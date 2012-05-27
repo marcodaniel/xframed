@@ -296,7 +296,7 @@ Have fun!
 }
 
 \clist_map_function:nN
-  { etoolbox , color , zref-abspage , xparse , l3keys2e }
+  { etoolbox , zref-abspage , xparse , l3keys2e }
     \xframed_load_check:n
 
 %    \end{macrocode}
@@ -402,6 +402,7 @@ Have fun!
    title-right-margin      ==  10pt             ,
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
+   null-skip               ==  \c_zero_dim      ,
  } \xframed_lengthkeys_define:n
 
 %    \end{macrocode}
@@ -707,31 +708,33 @@ Have fun!
 %    \begin{macrocode}
 \NewDocumentEnvironment { xframed } { O{} }
  {
-  \group_begin:
-  \xframedsetup { #1 }  
-  \xframed_trivlist: \item\relax
-  \xframed_calculate_width: 
-  \vcoffin_set:Nnw \l_xframed_store_one_coffin { \l_tmpa_dim }
+ \group_begin:
+   \xframedsetup { #1 }  
+   \xframed_trivlist:
+    \item\relax
+    \xframed_calculate_width: 
+    \vcoffin_set:Nnw \l_xframed_store_one_coffin { \l_tmpa_dim }
  }
  {
-  \par \tex_unskip:D
-  \skip_vertical:N \tex_lastskip:D
-  \par
-  \hbox:n { 
-           \tex_vrule:D width  0   pt 
-                        height 0.7 \tex_baselineskip:D 
-                        depth  0.3 \tex_baselineskip:D
-           \scan_stop: 
-          }
-  \par \tex_unskip:D \tex_unskip:D
-  \setbox0=\lastbox
-  \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
-  \vcoffin_set_end:
-%  \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
-  \coffin_display_handles:Nn \l_xframed_store_one_coffin { red!70!black }
-  \endxframed_trivlist:
+    \par \tex_unskip:D
+    \skip_vertical:N \tex_lastskip:D
+    \par
+    \hbox:n { 
+             \tex_vrule:D width  0   pt 
+                          height 0.7 \tex_baselineskip:D 
+                          depth  0.3 \tex_baselineskip:D
+             \scan_stop: 
+            }
+    \par \tex_unskip:D \tex_unskip:D
+    \setbox0=\lastbox
+    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+    \vcoffin_set_end:
+%    \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
+    \coffin_display_handles:Nn \l_xframed_store_one_coffin { red!70!black }
+   \endxframed_trivlist:
   \group_end:
-}
+  \@doendpe
+ }
 
 
 
@@ -740,7 +743,6 @@ Have fun!
  {
   \setlength{\topsep}
          { \prop_get:Nn \l_xframed_lengthoption_prop { skip-above } }
-  \textbf{foo}\prop_get:Nn \l_xframed_lengthoption_prop { skip-above }  
   \parsep\parskip
   \@nmbrlistfalse
   \@trivlist
