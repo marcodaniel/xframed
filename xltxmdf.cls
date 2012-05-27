@@ -9,13 +9,13 @@
 %% Either version 1.0 or, at your option, any later version.
 
 
-%%$Id: xltxmdf.cls 3 2012-05-27 09:22:24Z marco $
-%%$Rev: 3 $
+%%$Id: xltxmdf.cls 4 2012-05-27 18:13:09Z marco $
+%%$Rev: 4 $
 %%$Author: marco $
-%%$Date: 2012-05-27 11:22:24 +0200 (So, 27 Mai 2012) $
+%%$Date: 2012-05-27 20:13:09 +0200 (So, 27 Mai 2012) $
 
 \RequirePackage{expl3}
-\GetIdInfo$Id: xltxmdf.cls 3 2012-05-27 09:22:24Z marco $
+\GetIdInfo$Id: xltxmdf.cls 4 2012-05-27 18:13:09Z marco $
           {documentation class for Marco Daniel}
 
 \ProvidesExplClass{\ExplFileName}
@@ -368,6 +368,12 @@
 \ExplSyntaxOff
 \lstMakeShortInline[basicstyle=\small\ttfamily\color{blue!60!black}]{|}
 \def\macro#1{%
+  \ifx\relax#1\relax
+   \topsep\MacroTopsep \trivlist
+   \item[\textbullet]\leavevmode\par\kern\MacroTopsep\noindent\ignorespaces
+   \global\advance\c@CodelineNo\@ne\relax
+   \ignorespaces
+  \else
    \MakePrivateLetters
    \topsep\MacroTopsep \trivlist
    \edef\saved@macroname{#1}%
@@ -395,7 +401,8 @@
        \expandafter\SpecialMainIndex\expandafter{\next}\nobreak
        \expandafter\DoNotIndex\expandafter{\next}}%
   \global\advance\c@CodelineNo\m@ne
-  \ignorespaces}
+  \ignorespaces
+  \fi}
 
 
 \def\SpecialOptIndex#1{\@bsphack
