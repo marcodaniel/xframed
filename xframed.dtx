@@ -155,12 +155,12 @@ Have fun!
 \fi
 %</internal>
 %<*driver>
-%%$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
+%%$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
 \setcounter{errorcontextlines}{999}
 \documentclass[parskip=false,11pt,]{xltxmdf}
 %%%\usepackage[framemethod=TikZ]{xframed}
 \usepackage{xparse}
-\GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
+\GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
           {documentation of xframed}
 
 \EnableCrossrefs
@@ -197,7 +197,7 @@ Have fun!
 % \subtitle{auto-split frame environment}
 % \author{\href{mailto:marco.daniel@mada-nada.de}{Marco Daniel}}%
 % \version{0.01 ALPHA}
-% \GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
+% \GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
 %           {documentation of xframed}
 % \date{\ExplFileDate}
 % \introduction{The standard methods for framing text (\Cmd{fbox}
@@ -243,16 +243,16 @@ Have fun!
 %
 % \subsection{The Explanation of xframed.sty}
 %
-% %$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
-% %$Rev: 5 $
+% %$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
+% %$Rev: 6 $
 % %$Author: marco $
-% %$Date: 2012-05-27 21:16:20 +0200 (So, 27 Mai 2012) $
-% \begin{macro}{\mdversion,\GetIdInfo}
+% %$Date: 2012-05-28 20:46:06 +0200 (Mo, 28 Mai 2012) $
+% \begin{macro}{\xframedersion,\GetIdInfo}
 % Set package information and start header with expl3
 %    \begin{macrocode}
-\def\mdversion{v2.0}
+\def\xframedversion{v0.01 ALPHA}
 \RequirePackage{expl3}
-\GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
+\GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
           {package xframed}
 
 \ProvidesExplPackage{\ExplFileName}
@@ -299,7 +299,7 @@ Have fun!
 }
 
 \clist_map_function:nN
-  { etoolbox , zref-abspage , xparse , l3keys2e }
+  { etoolbox , zref-abspage , xparse , l3keys2e  }
     \xframed_load_check:n
 
 %    \end{macrocode}
@@ -351,12 +351,6 @@ Have fun!
 % \Cmd{\l_xframed_lengthoption_prop}. 
 %    \begin{macrocode}
 \prop_new:N \l_xframed_lengthoption_prop
-
-\cs_new_protected:Npn \xframed_prop_set:Nnn #1 #2 #3
- {
-  \prop_del:Nn  #1 { #2 } 
-  \prop_put:Nnn #1 { #2 } { #3 }
- }
 
 %    \end{macrocode}
 % \end{macro}
@@ -411,7 +405,8 @@ Have fun!
    middle-line-width       ==  .4pt             ,
    outer-line-width        ==  \c_zero_dim      ,
    round-corner            ==  \c_zero_dim      ,
-   footenote-distance      ==  \medskipamount   ,
+   footnote-distance       ==  \medskipamount   ,
+   footnote-line-width     ==  .8pt             ,
    text-width              ==  \linewidth       ,
    title-above-skip        ==  5pt              ,
    title-below-skip        ==  5pt              ,
@@ -714,12 +709,20 @@ Have fun!
 % \end{macro}
 %
 %
+% \begin{macro}{\l_xframed_coffin_width_dim}
+%    \begin{macrocode}
+\dim_new:N \l_xframed_coffin_width_dim
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % \begin{macro}{\xframed_calculate_width:}
 % This command calculates the with of the coffin based on the user input. 
 %    \begin{macrocode}
 \cs_new:Npn \xframed_calculate_width:
  {
-  \dim_set:Nn \l_tmpa_dim { \linewidth }
+  \dim_set:Nn \l_xframed_coffin_width_dim { \linewidth }
   \clist_map_inline:nn 
     { 
      left-margin , outer-line-width , middle-line-width , inner-line-width , 
@@ -727,7 +730,7 @@ Have fun!
      middle-line-width , outer-line-width , right-margin
     }
     {
-     \dim_sub:Nn \l_tmpa_dim 
+     \dim_sub:Nn \l_xframed_coffin_width_dim 
            { 
             \prop_get:Nn \l_xframed_lengthoption_prop { ##1 }
            }
@@ -751,7 +754,10 @@ Have fun!
    \xframed_trivlist:
     \item\relax
     \xframed_calculate_width: 
-    \vcoffin_set:Nnw \l_xframed_store_one_coffin { \l_tmpa_dim }
+    \vcoffin_set:Nnw   \l_xframed_store_one_coffin 
+                     { \l_xframed_coffin_width_dim }
+    \linewidth\hsize
+    \textwidth\hsize
  }
 %    \end{macrocode}
 % The end part of the environment
@@ -760,27 +766,13 @@ Have fun!
 %    \end{macrocode}
 % Try to fix the last vertical skip of environments and equations
 %    \begin{macrocode}
-    \par \tex_unskip:D
-    \skip_vertical:N \tex_lastskip:D
-%    \end{macrocode}
-% Trying to ignore descenders
-%    \begin{macrocode}
-    \par
-    \hbox:n { 
-             \tex_vrule:D width  0   pt 
-                          height 0.7 \tex_baselineskip:D 
-                          depth  0.3 \tex_baselineskip:D
-             \scan_stop: 
-            }
-    \par \tex_unskip:D \tex_unskip:D
-    \setbox0=\lastbox
-    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+    \xframed_last_coffin_line:
     \vcoffin_set_end:
 %    \end{macrocode}
 % End coffin input and start output
 %    \begin{macrocode}
 %    \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
-    \coffin_display_handles:Nn \l_xframed_store_one_coffin { red!70!black }
+     \xframed_proces_contents: % THE OUTPUT ROUTINE
    \endxframed_trivlist:
   \group_end:
   \@doendpe
@@ -847,6 +839,265 @@ Have fun!
 % \end{macro}
 %
 %
+% \begin{macro}{ToDo to handle the input}
+%  This routine start the process to print out the contents. Therefor the 
+%  following things must be happen:
+%  \begin{enumerate}
+%   \item handle title
+%   \item handle footnotes
+%   \item check if used inside a non splittable part
+%   \item \ldots
+%  \end{enumerate}
+% First create a new message which will be called if the environment
+% \Env{xframed} ist used inside a non breakable environment like \Env{minipage}
+% or \Env{figure}
+%    \begin{macrocode}
+\msg_new:nnnn { xframed } { inside-box }
+  { Environment~xframed~is~used~inside~a~non~breakable~box. }
+  {
+    You~are~using~the~environment~xframed~inside~a~non~breakable\\
+    box.~By~this~the~option~nobreak~is~used.~For~further~information\\
+    see~the~documentation.
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_test_if_splittable:,\xframed_boolexpr_if:n}
+%  Define a stand alone function which test the surrounding environment.
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \xframed_boolexpr_if:n #1 { T , F , TF }
+ {
+  \if_predicate:w \bool_if_p:n {#1}
+     \prg_return_true:
+  \else:
+     \prg_return_false:
+  \fi:
+ }
+
+\cs_new:Npn \xframed_test_if_splittable:
+ {
+  \xframed_boolexpr_if:nTF 
+    {
+      \cs_if_exist_p:N \@captype             || 
+      \if@minipage 1 \else 0 \fi             ||
+      \ifinner     1 \else 0 \fi             ||
+      \bool_if_p:N \l_xframed_nobreak_bool
+    }
+    {
+     \bool_if:NF \l_xframed_nobreak_bool
+       {
+        \msg_warning:nn { xframed } { inside-box }
+       }
+     \xframed_use_nosplittable_output:   
+     \msg_term:x { line~\msg_line_number:\ ~xframed~uses~nonsplittable~output }
+    }
+    {
+     \xframed_use_splittable_output: 
+     \msg_term:x { line~\msg_line_number:\ ~xframed~uses~splittable~output }
+    }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+\cs_new:Npn \xframed_proces_contents: 
+ {
+  \xframed_check_title_first:
+  \xframed_test_if_splittable:
+ }
+\cs_new:Npn \xframed_use_nosplittable_output:
+ {
+  \coffin_display_handles:Nn \l_xframed_store_one_coffin { blue!70!black }
+ }
+\cs_new:Npn \xframed_use_splittable_output:
+ {
+  \coffin_display_handles:Nn \l_xframed_store_one_coffin { red!70!black }
+ }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_check_title_first:}%
+% If a title is given the title coffin will joined with the contents coffin.
+% The command includes the correct computing of the distance between the title
+% and the contents of the user input.
+%    \begin{macrocode}
+\cs_new:Npn \xframed_check_title_first:
+ {
+  \tl_if_blank:VTF \l_xframed_title_tl
+    {
+     \msg_term:x { line~\msg_line_number:\ ~title~is~empty~or~space~filled }
+    }
+    {
+     \msg_term:x { line~\msg_line_number:\ ~title~isn't~empty,~save~in~coffin }
+     \bool_if:NF \l_xframed_titleline_bool
+       {
+        \xframed_prop_set:Nnn \l_xframed_lengthoption_prop 
+                              { title-line-width } 
+                              { \c_zero_dim }
+       }
+     \vcoffin_set:Nnn   \l_xframed_store_title_coffin 
+                      { \l_xframed_coffin_width_dim   }
+                      { \tl_trim_spaces:N \l_xframed_title_tl
+                        \tl_use:N \l_xframed_title_tl }  
+%     \coffin_display_handles:Nn \l_xframed_store_title_coffin { red!70!black }
+     \coffin_join:NnnNnnnn \l_xframed_store_one_coffin { hc } { t }
+                           \l_xframed_store_title_coffin { hc } { b }
+                           { 0pt }%extra x sep
+                           { 
+                            \prop_get:Nn \l_xframed_lengthoption_prop 
+                                         { title-below-skip }
+                            +
+                            \prop_get:Nn \l_xframed_lengthoption_prop 
+                                         { title-line-width }
+                            +
+                            \prop_get:Nn \l_xframed_lengthoption_prop 
+                                         { inner-top-margin }
+                           }
+    }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_check_footnote:}%
+% If footnotes are given they are saved inside the coffin
+% \Cmd{\l_xframed_footnotes_coffin}. If the footnotes should be printed inside
+% the environment, the coffins must be joined. A coffin is a box so the test
+% \Cmd{\box_if_empty:NF} is used.
+%    \begin{macrocode}
+\cs_new:Npn \xframed_check_footnotes:
+ {
+  \box_if_empty:NTF \l_xframed_store_footnotes_coffin
+    {
+     \msg_term:x { line~\msg_line_number:\ ~no~footnote~presented }
+    }
+    {
+     \msg_term:x { line~\msg_line_number:\ ~footnotes~are~found }
+     \bool_if:NTF \l_xframed_footnoteinside_bool
+       {
+        \msg_term:x { line~\msg_line_number:\ ~footnotes~inside~--~joined }
+%        \coffin_display_handles:Nn \l_xframed_store_footnotes_coffin { red }
+        \coffin_join:NnnNnnnn \l_xframed_store_one_coffin { hc } { b }
+                              \l_xframed_store_footnotes_coffin { hc } { t }
+                              { 0pt }%extra x sep
+                              { 
+                               \prop_get:Nn \l_xframed_lengthoption_prop 
+                                             { footnote-distance }
+                                +
+                               \prop_get:Nn \l_xframed_lengthoption_prop 
+                                         { footnote-line-width }
+                              }
+       }
+       {
+        \msg_term:x { line~\msg_line_number:\ ~footnotes~outside }
+       }
+    }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+
+%
+% \begin{macro}{FOOTNOTES}
+%  \textbf{\color{red} THE FOLLOWING IS ONLY COPIED SO I DON'T FORGET IT}
+%    \begin{macrocode}
+\cs_new:Npn \xframed_footnote_must_be_declared:
+ {
+   START
+   \def\@mpfn{mpfootnote}%
+   \def\thempfn{\thempfootnote}%
+   \c@mpfootnote\z@%
+   \let\@footnotetext\@mpfootnotetext%
+   OUTPUT
+     \ifvoid\@mpfootins\else%
+          \nobreak%
+          \vskip\mdf@footenotedistance@length%
+          \normalcolor%
+          \mdf@footnoterule%
+          \unvbox\@mpfootins%
+     \fi%
+   FOOTNOTERULE
+    \kern0\p@%
+    \hrule \@width 1in \kern 2.6\p@
+ }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_measure_free_vspace:}
+% The main idea based on the great package \Pack{multicol} of Frank Mittelbach.
+% In his documentation he wrote the following:
+% \begin{quote}
+%    The |\enough@room| macro used
+%    above isn't perfect but works reasonably well in this context. We
+%    measure the free space on the current page by subtracting
+%    |\pagetotal| from |\pagegoal|. This isn't entirely
+%    correct since it doesn't take the `shrinking' (i.e.\
+%    |\pageshrink|) into account.  The `recent contribution list'
+%    might be nonempty so we start with |\par| and an explicit
+%    |\penalty|.\footnote{See the documentation of 
+%    \Cmd{endmulticols} for further details.}
+%    Actually, we use |\addpenalty| to ensure that a following
+%    |\addvspace| will `see' the vertical space that might be
+%    present.
+%    The use of |\addpenalty| will have the effect that all items from
+%    the recent contributions will be moved to the main vertical list
+%    and the |\pagetotal| value will be updated correctly. However,
+%    the penalty will be placed in front of any dangling glue item
+%    with the result that the main vertical list may already be
+%    overfull even if \TeX{} is not invoking the output routine.\par\vdots
+%
+%    To empty the contribution list the first release contained a
+%    penalty zero but this had the result that |\addvspace| couldn't
+%    detect preceding glue. So this was changed to |\addpenalty|. But
+%    this turned out to be not enough as |\addpenalty| will not add a
+%    penalty when |@nobreak| is true. Therefore we force this switch
+%    locally to false. As a result there may be a break between
+%    preceding text and the start of a multicols environment, but this
+%    seems acceptable since there is the optional argument for exactly
+%    this reason.
+% \end{quote}
+%
+%  The following code of this package is relavant:
+%    \begin{verbatim}
+%   \bgroup\@nobreakfalse\addpenalty\z@\egroup
+%   \page@free \pagegoal
+%   \advance \page@free -\pagetotal
+%   \@tempskipa#1\relax
+%   \mult@info\z@
+%       {Current page:\MessageBreak
+%        height=%
+%        \the\pagegoal: used \the\pagetotal
+%        \space -> free=\the\page@free
+%        \MessageBreak
+%        needed \the\@tempskipa
+%              \space(for #1)}%
+%   \ifdim \page@free <#1\newpage \fi
+%    \end{verbatim}
+%
+%    \begin{macrocode}
+\cs_new:Npn \xframed_measure_free_vspace:
+ {
+
+
+ }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % \begin{macro}{}
 %    \begin{macrocode}
 
@@ -864,6 +1115,43 @@ Have fun!
 % \begin{macro}{}
 %    \begin{macrocode}
 
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+%
+% \begin{macro}{\xframed_last_coffin_line:}
+%  This code trys to ignore descendes and last vertical skip of environments.
+%    \begin{macrocode}
+\cs_new:Npn \xframed_last_coffin_line:
+{
+%    \end{macrocode}
+% Try to fix the last vertical skip of environments and equations
+%    \begin{macrocode}
+    \par \tex_unskip:D
+    \skip_vertical:N \tex_lastskip:D
+%    \end{macrocode}
+% Trying to ignore descenders
+%    \begin{macrocode}
+    \par
+    \hbox:n { 
+             \tex_vrule:D width  0   pt 
+                          height 0.7 \tex_baselineskip:D 
+                          depth  0.3 \tex_baselineskip:D
+             \scan_stop: 
+            }
+    \par \tex_unskip:D \tex_unskip:D
+    \setbox0=\lastbox
+    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+}
 %    \end{macrocode}
 % \end{macro}
 %
