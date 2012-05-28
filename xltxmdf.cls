@@ -372,11 +372,10 @@
 \lstMakeShortInline[basicstyle=\small\ttfamily\color{blue!60!black}]{|}
 \def\MakePrivateletters{%
  \@makeother\_\@makeother\@\@makeother\:}
-
 \ExplSyntaxOn
 
-
-\DeclareDocumentEnvironment { macro } { O{} v }
+\cs_generate_variant:Nn \tl_to_str:n {f}
+\DeclareDocumentEnvironment { macro } { O{} m }
 {
  \clist_set:Nn      \l_tmpa_clist  { #2 }
  \clist_if_empty:NF \l_tmpa_clist
@@ -388,8 +387,9 @@
                 \clist_map_inline:Nn \l_tmpa_clist 
                   { 
                    \int_compare:nNnTF { \l_tmpa_int } = { \c_one }
-                     { \MacroFont \tl_to_str:n { ##1 }~\\\bottomrule }
-                     { \MacroFont \tl_to_str:n { ##1 }~\\ }
+                     { \MacroFont \tl_to_str:f { \token_to_str:N ##1 }\\
+                                                  \bottomrule            }
+                     { \MacroFont \tl_to_str:f { \token_to_str:N ##1 }\\ }
                     \int_gdecr:N \l_tmpa_int
                    }
                \end{tabular}]
