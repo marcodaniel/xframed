@@ -252,29 +252,32 @@
 %Modifkation of code
 \tl_gput_left:Nn \theCodelineNo { \color{gray} }
 \dim_set:Nn \MacroTopsep { 10pt }
-\tl_gput_right:Nn \MacroFont { \color{ltxmdfblue} }
-
+%\tl_gput_right:Nn \MacroFont { \color{ltxmdfblue} }
+\cs_set:Npn \MacroFont 
+ {
+  \color{ltxmdfblue}\small\ttfamily
+ }
 
 %Anweisung zur Darstellung
 
 \NewDocumentCommand \Opt { m }
  {
-  {\MacroFont #1}\xspace
+  \hbox:n {\MacroFont #1}\xspace
  }
 
 \NewDocumentCommand \Env { m }
  {
-  {\MacroFont #1}\xspace
+  \hbox:n {\MacroFont #1}\xspace
  }
 
 \NewDocumentCommand \Cmd { m }
  {
-  {\MacroFont\textbackslash #1}\xspace
+  \hbox:n {\MacroFont \tl_to_str:n { #1 } }\xspace
  }
 
 \NewDocumentCommand \Pack { m }
  {
-  \texttt { #1 } \xspace
+  \hbox:n { \texttt { #1 } }\xspace
  }
 
 \NewDocumentCommand \NOTE {}
@@ -343,7 +346,7 @@
                    {
                      \skip_horizontal:n { -2em }
                      \@bsphack
-                      \MacroFont\textbackslash #2
+                      \MacroFont \tl_to_str:n{ #2 }
                       \SpecialUsageIndex{#2}
                      \@esphack
                     }
@@ -367,42 +370,38 @@
 
 \ExplSyntaxOff
 \lstMakeShortInline[basicstyle=\small\ttfamily\color{blue!60!black}]{|}
-\def\macro#1{%
-  \ifx\relax#1\relax
+\def\MakePrivateletters{%
+ \@makeother\_\@makeother\@\@makeother\:}
+
+\ExplSyntaxOn
+
+
+\DeclareDocumentEnvironment { macro } { O{} v }
+{
+ \clist_set:Nn      \l_tmpa_clist  { #2 }
+ \clist_if_empty:NF \l_tmpa_clist
+  {
    \topsep\MacroTopsep \trivlist
-   \item[\textbullet]\leavevmode\par\kern\MacroTopsep\noindent\ignorespaces
-   \global\advance\c@CodelineNo\@ne\relax
-   \ignorespaces
-  \else
-   \MakePrivateLetters
-   \topsep\MacroTopsep \trivlist
-   \edef\saved@macroname{#1}%
    \def\makelabel##1{\makebox[0pt][l]{\kern-2em ##1}}%
-   \if@inlabel
-    \let\@tempa\@empty \count@\macro@cnt
-    \loop \ifnum\count@>\z@
-      \edef\@tempa{\@tempa\hbox{\strut}}\advance\count@\m@ne \repeat
-    \edef\makelabel##1{\llap{\vtop to\baselineskip
-                               {\@tempa\hbox{##1}\vss}}}%
-    \advance \macro@cnt \@ne
-   \else  \macro@cnt\@ne  \fi
-    \toks@={\@gobble}%
-    \@for\next:=#1\do
-      {\toks@=\expandafter{\the\expandafter\toks@%
-                           \expandafter\\%
-                           \expandafter\PrintMacroName\expandafter{\next}}}%
-   \item[\fbox{\begin{tabular}{@{\textbackslash}>{}l}
-                \the\toks@
-               \end{tabular}}]%
+   \int_set:Nn \l_tmpa_int { \clist_count:N \l_tmpa_clist }
+   \item[\begin{tabular}{l}\toprule
+                \clist_map_inline:Nn \l_tmpa_clist 
+                  { 
+                   \int_compare:nNnTF { \l_tmpa_int } = { \c_one }
+                     { \MacroFont \tl_to_str:n { ##1 }~\\\bottomrule }
+                     { \MacroFont \tl_to_str:n { ##1 }~\\ }
+                    \int_gdecr:N \l_tmpa_int
+                   }
+               \end{tabular}]
    \leavevmode\par\kern\MacroTopsep\noindent\ignorespaces
    \global\advance\c@CodelineNo\@ne
-   \@for\next:=#1\do
-       {%
-       \expandafter\SpecialMainIndex\expandafter{\next}\nobreak
-       \expandafter\DoNotIndex\expandafter{\next}}%
-  \global\advance\c@CodelineNo\m@ne
-  \ignorespaces
-  \fi}
+   \global\advance\c@CodelineNo\m@ne
+   \ignorespaces
+  }
+ }
+ {
+  \clist_if_empty:NF \l_tmpa_clist { \endtrivlist }
+ }
 
 
 \def\SpecialOptIndex#1{\@bsphack
@@ -410,7 +409,7 @@
            (option)\encapchar usage}%
     \index{options:\levelchar#1\actualchar{\protect\ttfamily#1}\encapchar
            usage}\@esphack}
-\ExplSyntaxOn
+
 
 
 
