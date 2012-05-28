@@ -10,7 +10,7 @@ Working with the command \fbox or \fcolorbox, one has to
 handle page breaks by hand. The present package defines the
 environment xframed which automatically deals with page breaks.
 
-Author's name: Marco Daniel and Elke Schubert (supports tikz implementation)
+Author's name: Marco Daniel
 License type: lppl
 
 ================================================================
@@ -59,7 +59,7 @@ Working with the command fbox or fcolorbox, one has to
 handle page breaks by hand. The present package defines the
 environment xframed which automatically deals with page breaks.
 
-Author's name: Marco Daniel and Elke Schubert (!new)
+Author's name: Marco Daniel 
 License type: lppl
 
 ==================================================
@@ -155,12 +155,12 @@ Have fun!
 \fi
 %</internal>
 %<*driver>
-%%$Id: xframed.dtx 4 2012-05-27 18:13:09Z marco $
+%%$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
 \setcounter{errorcontextlines}{999}
 \documentclass[parskip=false,11pt,]{xltxmdf}
 %%%\usepackage[framemethod=TikZ]{xframed}
 \usepackage{xparse}
-\GetIdInfo$Id: xframed.dtx 4 2012-05-27 18:13:09Z marco $
+\GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
           {documentation of xframed}
 
 \EnableCrossrefs
@@ -195,10 +195,9 @@ Have fun!
 % \title{The \Pack{xframed} package
 %       \footnote{Extending the package \texttt{framed.sty}}}
 % \subtitle{auto-split frame environment}
-% \author{\href{mailto:marco.daniel@mada-nada.de}{Marco Daniel}%
-%        \href{mailto:marco.daniel@mada-nada.de}{Elke Schubert}}
+% \author{\href{mailto:marco.daniel@mada-nada.de}{Marco Daniel}}%
 % \version{0.01 ALPHA}
-% \GetIdInfo$Id: xframed.dtx 4 2012-05-27 18:13:09Z marco $
+% \GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
 %           {documentation of xframed}
 % \date{\ExplFileDate}
 % \introduction{The standard methods for framing text (\Cmd{fbox}
@@ -244,27 +243,31 @@ Have fun!
 %
 % \subsection{The Explanation of xframed.sty}
 %
-% %$Id: xframed.dtx 4 2012-05-27 18:13:09Z marco $
-% %$Rev: 4 $
+% %$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
+% %$Rev: 5 $
 % %$Author: marco $
-% %$Date: 2012-05-27 20:13:09 +0200 (So, 27 Mai 2012) $
-% \begin{macro}{mdversion,xframedpackagename}
+% %$Date: 2012-05-27 21:16:20 +0200 (So, 27 Mai 2012) $
+% \begin{macro}{\mdversion,\GetIdInfo}
 % Set package information and start header with expl3
 %    \begin{macrocode}
 \def\mdversion{v2.0}
-\def\xframedpackagename{xframed}
 \RequirePackage{expl3}
-\GetIdInfo$Id: xframed.dtx 4 2012-05-27 18:13:09Z marco $
+\GetIdInfo$Id: xframed.dtx 5 2012-05-27 19:16:20Z marco $
           {package xframed}
 
 \ProvidesExplPackage{\ExplFileName}
      {\ExplFileDate}{\ExplFileVersion}{\ExplFileDescription}
+
+\cs_set_eq:NN \xframedpackagename \ExplFileName
+
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{a}
-%  Test whether a newer version of \Pack{expl3} is available.
+% \begin{macro}{}
+%  To run the package you need a version of \Pack{expl3} newer than
+%  \texttt{2011/09/05}. If such version isn't available the package provides an
+%  error and stop the input.
 %    \begin{macrocode}
 \@ifpackagelater { expl3 } { 2011/09/05 }
   { }
@@ -281,7 +284,7 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{\xframed_load_check:n}
 %  Loading required packages
 %    \begin{macrocode}
 \msg_new:nnnn { xframed } { package-not-available }
@@ -302,8 +305,9 @@ Have fun!
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{}
-%  Definining the global option \Opt{framemethod}.
+% \begin{macro}{\xframed_framemethode_tl,framemethod (Option)}
+%  Definining the global option \Opt{framemethod} whereby the method will be
+%  save in the token \Cmd{\xframed_framethode_tl}.
 %    \begin{macrocode}
 \tl_new:N \xframed_framemethode_tl
 \cs_new_protected:Npn \xframed_set_framemethod:n #1 
@@ -328,8 +332,23 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
-% Command to define a new length option with a default value. 
+% \begin{macro}{\xframed_prop_set:Nnn}
+% The kernel of \LaTeX3 doesn't provide a command \Cmd{\prop_set:Nnn}. So
+% \Pack{xframed} will define its own command.
+%    \begin{macrocode}
+\cs_new_protected:Npn \xframed_prop_set:Nnn #1 #2 #3
+ {
+  \prop_del:Nn  #1 { #2 } 
+  \prop_put:Nnn #1 { #2 } { #3 }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\l_xframed_lengthoption_prop, all length Option}
+% All length option will be saved in the property list
+% \Cmd{\l_xframed_lengthoption_prop}. 
 %    \begin{macrocode}
 \prop_new:N \l_xframed_lengthoption_prop
 
@@ -343,7 +362,10 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{\xframed_lengthkeys_define:n}
+% The command is used inside a loop by \Cmd{clist_map_function:nN} to fill the
+% property list with all length options. Simultaneously all option will be
+% initializied by \Cmd{\keys_set:nn}
 %    \begin{macrocode}
 \cs_new_protected:Npn \xframed_lengthkeys_define:n #1
  {
@@ -367,7 +389,7 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{Setting the length option}
 % Here the declaration of all length options.
 %    \begin{macrocode}
 \clist_map_function:nN
@@ -409,8 +431,8 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
-% Command to define a new string option with a default value. 
+% \begin{macro}{\l_xframed_coloroption_prop, all color Option}
+% The syntax is equal to the length option. 
 %    \begin{macrocode}
 \prop_new:N \l_xframed_coloroption_prop
 
@@ -435,7 +457,7 @@ Have fun!
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{}
+% \begin{macro}{Setting the color options}
 % Here the declaration of all color options.
 %    \begin{macrocode}
 \clist_map_function:nN
@@ -462,7 +484,7 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{Setting the bool options}
 % Command to define a all bool option with a default value. 
 %    \begin{macrocode}
 \keys_define:nn { xframed }
@@ -495,8 +517,8 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
-% Here the declaration of the string options.
+% \begin{macro}{Setting the string option}
+% All string option will be saved in a token variable.
 %    \begin{macrocode}
 \keys_define:nn { xframed }
  {
@@ -514,7 +536,8 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{Setting the option alignment:,~~for the environment,
+%                ~~for the title,~~for the subtitle,~~for the subsubtitle,}
 % Here the declaration of the align options.
 %    \begin{macrocode}
 \tl_new:N \l_xframed_alignment_tl
@@ -570,7 +593,7 @@ Have fun!
 %
 %
 %
-% \begin{macro}{}
+% \begin{macro}{Setting option we will see ;-)}
 % Option to pass options to tikz or pstricks
 %    \begin{macrocode}
 \keys_define:nn { xframed }
@@ -582,8 +605,8 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
-% Defining the option needspace MUST BE CHANGED -- LATER
+% \begin{macro}{option needspace}
+% Defining the option needspace \textbf{\color{red} MUST BE CHANGED -- LATER}
 %    \begin{macrocode}
 
 %%  \define@key{mdf}{needspace}[\z@]{%
@@ -602,7 +625,9 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{Unknown option}
+% If an unknown option is passed to the package, it will provide an error
+% message.
 %    \begin{macrocode}
 \msg_new:nnnn { xframed } { unknown-option }
   { Unknown~option~'#1'. }
@@ -624,7 +649,8 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{\ProcessKeysOptions}
+% Explained in the documentation of \Pack{l3keys2e}.
 %    \begin{macrocode}
 \ProcessKeysOptions { xframed }
 
@@ -632,7 +658,7 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{xframedsetup}
+% \begin{macro}{\xframedsetup}
 %    \begin{macrocode}
 \NewDocumentCommand \xframedsetup { m }
  {
@@ -643,7 +669,7 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{style}
+% \begin{macro}{style (option)}
 %    \begin{macrocode}
 \msg_new:nnnn { xframed } { unknown-style }
   { Unknown~style~'#1'. }
@@ -670,18 +696,26 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
-%  Initialize all commands and length which will we used later
+% \begin{macro}{\l_xframed_store_one_coffin,\l_xframed_store_two_coffin,
+%               \l_xframed_store_save_coffin,\l_xframed_store_footnotes_coffin,
+%               \l_xframed_store_title_coffin,\l_xframed_store_subtitle_coffin,
+%               \l_xframed_store_subtitle_coffin}
+%  Initialize all coffins which will save user material
 %    \begin{macrocode}
 \coffin_new:N \l_xframed_store_one_coffin
 \coffin_new:N \l_xframed_store_two_coffin
 \coffin_new:N \l_xframed_store_save_coffin
+\coffin_new:N \l_xframed_store_footnotes_coffin
+\coffin_new:N \l_xframed_store_title_coffin
+\coffin_new:N \l_xframed_store_subtitle_coffin
+\coffin_new:N \l_xframed_store_subsubtitle_coffin
 
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{\xframed_calculate_width:}
+% This command calculates the with of the coffin based on the user input. 
 %    \begin{macrocode}
 \cs_new:Npn \xframed_calculate_width:
  {
@@ -704,10 +738,14 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{}
+% \begin{macro}{xframed (environment)}
+% The definition of the main environment of the package.
 %    \begin{macrocode}
 \NewDocumentEnvironment { xframed } { O{} }
  {
+%    \end{macrocode}
+% The start part of the environment
+%    \begin{macrocode}
  \group_begin:
    \xframedsetup { #1 }  
    \xframed_trivlist:
@@ -715,9 +753,18 @@ Have fun!
     \xframed_calculate_width: 
     \vcoffin_set:Nnw \l_xframed_store_one_coffin { \l_tmpa_dim }
  }
+%    \end{macrocode}
+% The end part of the environment
+%    \begin{macrocode}
  {
+%    \end{macrocode}
+% Try to fix the last vertical skip of environments and equations
+%    \begin{macrocode}
     \par \tex_unskip:D
     \skip_vertical:N \tex_lastskip:D
+%    \end{macrocode}
+% Trying to ignore descenders
+%    \begin{macrocode}
     \par
     \hbox:n { 
              \tex_vrule:D width  0   pt 
@@ -729,6 +776,9 @@ Have fun!
     \setbox0=\lastbox
     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
     \vcoffin_set_end:
+%    \end{macrocode}
+% End coffin input and start output
+%    \begin{macrocode}
 %    \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
     \coffin_display_handles:Nn \l_xframed_store_one_coffin { red!70!black }
    \endxframed_trivlist:
@@ -736,9 +786,14 @@ Have fun!
   \@doendpe
  }
 
-
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_trivlist:}
+% At the moment the environment is defined with \LaTeXe. I have no idea how to
+% fix this.
+%    \begin{macrocode}
 \cs_new:Npn \xframed_trivlist:
  {
   \setlength{\topsep}
@@ -752,6 +807,15 @@ Have fun!
   \let\@itemlabel\@empty
   \def\makelabel##1{##1}
  }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\endxframed_trivlist:}
+% At the moment the environment is defined with \LaTeXe. I have no idea how to
+% fix this.
+%    \begin{macrocode}
 \cs_new:Npn \endxframed_trivlist:
  {
   \if@inlabel
@@ -777,6 +841,28 @@ Have fun!
     \@endpetrue
   \fi
  }
+
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{}
+%    \begin{macrocode}
 
 %    \end{macrocode}
 % \end{macro}
