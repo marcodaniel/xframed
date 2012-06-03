@@ -1,0 +1,33 @@
+# .gitignore itself #
+#########################
+# .gitignore
+
+
+# OS generated files #
+#########################
+*.*~
+*~
+
+# source #
+#########################
+.svn/
+*.mdf
+*.aux
+*.hd
+*.ind
+*.ins
+*.idxlog
+*.idx
+*.log
+*.out
+*.thm
+*.tar.gz
+*.jpg
+*.synctex.gz
+*.toc
+*.txt
+
+
+*.pdf
+*.sty
+
