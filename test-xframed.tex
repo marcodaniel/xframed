@@ -1,0 +1,37 @@
+% !TEX program = pdflatex
+% !TEX encoding = utf8
+% !TEX spellcheck = en_GB
+%:!arara settings
+% arara: latex: {synctex: true , shell: true}
+% arara: dvips
+% arara: ps2pdf
+%%: Start Header
+\setcounter{errorcontextlines}{999}
+%\documentclass[parskip=half]{scrartcl}
+\documentclass{article}
+\parindent0pt
+\usepackage[showframe]{geometry}
+\usepackage{xcolor}
+\usepackage{kantlipsum}
+
+\usepackage[developer-info=true,footnote-inside=true,footnote-distance=0pt,title-font-color=red]{xframed}
+\usepackage{etoolbox}
+\usepackage{amsmath}
+\begin{document}
+
+
+\begin{xframed}[skip-above=2cm,skip-below=1cm, ,line-width=0pt,inner-margin=0pt]
+text\footnote{foobar}
+\kant[11]\footnote{text}
+
+text\footnote{foobar}
+\begin{enumerate}
+\item foo
+\item bar \verb+1+
+\end{enumerate}
+\begin{align}
+1+2
+\end{align}
+\end{xframed}
+\kant[12]
+\end{document}
