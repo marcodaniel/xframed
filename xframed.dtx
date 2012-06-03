@@ -155,12 +155,12 @@ Have fun!
 \fi
 %</internal>
 %<*driver>
-%%$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
+%%$Id: xframed.dtx 8 2012-06-03 15:24:38Z marco $
 \setcounter{errorcontextlines}{999}
 \documentclass[parskip=false,11pt,]{xltxmdf}
 %%%\usepackage[framemethod=TikZ]{xframed}
 \usepackage{xparse}
-\GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
+\GetIdInfo$Id: xframed.dtx 8 2012-06-03 15:24:38Z marco $
           {documentation of xframed}
 
 \EnableCrossrefs
@@ -197,7 +197,7 @@ Have fun!
 % \subtitle{auto-split frame environment}
 % \author{\href{mailto:marco.daniel@mada-nada.de}{Marco Daniel}}%
 % \version{0.01 ALPHA}
-% \GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
+% \GetIdInfo$Id: xframed.dtx 8 2012-06-03 15:24:38Z marco $
 %           {documentation of xframed}
 % \date{\ExplFileDate}
 % \introduction{The standard methods for framing text (\Cmd{fbox}
@@ -243,16 +243,16 @@ Have fun!
 %
 % \subsection{The Explanation of xframed.sty}
 %
-% %$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
-% %$Rev: 6 $
+% %$Id: xframed.dtx 8 2012-06-03 15:24:38Z marco $
+% %$Rev: 8 $
 % %$Author: marco $
-% %$Date: 2012-05-28 20:46:06 +0200 (Mo, 28 Mai 2012) $
+% %$Date: 2012-06-03 17:24:38 +0200 (So, 03 Jun 2012) $
 % \begin{macro}{\xframedersion,\GetIdInfo}
 % Set package information and start header with expl3
 %    \begin{macrocode}
 \def\xframedversion{v0.01 ALPHA}
 \RequirePackage{expl3}
-\GetIdInfo$Id: xframed.dtx 6 2012-05-28 18:46:06Z marco $
+\GetIdInfo$Id: xframed.dtx 8 2012-06-03 15:24:38Z marco $
           {package xframed}
 
 \ProvidesExplPackage{\ExplFileName}
@@ -343,14 +343,43 @@ Have fun!
  }
 
 %    \end{macrocode}
+% \end{macro}%
+%
+%
+% \begin{macro}{\xframed_prop_get:nn}
+% Define you own function to call the relavant property. 
+%    \begin{macrocode}
+\cs_new_protected:Npn \xframed_prop_get:nn #1 #2 
+ {
+  \prop_get:cn  { l_xframed_#1_option_prop } { #2 } 
+ }
+
+%    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{\l_xframed_lengthoption_prop, all length Option}
-% All length option will be saved in the property list
-% \Cmd{\l_xframed_lengthoption_prop}. 
+% \begin{macro}{\xframed_msg_log:n}
+% Define my own function to print information to the log-file. 
 %    \begin{macrocode}
-\prop_new:N \l_xframed_lengthoption_prop
+\cs_new:Npn \xframed_msg_log:n #1 
+ {
+  \bool_if:NT \g_xframed_developer_info_bool
+       {
+        \msg_log:x { xframed~developer~info~line~
+                     \msg_line_number:\\\\#1
+                    }
+       }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\l_xframed_length_option_prop, all length Option}
+% All length option will be saved in the property list
+% \Cmd{\l_xframed_length_option_prop}. 
+%    \begin{macrocode}
+\prop_new:N \l_xframed_length_option_prop
 
 %    \end{macrocode}
 % \end{macro}
@@ -370,7 +399,7 @@ Have fun!
  {
    \keys_define:nn { xframed }
     {
-      #1 .code:n  =  \xframed_prop_set:Nnn \l_xframed_lengthoption_prop 
+      #1 .code:n  =  \xframed_prop_set:Nnn \l_xframed_length_option_prop 
                                   { #1 } { \dim_eval:n { ##1 } }
     }
   \keys_set:nn  { xframed }
@@ -400,7 +429,6 @@ Have fun!
    split-bottomskip        ==  \c_zero_dim      ,
    outer-margin            ==  \c_zero_dim      ,
    inner-margin            ==  \c_zero_dim      ,
-   line-width              ==  0.4pt            ,
    inner-line-width        ==  \c_zero_dim      ,
    middle-line-width       ==  .4pt             ,
    outer-line-width        ==  \c_zero_dim      ,
@@ -420,16 +448,46 @@ Have fun!
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
    null-skip               ==  \c_zero_dim      ,
+   minimum-space           ==  2\baselineskip   ,
  } \xframed_lengthkeys_define:n
 
 %    \end{macrocode}
 % \end{macro}
 %
 %
-% \begin{macro}{\l_xframed_coloroption_prop, all color Option}
+% \begin{macro}{Setting the length option}
+% Some length options should be meta keys.
+%    \begin{macrocode}
+\keys_define:nn { xframed }
+ {
+   margin                  .meta:n  = 
+         {
+          left-margin               = #1          ,
+          right-margin              = #1          ,
+          outer-margin              = #1          , 
+          inner-margin              = #1          ,
+         }                                                             ,
+   skip                    .meta:n  = 
+         {
+          skip-above                =  #1         ,
+          skip-below                =  #1         ,
+
+         }                                                             ,
+   line-width              .meta:n  =
+         {
+          inner-line-width          = \c_zero_dim ,
+          middle-line-width         = #1          ,
+          outer-line-width          = \c_zero_dim ,
+         }                                                             
+ } 
+
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\l_xframed_color_option_prop, all color Option}
 % The syntax is equal to the length option. 
 %    \begin{macrocode}
-\prop_new:N \l_xframed_coloroption_prop
+\prop_new:N \l_xframed_color_option_prop
 
 \cs_new_protected:Npn \xframed_colorkeys_define:n #1
  {
@@ -440,7 +498,7 @@ Have fun!
  {
    \keys_define:nn { xframed }
     {
-      #1 .code:n  =  \xframed_prop_set:Nnn \l_xframed_coloroption_prop 
+      #1 .code:n  =  \xframed_prop_set:Nnn \l_xframed_color_option_prop 
                                   { #1 } { ##1 }
     }
   \keys_set:nn  { xframed }
@@ -506,6 +564,8 @@ Have fun!
   shadow                .bool_set:N = \l_xframed_shadow_bool           ,
   draw-everyline        .bool_set:N = \l_xframed_everyline_bool        ,
   ignore-last-descender .bool_set:N = \l_xframed_descenders_bool       ,
+  ignore-last-skip      .bool_set:N = \l_xframed_ignore_lastskip_bool  ,
+  developer-info        .bool_gset:N= \g_xframed_developer_info_bool   ,
  }
 
 %    \end{macrocode}
@@ -517,6 +577,7 @@ Have fun!
 %    \begin{macrocode}
 \keys_define:nn { xframed }
  {
+  font-setting         .tl_set:N    = \l_xframed_font_tl               ,
   title                .tl_set:N    = \l_xframed_title_tl              ,
   code-before          .tl_set:N    = \l_xframed_codebefore_tl         ,
   code-after           .tl_set:N    = \l_xframed_codeafter_tl          ,
@@ -525,6 +586,7 @@ Have fun!
   code-first-frame     .tl_set:N    = \l_xframed_code_first_frame_tl   ,
   code-middle-frame    .tl_set:N    = \l_xframed_code_middle_frame_tl  ,
   code-last-frame      .tl_set:N    = \l_xframed_code_last_frame_tl    ,
+  user-settings        .tl_set:N    = \l_xframed_user_settings_tl      ,
  }
 
 %    \end{macrocode}
@@ -596,26 +658,6 @@ Have fun!
   post-tikz-code  .tl_set:N = \l_xframed_extratikz_tl                   ,
   setup-tikz      .code:n   = { \tikzset{tikzsetting/.style = {#1} } }  ,
  }
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{option needspace}
-% Defining the option needspace \textbf{\color{red} MUST BE CHANGED -- LATER}
-%    \begin{macrocode}
-
-%%  \define@key{mdf}{needspace}[\z@]{%
-%%       \begingroup%
-%%          \setlength{\dimen@}{#1}%
-%%          \vskip\z@\@plus\dimen@%
-%%          \penalty -100\vskip\z@\@plus -\dimen@%
-%%          \vskip\dimen@%
-%%          \penalty 9999%
-%%          \vskip -\dimen@%
-%%          \vskip\z@skip % hide the previous |\vskip| from |\addvspace|
-%%        \endgroup%
-%%  }
-
 %    \end{macrocode}
 % \end{macro}
 %
@@ -717,6 +759,85 @@ Have fun!
 % \end{macro}
 %
 %
+% \begin{macro}{\xframed_font_settings:}
+%    \begin{macrocode}
+\cs_new:Npn \xframed_font_settings:
+ {
+  \color{ \xframed_prop_get:nn { color } { font-color} }
+  \tl_use:N \l_xframed_font_tl
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_minimum_space:}
+%    \begin{macrocode}
+\cs_new:Npn \xframed_minimum_space: 
+ {
+  \group_begin:
+    \dim_set:Nn \l_tmpa_dim
+                { \xframed_prop_get:nn { length }{ minimum-space } }
+    \skip_vertical:n { \c_zero_dim plus \l_tmpa_dim }
+    \tex_penalty:D  -100 \scan_stop:
+    \skip_vertical:n { \c_zero_dim plus -\l_tmpa_dim }
+    \skip_vertical:n { \l_tmpa_dim }
+    \tex_penalty:D  9999 \scan_stop:
+    \skip_vertical:n { -\l_tmpa_dim }
+    \skip_vertical:n { 0pt plus 0pt minus 0pt } 
+  \group_end:
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{inside-box (message)}
+% First create a new message which will be called if the environment
+% \Env{xframed} ist used inside a non breakable environment like \Env{minipage}
+% or \Env{figure}
+%    \begin{macrocode}
+\msg_new:nnnn { xframed } { inside-box }
+  { Environment~xframed~is~used~inside~a~non~breakable~box. }
+  {
+    You~are~using~the~environment~xframed~inside~a~non~breakable\\
+    box.~By~this~the~option~nobreak~is~used.~For~further~information\\
+    see~the~documentation.
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_test_if_splittable:,\xframed_boolexpr_if:n}
+%  Define a stand alone function which test the surrounding environment.
+%    \begin{macrocode}
+\cs_new:Npn \xframed_test_if_splittable:
+ {
+  \bool_if:nTF 
+    {
+      \cs_if_exist_p:N \@captype             || 
+      \if@minipage 1 \else 0 \fi             ||
+      \ifinner     1 \else 0 \fi             ||
+      \bool_if_p:N \l_xframed_nobreak_bool
+    }
+    {
+     \bool_if:NF \l_xframed_nobreak_bool
+       {
+        \msg_warning:nn { xframed } { inside-box }
+       }
+     \xframed_msg_log:n { xframed~uses~nonsplittable~output }
+     \bool_set_true:N \l_xframed_nobreak_bool
+    }
+    {
+     \xframed_msg_log:n { xframed~uses~splittable~output }
+     \bool_set_false:N \l_xframed_nobreak_bool
+    }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % \begin{macro}{\xframed_calculate_width:}
 % This command calculates the with of the coffin based on the user input. 
 %    \begin{macrocode}
@@ -732,7 +853,7 @@ Have fun!
     {
      \dim_sub:Nn \l_xframed_coffin_width_dim 
            { 
-            \prop_get:Nn \l_xframed_lengthoption_prop { ##1 }
+            \xframed_prop_get:nn { length } { ##1 }
            }
     }
  }
@@ -741,41 +862,94 @@ Have fun!
 % \end{macro}
 %
 %
-% \begin{macro}{xframed (environment)}
-% The definition of the main environment of the package.
+% \begin{macro}{\xframed_environment_precode:}
+% Collecting of all settings that have to execute before the coffin will set.
 %    \begin{macrocode}
-\NewDocumentEnvironment { xframed } { O{} }
+\cs_new:Npn \xframed_environment_precode:
  {
-%    \end{macrocode}
-% The start part of the environment
-%    \begin{macrocode}
- \group_begin:
-   \xframedsetup { #1 }  
-   \xframed_trivlist:
-    \item\relax
-    \xframed_calculate_width: 
-    \vcoffin_set:Nnw   \l_xframed_store_one_coffin 
-                     { \l_xframed_coffin_width_dim }
-    \linewidth\hsize
-    \textwidth\hsize
+  \xframed_minimum_space:
+  \xframed_test_if_splittable:
+  \xframed_calculate_width:
+  \xframed_declare_footnotes:
+  \l_xframed_user_settings_tl
  }
+
 %    \end{macrocode}
-% The end part of the environment
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_declare_footnotes:}
+%  \textbf{\color{red} THE FOLLOWING IS ONLY COPIED SO I DON'T FORGET IT}\par
+% |\@mpfn| is the name of the counter of footnotes declared by \LaTeX2e.
+% |mpfootnote| is the counter of footnotes inside |minipage|. I will use the
+% same counter inside \Env{xframed} to allow simply modifying.
+%
 %    \begin{macrocode}
+\cs_new:Npn \xframed_declare_footnotes:
  {
+  %%START
+   \cs_set:Npn \@mpfn { mpfootnote }
+  %% set the counter output
+   \cs_set:Npn \thempfn { \thempfootnote }
+  %%reset counter
+   \int_set_eq:NN \c@mpfootnote \c_zero
+  %%
+   \cs_set_eq:NN \@footnotetext \@mpfootnotetext
+ }
+
 %    \end{macrocode}
-% Try to fix the last vertical skip of environments and equations
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\xframed_environment_inner_postcode:}
+% This function will be executed as the last on inside the coffin.
 %    \begin{macrocode}
-    \xframed_last_coffin_line:
-    \vcoffin_set_end:
+\cs_new:Npn \xframed_environment_inner_postcode:
+ {
+  \xframed_ignore_last_descenders:
+  \xframed_ignore_last_skip:
+ }
+
 %    \end{macrocode}
-% End coffin input and start output
+% \end{macro}
+%
+%
+% \begin{macro}{\xframed_ignore_last_skip:}
+% Explanation
 %    \begin{macrocode}
-%    \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
-     \xframed_proces_contents: % THE OUTPUT ROUTINE
-   \endxframed_trivlist:
-  \group_end:
-  \@doendpe
+\cs_new:Npn \xframed_ignore_last_skip:
+ {
+  \bool_if:NT \l_xframed_ignore_lastskip_bool
+   {
+    \par \tex_unskip:D
+    \skip_vertical:N \tex_lastskip:D
+   }
+ }
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\xframed_ignore_last_descenders:}
+% Explanation 
+%    \begin{macrocode}
+\cs_new:Npn \xframed_ignore_last_descenders:
+ {
+  \bool_if:NT \l_xframed_descenders_bool
+    {
+     \par
+     \hbox:n { 
+              \tex_vrule:D width  0   pt 
+                           height 0.7 \tex_baselineskip:D 
+                           depth  0.3 \tex_baselineskip:D
+              \scan_stop: 
+             }
+     \par \tex_unskip:D \tex_unskip:D
+     \setbox0=\lastbox
+     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+    }
  }
 
 %    \end{macrocode}
@@ -788,8 +962,7 @@ Have fun!
 %    \begin{macrocode}
 \cs_new:Npn \xframed_trivlist:
  {
-  \setlength{\topsep}
-         { \prop_get:Nn \l_xframed_lengthoption_prop { skip-above } }
+  \setlength{\topsep}{ \xframed_prop_get:nn { length }{ skip-above } }
   \parsep\parskip
   \@nmbrlistfalse
   \@trivlist
@@ -829,7 +1002,7 @@ Have fun!
       \vskip\@tempskipa
     \fi
     \addpenalty\@endparpenalty
-    \addvspace { \prop_get:Nn \l_xframed_lengthoption_prop { skip-below } }
+    \addvspace { \xframed_prop_get:nn { length }{ skip-below } }
     \@endpetrue
   \fi
  }
@@ -837,65 +1010,20 @@ Have fun!
 
 %    \end{macrocode}
 % \end{macro}
-%
-%
-% \begin{macro}{ToDo to handle the input}
-%  This routine start the process to print out the contents. Therefor the 
-%  following things must be happen:
-%  \begin{enumerate}
-%   \item handle title
-%   \item handle footnotes
-%   \item check if used inside a non splittable part
-%   \item \ldots
-%  \end{enumerate}
-% First create a new message which will be called if the environment
-% \Env{xframed} ist used inside a non breakable environment like \Env{minipage}
-% or \Env{figure}
-%    \begin{macrocode}
-\msg_new:nnnn { xframed } { inside-box }
-  { Environment~xframed~is~used~inside~a~non~breakable~box. }
-  {
-    You~are~using~the~environment~xframed~inside~a~non~breakable\\
-    box.~By~this~the~option~nobreak~is~used.~For~further~information\\
-    see~the~documentation.
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{\xframed_test_if_splittable:,\xframed_boolexpr_if:n}
-%  Define a stand alone function which test the surrounding environment.
-%    \begin{macrocode}
-\prg_new_conditional:Npnn \xframed_boolexpr_if:n #1 { T , F , TF }
- {
-  \if_predicate:w \bool_if_p:n {#1}
-     \prg_return_true:
-  \else:
-     \prg_return_false:
-  \fi:
- }
 
-\cs_new:Npn \xframed_test_if_splittable:
+%
+%
+% \begin{macro}{\xframed_environment_precode:}
+% Collecting of all settings that have to execute before the coffin will set.
+%    \begin{macrocode}
+\cs_new:Npn \xframed_environment_postcode:
  {
-  \xframed_boolexpr_if:nTF 
-    {
-      \cs_if_exist_p:N \@captype             || 
-      \if@minipage 1 \else 0 \fi             ||
-      \ifinner     1 \else 0 \fi             ||
-      \bool_if_p:N \l_xframed_nobreak_bool
-    }
-    {
-     \bool_if:NF \l_xframed_nobreak_bool
-       {
-        \msg_warning:nn { xframed } { inside-box }
-       }
-     \xframed_use_nosplittable_output:   
-     \msg_term:x { line~\msg_line_number:\ ~xframed~uses~nonsplittable~output }
-    }
-    {
-     \xframed_use_splittable_output: 
-     \msg_term:x { line~\msg_line_number:\ ~xframed~uses~splittable~output }
-    }
+  \xframed_check_title_first:
+  \xframed_check_footnotes:
+  \xframed_measure_free_vspace:
+  \bool_if:NTF \l_xframed_nobreak_bool
+     { \xframed_use_nonsplittable_output: }
+     { \xframed_use_splittable_output:    }
  }
 
 %    \end{macrocode}
@@ -904,11 +1032,6 @@ Have fun!
 %
 % \begin{macro}{}
 %    \begin{macrocode}
-\cs_new:Npn \xframed_proces_contents: 
- {
-  \xframed_check_title_first:
-  \xframed_test_if_splittable:
- }
 \cs_new:Npn \xframed_use_nosplittable_output:
  {
   \coffin_display_handles:Nn \l_xframed_store_one_coffin { blue!70!black }
@@ -930,13 +1053,13 @@ Have fun!
  {
   \tl_if_blank:VTF \l_xframed_title_tl
     {
-     \msg_term:x { line~\msg_line_number:\ ~title~is~empty~or~space~filled }
+     \xframed_msg_log:n { title~is~empty~or~space~filled }
     }
     {
-     \msg_term:x { line~\msg_line_number:\ ~title~isn't~empty,~save~in~coffin }
+     \xframed_msg_log:n { title~isn't~empty,~save~in~coffin }
      \bool_if:NF \l_xframed_titleline_bool
        {
-        \xframed_prop_set:Nnn \l_xframed_lengthoption_prop 
+        \xframed_prop_set:Nnn \l_xframed_length_option_prop 
                               { title-line-width } 
                               { \c_zero_dim }
        }
@@ -949,14 +1072,11 @@ Have fun!
                            \l_xframed_store_title_coffin { hc } { b }
                            { 0pt }%extra x sep
                            { 
-                            \prop_get:Nn \l_xframed_lengthoption_prop 
-                                         { title-below-skip }
+                            \xframed_prop_get:nn { length }{ title-below-skip }
                             +
-                            \prop_get:Nn \l_xframed_lengthoption_prop 
-                                         { title-line-width }
+                            \xframed_prop_get:nn { length }{ title-line-width }
                             +
-                            \prop_get:Nn \l_xframed_lengthoption_prop 
-                                         { inner-top-margin }
+                            \xframed_prop_get:nn { length }{ inner-top-margin }
                            }
     }
  }
@@ -973,47 +1093,39 @@ Have fun!
 %    \begin{macrocode}
 \cs_new:Npn \xframed_check_footnotes:
  {
+   \vcoffin_set:Nnn \l_xframed_store_footnotes_coffin 
+                    { \l_xframed_coffin_width_dim } 
+                    { \unvbox\@mpfootins }
   \box_if_empty:NTF \l_xframed_store_footnotes_coffin
     {
-     \msg_term:x { line~\msg_line_number:\ ~no~footnote~presented }
+     \xframed_msg_log:n { no~footnotes~presented }
     }
     {
-     \msg_term:x { line~\msg_line_number:\ ~footnotes~are~found }
+    \xframed_msg_log:n { footnotes~are~found }
      \bool_if:NTF \l_xframed_footnoteinside_bool
        {
-        \msg_term:x { line~\msg_line_number:\ ~footnotes~inside~--~joined }
+        \xframed_msg_log:n { footnotes~inside~--~joined }
 %        \coffin_display_handles:Nn \l_xframed_store_footnotes_coffin { red }
         \coffin_join:NnnNnnnn \l_xframed_store_one_coffin { hc } { b }
                               \l_xframed_store_footnotes_coffin { hc } { t }
                               { 0pt }%extra x sep
                               { 
-                               \prop_get:Nn \l_xframed_lengthoption_prop 
-                                             { footnote-distance }
+                               \xframed_prop_get:nn { length }
+                                                    { footnote-distance }
                                 +
-                               \prop_get:Nn \l_xframed_lengthoption_prop 
-                                         { footnote-line-width }
+                               \xframed_prop_get:nn { length } 
+                                                    { footnote-line-width }
                               }
        }
        {
-        \msg_term:x { line~\msg_line_number:\ ~footnotes~outside }
+        \xframed_msg_log:n { footnotes~outside }
        }
     }
  }
 
-%    \end{macrocode}
-% \end{macro}
 
-%
-% \begin{macro}{FOOTNOTES}
-%  \textbf{\color{red} THE FOLLOWING IS ONLY COPIED SO I DON'T FORGET IT}
-%    \begin{macrocode}
-\cs_new:Npn \xframed_footnote_must_be_declared:
+\cs_new:Npn \xframed_output_footnotes:
  {
-   START
-   \def\@mpfn{mpfootnote}%
-   \def\thempfn{\thempfootnote}%
-   \c@mpfootnote\z@%
-   \let\@footnotetext\@mpfootnotetext%
    OUTPUT
      \ifvoid\@mpfootins\else%
           \nobreak%
@@ -1022,12 +1134,18 @@ Have fun!
           \mdf@footnoterule%
           \unvbox\@mpfootins%
      \fi%
-   FOOTNOTERULE
-    \kern0\p@%
-    \hrule \@width 1in \kern 2.6\p@
+ }
+
+\cs_new:Npn \xframed_footnote_rule:
+ {
+  \tex_kern:D \c_zero_skip
+  \tex_hrule:D width  1 in  \scan_stop: 
+  \tex_kern:D 2.6 pt
  }
 %    \end{macrocode}
 % \end{macro}
+%
+%
 %
 %
 % \begin{macro}{\xframed_measure_free_vspace:}
@@ -1082,17 +1200,32 @@ Have fun!
 %    \end{verbatim}
 %
 %    \begin{macrocode}
+\dim_new:N \l_xframed_free_vspace_dim
+
 \cs_new:Npn \xframed_measure_free_vspace:
  {
-
+  \group_begin:
+     \@nobreakfalse\addpenalty\z@\
+  \group_end:
+    \dim_set_eq:NN \l_xframed_free_vspace_dim \tex_pagegoal:D
+    \dim_sub:Nn    \l_xframed_free_vspace_dim { \tex_pagetotal:D } 
+    \xframed_msg_log:n {
+                        computet~vertical~space~is~
+                        \dim_use:N \l_xframed_free_vspace_dim \\
+                        text~height~is~\the\textheight        \\
+                        maxdimen~is~\the\maxdimen 
+                       } 
+   \dim_compare:nNnT \l_xframed_free_vspace_dim = \c_max_dim
+         {
+          \dim_set_eq:NN \l_xframed_free_vspace_dim \tex_vsize:D
+          \xframed_msg_log:n 
+                { 
+                 free~vertical~space~was~caclulated~as~maxdimen\\
+                 vsize~will~be~use
+                }
+         }
 
  }
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{}
-%    \begin{macrocode}
 
 %    \end{macrocode}
 % \end{macro}
@@ -1126,34 +1259,56 @@ Have fun!
 % \end{macro}
 %
 %
-%
-%
-% \begin{macro}{\xframed_last_coffin_line:}
-%  This code trys to ignore descendes and last vertical skip of environments.
+% \begin{macro}{}
 %    \begin{macrocode}
-\cs_new:Npn \xframed_last_coffin_line:
-{
+
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{xframed (environment)}
+% The definition of the main environment of the package.
+%    \begin{macrocode}
+\NewDocumentEnvironment { xframed } { O{} }
+ {
+%    \end{macrocode}
+% The start part of the environment
+%    \begin{macrocode}
+ \group_begin:
+   \xframedsetup { #1 }  
+   \xframed_trivlist:
+    \item\relax
+    \xframed_environment_precode: 
+    \vcoffin_set:Nnw   \l_xframed_store_one_coffin 
+                     { \l_xframed_coffin_width_dim }
+    \linewidth\hsize
+    \textwidth\hsize
+ }
+%    \end{macrocode}
+% The end part of the environment
+%    \begin{macrocode}
+ {
 %    \end{macrocode}
 % Try to fix the last vertical skip of environments and equations
 %    \begin{macrocode}
-    \par \tex_unskip:D
-    \skip_vertical:N \tex_lastskip:D
+    \xframed_environment_inner_postcode:
+    \vcoffin_set_end:
 %    \end{macrocode}
-% Trying to ignore descenders
+% End coffin input and start output
 %    \begin{macrocode}
-    \par
-    \hbox:n { 
-             \tex_vrule:D width  0   pt 
-                          height 0.7 \tex_baselineskip:D 
-                          depth  0.3 \tex_baselineskip:D
-             \scan_stop: 
-            }
-    \par \tex_unskip:D \tex_unskip:D
-    \setbox0=\lastbox
-    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
-}
+%    \coffin_rotate:Nn \l_xframed_store_one_coffin { 0 } % must be <0
+    \xframed_environment_postcode:
+   \endxframed_trivlist:
+  \group_end:
+  \@doendpe
+ }
+
 %    \end{macrocode}
 % \end{macro}
+%
+%
+%
 %
 %
 % \begin{macro}{}
