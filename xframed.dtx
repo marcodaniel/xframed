@@ -155,12 +155,12 @@ Have fun!
 \fi
 %</internal>
 %<*driver>
-%%$Id: xframed.dtx 9 2012-06-03 19:16:42Z marco $
+%%$Id: xframed.dtx 11 2012-06-03 19:37:43Z marco $
 \setcounter{errorcontextlines}{999}
 \documentclass[parskip=false,11pt,]{xltxmdf}
 %%%\usepackage[framemethod=TikZ]{xframed}
 \usepackage{xparse}
-\GetIdInfo$Id: xframed.dtx 9 2012-06-03 19:16:42Z marco $
+\GetIdInfo$Id: xframed.dtx 11 2012-06-03 19:37:43Z marco $
           {documentation of xframed}
 
 \EnableCrossrefs
@@ -197,7 +197,7 @@ Have fun!
 % \subtitle{auto-split frame environment}
 % \author{\href{mailto:marco.daniel@mada-nada.de}{Marco Daniel}}%
 % \version{0.01 ALPHA}
-% \GetIdInfo$Id: xframed.dtx 9 2012-06-03 19:16:42Z marco $
+% \GetIdInfo$Id: xframed.dtx 11 2012-06-03 19:37:43Z marco $
 %           {documentation of xframed}
 % \date{\ExplFileDate}
 % \introduction{The standard methods for framing text (\Cmd{fbox}
@@ -243,16 +243,16 @@ Have fun!
 %
 % \subsection{The Explanation of xframed.sty}
 %
-% %$Id: xframed.dtx 9 2012-06-03 19:16:42Z marco $
-% %$Rev: 9 $
+% %$Id: xframed.dtx 11 2012-06-03 19:37:43Z marco $
+% %$Rev: 11 $
 % %$Author: marco $
-% %$Date: 2012-06-03 21:16:42 +0200 (So, 03 Jun 2012) $
+% %$Date: 2012-06-03 21:37:43 +0200 (So, 03 Jun 2012) $
 % \begin{macro}{\xframedersion,\GetIdInfo}
 % Set package information and start header with expl3
 %    \begin{macrocode}
 \def\xframedversion{v0.01 ALPHA}
 \RequirePackage{expl3}
-\GetIdInfo$Id: xframed.dtx 9 2012-06-03 19:16:42Z marco $
+\GetIdInfo$Id: xframed.dtx 11 2012-06-03 19:37:43Z marco $
           {package xframed}
 
 \ProvidesExplPackage{\ExplFileName}
@@ -467,6 +467,11 @@ Have fun!
           right-margin              = #1          ,
           outer-margin              = #1          , 
           inner-margin              = #1          ,
+         }                                                             ,
+   inner-margin            .meta:n  = 
+         {
+          inner-left-margin         = #1          ,
+          inner-right-margin        = #1          ,
          }                                                             ,
    skip                    .meta:n  = 
          {
@@ -1237,7 +1242,7 @@ Have fun!
 \cs_new:Npn \xframed_measure_free_vspace:
  {
   \group_begin:
-     \@nobreakfalse\addpenalty\z@\
+     \@nobreakfalse\addpenalty\z@
   \group_end:
     \dim_set_eq:NN \l_xframed_free_vspace_dim \tex_pagegoal:D
     \dim_sub:Nn    \l_xframed_free_vspace_dim { \tex_pagetotal:D } 
