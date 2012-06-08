@@ -7,23 +7,23 @@
 % arara: ps2pdf
 %%: Start Header
 \setcounter{errorcontextlines}{999}
-%\documentclass[parskip=half]{scrartcl}
-\documentclass{article}
+\documentclass[parskip=half]{scrartcl}
+%\documentclass{article}
 \parindent0pt
 \usepackage[showframe]{geometry}
 \usepackage{xcolor}
 \usepackage{kantlipsum}
 
-\usepackage[developer-info=true,footnote-inside=true,footnote-distance=0pt,title-font-color=red]{xframed}
+\usepackage[developer-info=true,footnote-inside=true,footnote-distance=6pt,title-font-color=red]{xframed}
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \begin{document}
+\kant[12]
 
-
-\begin{xframed}[skip-above=2cm,skip-below=1cm, ,line-width=0pt,inner-margin=0pt]
-text\footnote{foobar}
-\kant[11]\footnote{text}
-
+\begin{xframed}[skip-above=1cm,skip-below=1cm, ,line-width=0pt,inner-margin=2cm,title=foobar]
+text
+\kant[9]\kant[9]
+\kant[9]\kant[9]\kant[9]\kant[9]\kant[9]\kant[9]
 text\footnote{foobar}
 \begin{enumerate}
 \item foo
@@ -32,6 +32,7 @@ text\footnote{foobar}
 \begin{align}
 1+2
 \end{align}
+\kant[9]\kant[9]\kant[9]\kant[9]\kant[9]
 \end{xframed}
 \kant[12]
 \end{document}
