@@ -9,13 +9,13 @@
 %% Either version 1.0 or, at your option, any later version.
 
 
-%%$Id: xltxmdf.cls 6 2012-05-28 18:46:06Z marco $
-%%$Rev: 6 $
+%%$Id: xltxmdf.cls 13 2012-06-08 14:11:22Z marco $
+%%$Rev: 13 $
 %%$Author: marco $
-%%$Date: 2012-05-28 20:46:06 +0200 (Mo, 28 Mai 2012) $
+%%$Date: 2012-06-08 16:11:22 +0200 (Fr, 08 Jun 2012) $
 
 \RequirePackage{expl3}
-\GetIdInfo$Id: xltxmdf.cls 6 2012-05-28 18:46:06Z marco $
+\GetIdInfo$Id: xltxmdf.cls 13 2012-06-08 14:11:22Z marco $
           {documentation class for Marco Daniel}
 
 \ProvidesExplClass{\ExplFileName}
@@ -403,6 +403,36 @@
   \clist_if_empty:NF \l_tmpa_clist { \endtrivlist }
  }
 
+\DeclareDocumentEnvironment { macromessage } { O{} m }
+{
+ \clist_set:Nn      \l_tmpa_clist  { #2 }
+ \clist_if_empty:NF \l_tmpa_clist
+  {
+   \topsep\MacroTopsep \trivlist
+   \def\makelabel##1{\makebox[0pt][l]{\kern-2em ##1}}%
+   \int_set:Nn \l_tmpa_int { \clist_count:N \l_tmpa_clist }
+   \item[\begin{tabular}{l}\toprule
+                \clist_map_inline:Nn \l_tmpa_clist 
+                  { 
+                   \int_compare:nNnTF { \l_tmpa_int } = { \c_one }
+                     { \MacroFont (message) ~
+                       \tl_to_str:f { \token_to_str:N ##1 }\\\bottomrule
+                     }
+                     { \MacroFont (message) ~
+                       \tl_to_str:f { \token_to_str:N ##1 }\\ 
+                     }
+                    \int_gdecr:N \l_tmpa_int
+                   }
+               \end{tabular}]
+   \leavevmode\par\kern\MacroTopsep\noindent\ignorespaces
+   \global\advance\c@CodelineNo\@ne
+   \global\advance\c@CodelineNo\m@ne
+   \ignorespaces
+  }
+ }
+ {
+  \clist_if_empty:NF \l_tmpa_clist { \endtrivlist }
+ }
 
 \def\SpecialOptIndex#1{\@bsphack
     \index{#1\actualchar{\protect\ttfamily#1}
