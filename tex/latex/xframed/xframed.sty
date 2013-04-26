@@ -1,0 +1,463 @@
+%%
+%% This is file `xframed.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package')
+%% ----------------------------------------------------------------
+%% Working with the command fbox or fcolorbox, one has to
+%% handle page breaks by hand. The present package defines the
+%% environment xframed which automatically deals with page breaks.
+%% 
+%% Author's name: Marco Daniel
+%% License type: lppl
+%% 
+%% ==================================================
+%% ========Is based on the idea of framed.sty========
+%% ==================================================
+%% ===== Currently the package has a beta-Status ====
+%% ==================================================
+%% 
+%%  Copyright (c) 2010 Marco Daniel
+%% 
+%%  This package may be distributed under the terms of the LaTeX Project
+%%  Public License, as described in lppl.txt in the base LaTeX distribution.
+%%  Either version 1.0 or, at your option, any later version.
+%% 
+%% 
+%% =================================================
+%%  Erstellung eines Rahmens, der am Seitenende keine
+%%  horizontale Linie einfuegt
+%% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%%       _______________
+%%       |    page 1   |
+%%       |    Text     |
+%%       |  __Text__   |
+%%       |  | Text |   |
+%%      P A G E B R E A K
+%%       |  | Text |   |
+%%       |  |_Text_|   |
+%%       |    Text     |
+%%       |____page 2___|
+%% 
+%% >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%% ==================================================
+%% 
+\def\xframedversion{v0.01 ALPHA}
+\RequirePackage{expl3}
+\GetIdInfo$Id: xframed.dtx 13 2012-06-08 14:11:22Z marco $
+          {package xframed}
+
+\ProvidesExplPackage{\ExplFileName}
+     {\ExplFileDate}{\ExplFileVersion}{\ExplFileDescription}
+
+\cs_set_eq:NN \xframedpackagename \ExplFileName
+
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\@ifpackagelater { expl3 } { 2011/09/05 }
+  { }
+  {
+    \PackageError { xframed } { Support~package~expl3~too~old. }
+      {
+        You~need~to~update~your~installation~of~the~bundles~'l3kernel'~and~
+        'l3packages'.\\
+        Loading~xframed~will~abort!
+      }
+    \tex_endinput:D
+  }
+
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\cs_new_protected:Npn \xframed__load_check:n #1 {
+    \IfFileExists {#1.sty}
+      { \RequirePackage{#1} }
+      { \msg_error:nnx { xframed } { package-not-available } {#1} }
+}
+
+\clist_map_function:nN
+  { zref-abspage , xparse , l3keys2e  }
+    \xframed__load_check:n
+
+\cs_new_protected:Npn \xframed__load_deffiles:n #1 {
+    \IfFileExists {xframed-#1.def}
+      { \input{xframed-#1.def} }
+      { \msg_error:nnx { xframed } { def-not-available } {#1} }
+}
+\msg_new:nnnn { xframed } { def-not-available }
+  { File~xframed-'#1'.def~is~not~available. }
+  {
+    The~file~xframed-#1-de~is~not available~but~xframed~needs~the~filee~.\\
+    I~guess~you~installed~xframed~wrong.
+  }
+
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%!input helper functions
+\xframed__load_deffiles:n { funct }
+%!input user keys
+\xframed__load_deffiles:n { keys }
+%!input head
+%%\xframed__load_deffiles:n { head }%%empty
+%!input messages
+\xframed__load_deffiles:n { msg }
+%!input all new variables
+\xframed__load_deffiles:n { initial }
+
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\xframed__developer_tools:
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+
+
+
+% Define user environment
+
+\NewDocumentEnvironment { xframed } { O{} }
+ {
+ \group_begin:
+   \xframedsetup { #1 }
+   \xframed__set_list:
+   \xframed__environment_precode:
+    \vcoffin_set:Nnw   \l__xframed_head_coffin
+                     { \l__xframed_coffin_width_dim }
+     \xframed__environment_inner_precode:
+ }
+ {
+    \xframed__environment_inner_postcode:
+    \vcoffin_set_end:
+    \xframed__environment_postcode:
+  \group_insert_after:N \xframed__set_endlist:
+  \group_end:
+ }
+
+% Define user command for box
+\NewDocumentCommand { \xframedbox } { O{} m }
+ {
+  \group_begin:
+   \xframedsetup { #1 }
+  \group_end:
+ }
+ 
+
+\cs_new_nopar:Npn \xframedendhead
+ {
+    \xframed__environment_head_postcode:
+    \vcoffin_set_end: 
+    \bool_set_true:N \l__xframed_head_bool
+    \vcoffin_set:Nnw   \l__xframed_main_coffin
+                      { \l__xframed_coffin_width_dim }
+     \xframed__environment_afterhead_precode:
+ }
+
+\cs_new:Npn \xframed__environment_afterhead_precode: {}
+
+\cs_new:Npn \xframed__test_if_splittable: {}
+
+\cs_new:Npn \xframed__environment_head_postcode: {}
+
+\cs_new:Npn \xframed__environment_precode:
+ {
+  \xframed__minimum_space:
+  \xframed__test_if_splittable:
+  \xframed__calculate_width:
+  \xframed__declare_footnotes:
+  \l__xframed_user_settings_tl
+  \l__xframed_codebefore_tl
+ }
+
+\cs_new:Npn \xframed__minimum_space:
+ {
+  \group_begin:
+    \dim_set:Nn \l_tmpa_dim
+                { \xframed__prop_get:nn { length }{ minimum-space } }
+    \skip_vertical:n { \c_zero_dim plus \l_tmpa_dim }
+    \tex_penalty:D  -100 \scan_stop:
+    \skip_vertical:n { \c_zero_dim plus -\l_tmpa_dim }
+    \skip_vertical:n { \l_tmpa_dim }
+    \tex_penalty:D  9999 \scan_stop:
+    \skip_vertical:n { -\l_tmpa_dim }
+    \skip_vertical:n { 0pt plus 0pt minus 0pt }
+  \group_end:
+ }
+
+
+\cs_new:Npn \xframed__calculate_width:
+ {
+  \dim_set:Nn \l__xframed_coffin_width_dim { \linewidth }
+  \clist_map_inline:nn
+    {
+     left-margin , outer-line-width , middle-line-width , inner-line-width ,    
+     inner-left-margin , inner-right-margin , inner-line-width , 
+     middle-line-width , outer-line-width , right-margin
+    }
+    {
+     \dim_sub:Nn \l__xframed_coffin_width_dim
+           {
+            \xframed__prop_get:nn { length } { ##1 }
+           }
+    }
+ }
+
+\cs_new:Npn \xframed__declare_footnotes:
+ {
+  %% START
+   \cs_set:Npn \@mpfn { mpfootnote }
+  %% set the counter output
+   \cs_set:Npn \thempfn { \thempfootnote }
+  %%reset counter
+   \int_set_eq:NN \c@mpfootnote \c_zero
+  %%
+   \cs_set_eq:NN \@footnotetext \@mpfootnotetext
+ }
+
+\cs_new:Npn \xframed__environment_inner_precode:
+ {
+  \skip_vertical:n { - \parskip }
+ }
+
+\cs_new:Npn \xframed__environment_inner_postcode:
+ {
+  \xframed__ignore_last_descenders:
+  \xframed__ignore_last_skip:
+ }
+
+\cs_new:Npn \xframed__ignore_last_skip:
+ {
+  \bool_if:NT \l__xframed_ignore_lastskip_bool
+   {
+    \par \tex_unskip:D
+    \skip_vertical:N \tex_lastskip:D
+   }
+ }
+
+%% Question on TeX.SX leads to the code
+%% http://tex.stackexchange.com/questions/47584/how-to-make-mdframed-ignore-descenders-in-last-line
+\cs_new:Npn \xframed__ignore_last_descenders:
+ {
+  \bool_if:NT \l__xframed_descenders_bool
+    {
+     \par
+     \hbox:n {
+              \tex_vrule:D width  0   pt
+                           height 0.7 \tex_baselineskip:D
+                           depth  0.3 \tex_baselineskip:D
+              \scan_stop:
+             }
+     \par \tex_unskip:D \tex_unskip:D
+     \setbox0=\lastbox
+     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+    }
+ }
+
+
+\cs_new:Npn \xframed__environment_postcode:
+ {
+  \xframed_check_title_first:
+  \xframed_check_footnotes:
+  \xframed_measure_free_vspace:
+  \xframed__coffin_output: 
+  \l__xframed_codeafter_tl
+ }
+
+\cs_new:Npn \xframed_check_title_first:
+ {
+  \tl_if_blank:VTF \l__xframed_title_tl
+    {
+     \xframed__msg_log:n { title~is~empty~or~space~filled }
+    }
+    {
+     \xframed__msg_log:n { title~isn't~empty,~save~in~coffin }
+     \bool_if:NF \l__xframed_titleline_bool
+       {
+        \xframed__prop_set:Nnn \l__xframed_length_option_prop
+                              { title-line-width }
+                              { \c_zero_dim }
+       }
+     \xframed__join_title_first:
+    }
+ }
+
+\cs_new:Npn \xframed__join_title_first:
+ {
+     \vcoffin_set:Nnn   \l__xframed_title_coffin
+                      { \l__xframed_coffin_width_dim   }
+                      {
+                       \exp_args:No \color
+                          {
+                           \xframed__prop_get:nn { color }
+                                                { title-font-color }
+                          }
+                        \l__xframed_titlefont_tl
+                        \tl_trim_spaces:N \l__xframed_title_tl
+                        \tl_use:N \l__xframed_title_tl
+%%                        \tl_to_str:f { \token_to_str:N ##1 }
+                      }
+    \vbox_set_top:Nn \l__xframed_tmpa_box
+               {
+                 \box_use:N \l__xframed_title_coffin
+                 \skip_vertical:n
+                           {
+                            \xframed__prop_get:nn { length }{ title-below-skip }
+                            +
+                            \xframed__prop_get:nn { length }{ title-line-width }
+                            +
+                            \xframed__prop_get:nn { length }{ inner-top-margin }
+                           }
+                \vbox_unpack_clear:N \l__xframed_main_coffin
+               }
+     \xframed__coffin_restructure:N   \l__xframed_main_coffin
+ }
+
+\cs_new:Npn \xframed_check_footnotes:
+ {
+  \box_if_empty:NTF \@mpfootins
+    {
+     \xframed__msg_log:n { no~footnotes~presented }
+    }
+    {
+    \xframed__msg_log:n { footnotes~are~found }
+    %%Save the footnoterule inside a coffin
+    \vcoffin_set:Nnn   \l__xframed_temp_coffin
+                     { \l__xframed_coffin_width_dim   }
+                     { 
+                      \skip_vertical:n 
+                          { \xframed__prop_get:nn { skip } 
+                                     { footnote-distance }
+                          }
+                      \xframed_footnote_rule: 
+                      \vbox_unpack_clear:N \@mpfootins
+                     }
+    %%Join main coffin with footnote-rule coffin
+    \coffin_join:NnnNnnnn 
+      \l__xframed_main_coffin {b}{l}
+      \l__xframed_temp_coffin {t}{l}
+      { 0pt }{ 0pt }
+    %%reset structure of main coffin:
+    \xframed__coffin_restructure:N   \l__xframed_main_coffin
+    }
+ }
+
+\cs_new:Npn \xframed_footnote_rule:
+ {
+  \tex_kern:D \c_zero_skip
+  \tex_hrule:D
+    width   \xframed__prop_get:nn { length } { footnote-line-lenght }
+    height  \xframed__prop_get:nn { length } { footnote-line-width }
+   \scan_stop:
+  \tex_kern:D 2.6 pt
+ }
+ 
+
+ 
+\cs_new:Npn \xframed__coffin_output:
+ {
+  \xframed__coffin_restructure:N \l__xframed_temp_coffin 
+  \xframed__coffin_restructure:N \l__xframed_main_coffin 
+  \fboxsep=0pt\fboxrule=2pt
+  \fbox{\xframed__display_coffins:Nn \l__xframed_head_coffin { red!70!black }}
+  \par
+  \fbox{\xframed__display_coffins:Nn \l__xframed_main_coffin { blue!70!black }}
+%%  \box_use:N \l__xframed_main_coffin
+ }
+
+\cs_new:Npn \xframed_needed_height:
+ {
+  \dim_set:Nn \l__xframed_computed_coffin_height_dim
+          {
+           \coffin_ht:N \l__xframed_main_coffin
+           + \coffin_dp:N \l__xframed_main_coffin
+          }
+  \bool_if:NT \l__xframed_topline_bool
+       {
+        \xframed__prop_set:Nnn \l__xframed_length_option_prop
+                              { top-line }
+                              { \c_zero_dim }
+       }
+  \bool_if:NT \l__xframed_bottomline_bool
+       {
+        \xframed__prop_set:Nnn \l__xframed_length_option_prop
+                              { bottom-line }
+                              { \c_zero_dim }
+       }
+  \clist_map_inline:nn
+    {
+     extra-skip-above ,
+     outer-line-width , middle-line-width , inner-line-width ,
+     inner-top-margin , inner-bottom-margin ,
+     inner-line-width , middle-line-width , outer-line-width
+    }
+    {
+     \dim_add:Nn \l__xframed_computed_coffin_height_dim
+           {
+            \xframed__prop_get:nn { length } { ##1 }
+           }
+    }
+ }
+
+
+\cs_new:Npn \xframed_measure_free_vspace:
+ {
+  \group_begin:
+     \@nobreakfalse\addpenalty\z@
+  \group_end:
+    \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_pagegoal:D
+    \dim_sub:Nn    \l__xframed_free_vspace_dim { \tex_pagetotal:D }
+    \xframed__msg_log:n {
+                        computet~vertical~space~is~
+                        \dim_use:N \l__xframed_free_vspace_dim \\
+                        text~height~is~\the\textheight        \\
+                        maxdimen~is~\the\maxdimen
+                       }
+   \dim_compare:nNnT \l__xframed_free_vspace_dim = \c_max_dim
+         {
+          \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_vsize:D
+          \xframed__msg_log:n
+                {
+                 free~vertical~space~was~caclulated~as~maxdimen\\
+                 vsize~will~be~use
+                }
+         }
+
+ }
+
+
+
+
+
+
+
+
+\tex_endinput:D
+
+%% 
+%% ================================================================
+%% Copyright (C) 2012 by Marco Daniel
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Marco Daniel.
+%% 
+%% Have fun!
+%% 
+%% ================================================================
+%%
+%% End of file `xframed.sty'.
