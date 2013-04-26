@@ -31,3 +31,5 @@
 *.pdf
 *.sty
 
+
+.DS_Store

@@ -1,0 +1,164 @@
+\cs_new:Npn \xframed__test_if_splittable:
+ {
+  \bool_if:nTF
+    {
+      \cs_if_exist_p:N \@captype             ||
+      \if@minipage 1 \else 0 \fi             ||
+      \ifinner     1 \else 0 \fi             ||
+      \bool_if_p:N \l__xframed_nobreak_bool
+    }
+    {
+     \bool_if:NF \l__xframed_nobreak_bool
+       {
+        \msg_warning:nn { xframed } { inside-box }
+       }
+     \xframed__msg_log:n { xframed~uses~nonsplittable~output }
+     \bool_set_true:N \l__xframed_nobreak_bool
+    }
+    {
+     \xframed__msg_log:n { xframed~uses~splittable~output }
+     \bool_set_false:N \l__xframed_nobreak_bool
+    }
+ }
+
+
+\cs_new:Npn \xframed_use_splittable_output:
+ {
+  \vcoffin_set:Nn \l__xframed_store_one_coffin
+       { \box_use_clear:N \l__xframed_store_one_coffin }
+%  \__coffin_reset_structure:N \l__xframed_store_one_coffin
+%  \__coffin_update_poles:N \l__xframed_store_one_coffin
+%  \__coffin_update_corners:N \l__xframed_store_one_coffin
+  \xframed_needed_height:
+  \dim_compare:nNnTF
+    { \l__xframed_free_vspace_dim }
+    >
+    { \l__xframed_computed_coffin_height_dim }
+    {
+     \xframed__msg_log:n { coffin~not~splitted;~enough~space }
+     \xframed__use_nosplittable_output:
+    }
+    {
+     \xframed__msg_log:n { coffin~must~be~splitted }
+     \xframed_splitting_height_first:
+     \coffin_set_eq:NN \l__xframed_store_save_coffin \l__xframed_store_one_coffin
+     \vbox_set_top:Nn   \l__xframed_tmpb_box
+                      { \vbox_unpack:N \l__xframed_store_one_coffin }
+     \vbox_set_split_to_ht:NNn \l__xframed_tmpa_box
+                               \l__xframed_store_one_coffin
+                              { \l__xframed_computed_coffin_height_dim }
+     \vcoffin_set:Nnn \l__xframed_store_two_coffin
+                     { \l__xframed_coffin_width_dim }
+                     { \vbox_unpack_clear:N \l__xframed_tmpa_box }
+     \coffin_display_handles:Nn \l__xframed_store_two_coffin { blue!70!black }
+%%  \box_use:N \l__xframed_store_one_coffin
+     \xframed_use_splittable_output_aux:
+    }
+ }
+
+\cs_new:Npn \xframed_use_splittable_output_aux:
+ {
+  \newpage
+  \coffin_reset_structure:N \l__xframed_store_one_coffin
+  \coffin_update_poles:N \l__xframed_store_one_coffin
+  \coffin_update_corners:N \l__xframed_store_one_coffin
+  \xframed_measure_free_vspace:
+  \xframed_needed_height:
+  \dim_compare:nNnTF
+    { \l__xframed_free_vspace_dim }
+    >
+    { \l__xframed_computed_coffin_height_dim }
+    {
+     \xframed__msg_log:n { coffin~not~splitted;~enough~space;~last~box }
+     \coffin_display_handles:Nn \l__xframed_store_one_coffin { blue!70!black }
+%%  \box_use:N \l__xframed_store_one_coffin
+    }
+    {
+     \xframed__msg_log:n { coffin~must~be~splitted;~middle~output }
+     \xframed_splitting_height_middle:
+     \coffin_set_eq:NN \l__xframed_store_save_coffin \l__xframed_store_one_coffin
+     \vbox_set_top:Nn   \l__xframed_tmpb_box
+                      { \vbox_unpack:N \l__xframed_store_one_coffin }
+     \vbox_set_split_to_ht:NNn \l__xframed_tmpa_box
+                               \l__xframed_store_one_coffin
+                              { \l__xframed_computed_coffin_height_dim }
+     \vcoffin_set:Nnn \l__xframed_store_two_coffin
+                     { \l__xframed_coffin_width_dim }
+                     { \vbox_unpack_clear:N \l__xframed_tmpa_box }
+     \coffin_display_handles:Nn \l__xframed_store_two_coffin { blue!70!black }
+%%  \box_use:N \l__xframed_store_one_coffin
+     \xframed_use_splittable_output_aux:
+    }
+ }
+
+\cs_new:Npn \xframed_splitting_height_first:
+ {
+  \dim_set_eq:NN \l__xframed_computed_coffin_height_dim
+                 \l__xframed_free_vspace_dim
+  \clist_map_inline:nn
+    {
+     outer-line-width , middle-line-width , inner-line-width ,
+     inner-top-margin , split-bottomskip ,
+    }
+    {
+     \dim_sub:Nn \l__xframed_computed_coffin_height_dim
+           {
+            \xframed__prop_get:nn { length } { ##1 }
+           }
+    }
+  \bool_if:NT \l__xframed_bottomline_bool
+       {
+        \bool_if:NT \l__xframed_splittings_lines_bool
+          {
+           \clist_map_inline:nn
+              {
+               inner-line-width , middle-line-width , outer-line-width
+              }
+              {
+               \dim_sub:Nn \l__xframed_computed_coffin_height_dim
+                     {
+                      \xframed__prop_get:nn { length } { ##1 }
+                     }
+              }
+          }
+       }
+ }
+
+\cs_new:Npn \xframed_splitting_height_middle:
+ {
+  \dim_set_eq:NN \l__xframed_computed_coffin_height_dim
+                 \l__xframed_free_vspace_dim
+  \dim_sub:Nn \l__xframed_computed_coffin_height_dim
+       {
+            \xframed__prop_get:nn { length } { split-bottomskip }
+       }
+  \bool_if:NT \l__xframed_splittings_lines_bool\l__xframed_bottomline_bool
+       {
+        \bool_if:NT \l__xframed_bottomline_bool
+          {
+           \clist_map_inline:nn
+              {
+               inner-line-width , middle-line-width , outer-line-width
+              }
+              {
+               \dim_sub:Nn \l__xframed_computed_coffin_height_dim
+                     {
+                      \xframed__prop_get:nn { length } { ##1 }
+                     }
+              }
+          }
+        \bool_if:NT \l__xframed_topline_bool
+          {
+           \clist_map_inline:nn
+              {
+               inner-line-width , middle-line-width , outer-line-width
+              }
+              {
+               \dim_sub:Nn \l__xframed_computed_coffin_height_dim
+                     {
+                      \xframed__prop_get:nn { length } { ##1 }
+                     }
+              }
+          }
+       }
+ }

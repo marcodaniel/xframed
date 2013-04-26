@@ -1,0 +1,21 @@
+\coffin_new:N \l__xframed_head_coffin
+\coffin_new:N \l__xframed_main_coffin
+\coffin_new:N \l__xframed_temp_coffin
+\coffin_new:N \l__xframed_two_coffin
+\coffin_new:N \l__xframed_save_coffin
+\coffin_new:N \l__xframed_footnotes_coffin
+\coffin_new:N \l__xframed_title_coffin
+\coffin_new:N \l__xframed_subtitle_coffin
+\coffin_new:N \l__xframed_subsubtitle_coffin
+
+\dim_new:N \l__xframed_coffin_width_dim
+\dim_new:N \l__xframed_free_vspace_dim
+\dim_new:N \l__xframed_computed_coffin_height_dim
+\dim_new:N \l__xframed_maximum_coffin_height_dim
+
+\box_new:N \l__xframed_tmpa_box
+\box_new:N \l__xframed_tmpb_box
+
+\bool_new:N \l__xframed_head_bool
+
+\tl_new:N \l__xframed_title_tl

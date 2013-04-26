@@ -1,0 +1,2 @@
+\cs_new:Npn \xframed__environment_head_postcode: {}
+\cs_new:Npn \xframed__environment_head_precode: {}

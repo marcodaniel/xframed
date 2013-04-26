@@ -1,0 +1,115 @@
+%%
+%% xframed-funct.def
+%%
+%% file to define helper functions
+%%
+%% ----------------------------------------------------------------
+%% Working with the command fbox or fcolorbox, one has to
+%% handle page breaks by hand. The present package defines the
+%% environment xframed which automatically deals with page breaks.
+%% 
+%% Author's name: Marco Daniel
+%% License type: lppl
+%% 
+%%  Copyright (c) 2010 Marco Daniel
+%% 
+%%  This package may be distributed under the terms of the LaTeX Project
+%%  Public License, as described in lppl.txt in the base LaTeX distribution.
+%%  Either version 1.0 or, at your option, any later version.
+\cs_new:Npn \xframed__coffin_restructure:N #1
+ {
+  \vcoffin_set:Nnn #1
+                  { \coffin_wd:N \l__xframed_main_coffin } 
+                  { 
+                    \box_use_clear:N #1
+                  } 
+ }
+
+\cs_new_protected:Npn \xframed__prop_set:Nnn #1 #2 #3
+ {
+  \prop_remove:Nn  #1 { #2 }
+  \prop_put:Nnn #1 { #2 } { #3 }
+ }
+
+\cs_new_protected:Npn \xframed__prop_get:nn #1 #2
+ {
+  \prop_get:cn  { l__xframed_#1_option_prop } { #2 }
+ }
+
+%%Test developer:
+\cs_new_protected:Npn \xframed__display_coffins:Nn #1 #2
+ {
+  \box_use:N #1
+ }
+\cs_new:Npn \xframed__msg_log:n #1 {}
+
+\cs_new:Npn \xframed__developer_tools:
+ {
+  \bool_if:NT \l__xframed_developer_info_bool
+    { 
+     \cs_set_eq:NN \xframed__display_coffins:Nn \coffin_display_handles:Nn 
+     \cs_set:Npn \xframed__msg_log:n ##1 
+      { 
+       \msg_log:n { xframed~developer~info~line~
+                    \msg_line_number:\\\\##1
+                  }
+      }
+    }
+ }
+
+\cs_new:Npn \xframed__trivlist:
+ {
+  \group_begin:
+     \@nobreakfalse\addpenalty\z@
+  \group_end:
+  \skip_set:Nn {\topsep}{ \xframed__prop_get:nn { skip }{ skip-above } }
+  \parsep\parskip
+  \@nmbrlistfalse
+  \@trivlist
+  \labelwidth\z@
+  \leftmargin\z@
+  \itemindent\z@
+  \let\@itemlabel\@empty
+  \def\makelabel##1{##1}
+ }
+
+\cs_new:Npn \endxframed__trivlist:
+ {
+  \if@inlabel
+    \leavevmode
+    \global \@inlabelfalse
+  \fi
+  \if@newlist
+    \@noitemerr
+    \global \@newlistfalse
+  \fi
+  \ifhmode\unskip \par
+  \else
+    \@inmatherr{\end{\@currenvir}}%
+  \fi
+  \if@noparlist \else
+    \ifdim\lastskip >\z@
+      \@tempskipa\lastskip \vskip -\lastskip
+      \advance\@tempskipa\parskip \advance\@tempskipa -\@outerparskip
+      \vskip\@tempskipa
+    \fi
+    \addpenalty\@endparpenalty
+    \addvspace { \xframed__prop_get:nn { skip }{ skip-below } }
+    \@endpetrue
+  \fi
+ }
+
+%
+\cs_new_protected:Npn \xframed__set_list:
+ {
+  \xframed__trivlist:\item\relax\color_group_begin: \color_ensure_current:
+ }
+
+
+\cs_set_protected_nopar:Npn \xframed__set_endlist:
+    {
+     \color_group_end:
+     \endxframed__trivlist:
+    } 
+
+\tex_endinput:D

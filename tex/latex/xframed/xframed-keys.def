@@ -1,0 +1,342 @@
+%%
+%% xframed-keys.def
+%%
+%% file to define all allowed keys
+%%
+%% ----------------------------------------------------------------
+%% Working with the command fbox or fcolorbox, one has to
+%% handle page breaks by hand. The present package defines the
+%% environment xframed which automatically deals with page breaks.
+%% 
+%% Author's name: Marco Daniel
+%% License type: lppl
+%% 
+%%  Copyright (c) 2010 Marco Daniel
+%% 
+%%  This package may be distributed under the terms of the LaTeX Project
+%%  Public License, as described in lppl.txt in the base LaTeX distribution.
+%%  Either version 1.0 or, at your option, any later version.
+%% 
+
+%!framemethod
+\tl_new:N \xframed__framemethode_tl
+\cs_new_protected:Npn \xframed__set_framemethod:n #1
+ {
+   \clist_if_in:nnT { default , tex , latex , none , 0 }
+                    { \tl_expandable_uppercase:n #1 }
+                    { \tl_gset \xframed__framemethode_tl { default } }
+   \clist_if_in:nnT { pgf , tikz , 1 }
+                    { \tl_expandable_uppercase:n #1 }
+                    { \tl_gset \xframed__framemethode_tl { tikz } }
+   \clist_if_in:nnT { pstricks , ps , postscript , 2 , 3 }
+                    { \tl_expandable_uppercase:n #1 }
+                    { \tl_gset \xframed__framemethode_tl { pstricks } }
+ }
+ 
+ \keys_define:nn { xframed }
+  {
+     framemethod .code:n  = \xframed__set_framemethod:n { #1 }
+  }
+%!end framemethod
+
+%!length options
+\prop_new:N \l__xframed_length_option_prop
+
+\cs_new_protected:Npn \xframed__lengthkeys_define:n #1
+ {
+   \xframed__lengthkeys_define_aux:nn #1 \q_stop
+ }
+
+\cs_new_protected:Npn \xframed__lengthkeys_define_aux:nn #1==#2 \q_stop
+ {
+   \keys_define:nn { xframed }
+    {
+      #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_length_option_prop
+                                  { #1 } { \dim_eval:n { ##1 } }
+    }
+  \keys_set:nn  { xframed }
+   {
+     #1 = { #2 }
+   }
+ }
+
+\clist_map_function:nN
+ {
+   left-margin             ==  \c_zero_dim      ,
+   right-margin            ==  \c_zero_dim      ,
+   inner-left-margin       ==  10pt             ,
+   inner-right-margin      ==  10pt             ,
+   inner-top-margin        ==  0.4\baselineskip ,
+   inner-bottom-margin     ==  0.4\baselineskip ,
+   outer-margin            ==  \c_zero_dim      ,
+   inner-margin            ==  \c_zero_dim      ,
+   inner-line-width        ==  \c_zero_dim      ,
+   middle-line-width       ==  .4pt             ,
+   outer-line-width        ==  \c_zero_dim      ,
+   round-corner            ==  \c_zero_dim      ,
+   footnote-line-width     ==  .8pt             ,
+   footnote-line-lenght    ==  1 in             ,
+   text-width              ==  \linewidth       ,
+   title-above-skip        ==  5pt              ,
+   title-below-skip        ==  5pt              ,
+   subtitle-above-skip     ==  5pt              ,
+   subtitle-below-skip     ==  5pt              ,
+   subsubtitle-above-skip  ==  5pt              ,
+   subsubtitle-below-skip  ==  5pt              ,
+   title-line-width        ==  .2pt             ,
+   title-left-margin       ==  10pt             ,
+   title-right-margin      ==  10pt             ,
+   shadow-size             ==  2pt              ,
+   extra-skip-above        ==  \c_zero_dim      ,
+   null-skip               ==  \c_zero_dim      ,
+   minimum-space           ==  2\baselineskip   ,
+ } \xframed__lengthkeys_define:n
+
+\keys_define:nn { xframed }
+ {
+   margin                  .meta:n  =
+         {
+          left-margin               = #1          ,
+          right-margin              = #1          ,
+          outer-margin              = #1          ,
+          inner-margin              = #1          ,
+         }                                                             ,
+   inner-margin            .meta:n  =
+         {
+          inner-left-margin         = #1          ,
+          inner-right-margin        = #1          ,
+         }                                                             ,
+   skip                    .meta:n  =
+         {
+          skip-above                =  #1         ,
+          skip-below                =  #1         ,
+
+         }                                                             ,
+   line-width              .meta:n  =
+         {
+          inner-line-width          = \c_zero_dim ,
+          middle-line-width         = #1          ,
+          outer-line-width          = \c_zero_dim ,
+         }
+ }
+%!end length options
+\prop_new:N \l__xframed_skip_option_prop
+
+\cs_new_protected:Npn \xframed__skipkeys_define:n #1
+ {
+   \xframed__skipkeys_define_aux:nn #1 \q_stop
+ }
+
+\cs_new_protected:Npn \xframed__skipkeys_define_aux:nn #1==#2 \q_stop
+ {
+   \keys_define:nn { xframed }
+    {
+      #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_skip_option_prop
+                                  { #1 } { \skip_eval:n { ##1 } }
+    }
+  \keys_set:nn  { xframed }
+   {
+     #1 = { #2 }
+   }
+ }
+%!skip option
+\clist_map_function:nN
+ {
+   skip-above              ==  10pt      ,
+   skip-below              ==  10pt      ,
+   split-topskip           ==  10pt      ,
+   split-bottomskip        ==  10pt      ,
+   footnote-distance       ==  10pt      ,
+   title-above-skip        ==  5pt       ,
+   title-below-skip        ==  5pt       ,
+   subtitle-above-skip     ==  5pt       ,
+   subtitle-below-skip     ==  5pt       ,
+   subsubtitle-above-skip  ==  5pt       ,
+   subsubtitle-below-skip  ==  5pt       ,
+
+ } \xframed__skipkeys_define:n
+%!end skip options
+
+%!start meta data
+\keys_define:nn { xframed }
+ {
+   margin                  .meta:n  =
+         {
+          left-margin               = #1          ,
+          right-margin              = #1          ,
+          outer-margin              = #1          ,
+          inner-margin              = #1          ,
+         }                                                             ,
+   inner-margin            .meta:n  =
+         {
+          inner-left-margin         = #1          ,
+          inner-right-margin        = #1          ,
+         }                                                             ,
+   skip                    .meta:n  =
+         {
+          skip-above                =  #1         ,
+          skip-below                =  #1         ,
+
+         }                                                             ,
+   line-width              .meta:n  =
+         {
+          inner-line-width          = \c_zero_dim ,
+          middle-line-width         = #1          ,
+          outer-line-width          = \c_zero_dim ,
+         }
+ }
+%!end meta data
+
+%!color options
+%\cs_new:Npn \xframed__use_font_settings:N #1
+% {
+%  \exp_args:No \color{ \xframed__prop_get:nn { color } { #1-font-color} }
+%  \tl_use:c {l_xframed_#1font_tl
+% }
+ 
+\prop_new:N \l__xframed_color_option_prop
+
+\cs_new_protected:Npn \xframed__colorkeys_define:n #1
+ {
+   \xframed__colorkeys_define_aux:nn #1 \q_stop
+ }
+
+\cs_new_protected:Npn \xframed__colorkeys_define_aux:nn #1==#2 \q_stop
+ {
+   \keys_define:nn { xframed }
+    {
+      #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_color_option_prop
+                                  { #1 } { ##1 }
+    }
+  \keys_set:nn  { xframed }
+   {
+     #1 = { #2 }
+   }
+ }
+
+\clist_map_function:nN
+ {
+   line-color              ==  black            ,
+   bg-color                ==  white            ,
+   font-color              ==  black            ,
+   inner-line-color        ==  white            ,
+   outer-line-color        ==  white            ,
+   middle-line-color       ==  white            ,
+   title-font-color        ==  black            ,
+   title-line-color        ==  black            ,
+   title-bg-color          ==  white            ,
+   subtitle-font-color     ==  black            ,
+   subtitle-line-color     ==  black            ,
+   subtitle-bg-color       ==  white            ,
+   subsubtitle-font-color  ==  black            ,
+   subsubtitle-line-color  ==  black            ,
+   subsubtitle-bg-color    ==  white            ,
+   shadow-color            ==  black!50         ,
+ } \xframed__colorkeys_define:n
+%!end color options
+
+%!font option
+\keys_define:nn { xframed }
+ {
+  font              .tl_set:N  = \l__xframed_title_font_tl        ,
+  font              .initial:n = \normalfont                      ,
+  title-font        .tl_set:N  = \l__xframed_title_font_tl        ,
+  title-font        .initial:n = \bfseries\sffamily\large         ,
+  subtitle-font     .tl_set:N  = \l__xframed_subtitle_font_tl     ,
+  subtitle-font     .initial:n = \bfseries\sffamily               ,
+  subsubtitle-font  .tl_set:N  = \l__xframed_subsubtitle_font_tl  ,
+  subsubtitle-font  .initial:n = \sffamily                        ,
+ }
+%!end font option
+
+%!hooks
+\keys_define:nn { xframed }
+ {
+  code-before         .tl_set:N  = \l__xframed_codebefore_tl                 ,
+  code-after          .tl_set:N  = \l__xframed_codeafter_tl                  ,
+  title-before        .tl_set:N  = \l__xframed_codebefore_tl                 ,
+  title-after         .tl_set:N  = \l__xframed_codeafter_tl                  ,
+  subtitle-before     .tl_set:N  = \l__xframed_codebefore_tl                 ,
+  subtitle-after      .tl_set:N  = \l__xframed_codeafter_tl                  ,
+  subsubtitle-before  .tl_set:N  = \l__xframed_codebefore_tl                 ,
+  subsubtitle-after   .tl_set:N  = \l__xframed_codeafter_tl                  ,
+  code-single-frame   .tl_set:N  = \l__xframed_code_single_frame_tl          ,
+  code-first-frame    .tl_set:N  = \l__xframed_code_first_frame_tl           ,
+  code-middle-frame   .tl_set:N  = \l__xframed_code_middle_frame_tl          ,
+  code-last-frame     .tl_set:N  = \l__xframed_code_last_frame_tl            ,
+  user-settings       .tl_set:N  = \l__xframed_user_settings_tl              ,
+  post-tikz-code      .tl_set:N  = \l__xframed_extratikz_tl                  ,
+  first-tikz-code     .tl_set:N  = \l__xframed_firsttikz_tl                  ,
+  middle-tikz-code    .tl_set:N  = \l__xframed_middletikz_tl                 ,
+  last-tikz-code      .tl_set:N  = \l__xframed_lasttikz_tl                   ,
+  setup-tikz          .code:n    = { \tikzset{tikzsetting/.style = {#1} } }  ,
+ }
+%!end hooks
+
+%!bool option
+\keys_define:nn { xframed }
+ {
+  top-line             .bool_set:N  = \l__xframed_topline_bool          ,
+  left-line            .bool_set:N  = \l__xframed_leftline_bool         ,
+  bottom-line          .bool_set:N  = \l__xframed_bottomline_bool       ,
+  right-line           .bool_set:N  = \l__xframed_rightline_bool        ,
+  splitting-lines      .bool_set:N  = \l__xframed_splittings_lines_bool ,
+  show-all-lines       .meta:n      = {
+                                       top-line    = #1  ,
+                                       left-line   = #1  ,
+                                       bottom-line = #1  ,
+                                       right-line  = #1  ,
+                                      }                                 ,
+  show-all-lines        .default:n  = true                              ,
+  title-line            .bool_set:N = \l__xframed_titleline_bool        ,
+  subtitle-line         .bool_set:N = \l__xframed_subtitleline_bool     ,
+  subsubtitle-line      .bool_set:N = \l__xframed_subsubtitleline_bool  ,
+  allow-breaking        .bool_set:N = \l__xframed_allowbreaking         ,
+  footnote-inside       .bool_set:N = \l__xframed_footnoteinside_bool   ,
+  twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
+  repeat-title          .bool_set:N = \l__xframed_repeattitle_bool      ,
+  shadow                .bool_set:N = \l__xframed_shadow_bool           ,
+  draw-everyline        .bool_set:N = \l__xframed_everyline_bool        ,
+  ignore-last-descender .bool_set:N = \l__xframed_descenders_bool       ,
+  ignore-last-skip      .bool_set:N = \l__xframed_ignore_lastskip_bool  ,
+  developer-info        .bool_set:N = \l__xframed_developer_info_bool   ,
+ }
+%!end bool options
+
+%!unknown option
+\keys_define:nn { xframed }
+ {
+  unknown .code:n =
+        {
+         \msg_error:nnx { xframed } { unknown-option }
+                        { \exp_not:V \l_keys_key_tl }
+        }
+ }
+%!end unknown option
+
+\ProcessKeysOptions { xframed }
+
+%!style option
+\keys_define:nn { xframed }
+ {
+  style .code:n =
+    {
+     \cs_if_exist:cTF { xframed_stylename_#1 }
+      {
+       \xframedsetup { \use:c { xframed_stylename_#1 } }
+      }
+      {
+       \msg_error:nnx { xframed } { unknown-style }
+                      { \exp_not:V \l_keys_key_tl }
+      }
+    }
+ }
+%!end style option 
+
+% This command is the user interface to setup options.
+\NewDocumentCommand \xframedsetup { m }
+ {
+ \keys_set:nn { xframed } { #1 }
+ }
+
+\tex_endinput:D
