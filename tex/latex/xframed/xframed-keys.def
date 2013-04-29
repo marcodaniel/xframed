@@ -52,7 +52,7 @@
    \keys_define:nn { xframed }
     {
       #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                                  { #1 } { \dim_use:N \__dim_eval:w ##1 \__dim_eval_end: }
+                                  { #1 } { \dim_eval:n { ##1 } }
     }
   \keys_set:nn  { xframed }
    {

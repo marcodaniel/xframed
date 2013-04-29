@@ -37,8 +37,9 @@
 \cs_new:Npn \xframed__draw_tikz_frame:N #1
  {
   \begin{tikzpicture}
+   \coordinate (O) at (0,0);
+   \coordinate (P) at (5,5);      
    \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
-   \node[xframed/bg] 
-        (xframed) { \xframed__display_coffins:N #1  };
+   \node[xframed/bg](xframed-inner) { \xframed__display_coffins:N #1  };
   \end{tikzpicture}
  }
