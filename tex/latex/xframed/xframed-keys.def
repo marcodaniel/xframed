@@ -52,7 +52,7 @@
    \keys_define:nn { xframed }
     {
       #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                                  { #1 } { \dim_eval:n { ##1 } }
+                                  { #1 } { \dim_use:N \__dim_eval:w ##1 \__dim_eval_end: }
     }
   \keys_set:nn  { xframed }
    {
@@ -70,13 +70,14 @@
    inner-bottom-margin     ==  0.4\baselineskip ,
    outer-margin            ==  \c_zero_dim      ,
    inner-margin            ==  \c_zero_dim      ,
-   inner-line-width        ==  \c_zero_dim      ,
-   middle-line-width       ==  .4pt             ,
-   outer-line-width        ==  \c_zero_dim      ,
-   round-corner            ==  \c_zero_dim      ,
+   line-width-top          ==  .4pt             ,
+   line-width-left         ==  .4pt             ,
+   line-width-right        ==  .4pt             ,
+   line-width-bottom       ==  .4pt             ,
+   round-corner            ==  5.0pt            ,
    footnote-line-width     ==  .8pt             ,
    footnote-line-lenght    ==  1 in             ,
-   text-width              ==  \linewidth       ,
+   framed-width            ==  \linewidth       ,
    title-above-skip        ==  5pt              ,
    title-below-skip        ==  5pt              ,
    subtitle-above-skip     ==  5pt              ,
@@ -90,6 +91,7 @@
    extra-skip-above        ==  \c_zero_dim      ,
    null-skip               ==  \c_zero_dim      ,
    minimum-space           ==  2\baselineskip   ,
+   head-rule-width         ==  0.8pt            ,
  } \xframed__lengthkeys_define:n
 
 \keys_define:nn { xframed }
@@ -114,9 +116,10 @@
          }                                                             ,
    line-width              .meta:n  =
          {
-          inner-line-width          = \c_zero_dim ,
-          middle-line-width         = #1          ,
-          outer-line-width          = \c_zero_dim ,
+          line-width-top          = 1.0 pt           ,
+          line-width-left         = 1.0 pt           ,
+          line-width-right        = 1.0 pt           ,
+          line-width-bottom       = 1.0 pt           ,
          }
  }
 %!end length options
@@ -218,6 +221,8 @@
  {
    line-color              ==  black            ,
    bg-color                ==  white            ,
+   head-bg-color           ==  white            ,
+   head-rule-color         ==  black            ,
    font-color              ==  black            ,
    inner-line-color        ==  white            ,
    outer-line-color        ==  white            ,
@@ -302,6 +307,18 @@
   developer-info        .bool_set:N = \l__xframed_developer_info_bool   ,
  }
 %!end bool options
+
+
+%!string option
+\keys_define:nn { xframed }
+ {
+  head          .tl_set:N  = \l__xframed_head_tl             ,
+  foot          .tl_set:N  = \l__xframed_foot_tl             ,
+  title         .tl_set:N  = \l__xframed_title_tl            ,
+  first-title   .tl_set:N  = \l__xframed_firsttitle_tl       ,
+  last-foot     .tl_set:N  = \l__xframed_lastfoot_tl         ,
+ }
+%!end string options
 
 %!unknown option
 \keys_define:nn { xframed }

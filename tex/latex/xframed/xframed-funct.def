@@ -25,19 +25,32 @@
                   } 
  }
 
-\cs_new_protected:Npn \xframed__prop_set:Nnn #1 #2 #3
+\cs_new:Npn \xframed__prop_set:Nnn #1 #2 #3
  {
-  \prop_remove:Nn  #1 { #2 }
-  \prop_put:Nnn #1 { #2 } { #3 }
+  \prop_put:Nnx #1 { #2 } { #3 }
  }
 
-\cs_new_protected:Npn \xframed__prop_get:nn #1 #2
+\cs_new:Npn \xframed__prop_get:nn #1 #2
  {
   \prop_get:cn  { l__xframed_#1_option_prop } { #2 }
  }
 
+\cs_new:Npn \xframed__get_skip:n #1
+ {
+  \xframed__prop_get:nn { skip }{ #1 }
+ }
+\cs_new:Npn \xframed__get_length:n #1
+ {
+  \xframed__prop_get:nn { length }{ #1 }
+ }
+\cs_new:Npn \xframed__get_color:n #1
+ {
+  \xframed__prop_get:nn { color }{ #1 }
+ }
+
+
 %%Test developer:
-\cs_new_protected:Npn \xframed__display_coffins:Nn #1 #2
+\cs_new:Npn \xframed__display_coffins:N #1
  {
   \box_use:N #1
  }
@@ -47,7 +60,10 @@
  {
   \bool_if:NT \l__xframed_developer_info_bool
     { 
-     \cs_set_eq:NN \xframed__display_coffins:Nn \coffin_display_handles:Nn 
+     \cs_set:Npn \xframed__display_coffins:N ##1
+       {
+        \coffin_display_handles:Nn ##1 { blue!70!black }
+       }
      \cs_set:Npn \xframed__msg_log:n ##1 
       { 
        \msg_log:n { xframed~developer~info~line~
@@ -56,6 +72,10 @@
       }
     }
  }
+
+
+
+
 
 \cs_new:Npn \xframed__trivlist:
  {

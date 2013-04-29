@@ -1,0 +1,44 @@
+%%initial~of~styles
+\def\xframedset{\pgfqkeys{/tikz/xframed}}
+\xframedset{
+%head
+ head~bg/.style={ fill= \xframed__get_color:n { head-bg-color } },
+ head~rule/.style={ 
+                   draw= \xframed__get_color:n { head-rule-color },
+                   line~width=\xframed__get_length:n { head-rule-width } 
+                  },
+%foot
+ foot~bg/.style={draw=none,fill=red}
+ foot~rule/.style={draw=black,linewidth=.8pt},
+%main
+ bg/.style={ 
+            fill = { \xframed__get_color:n { bg-color } },
+            rounded~corners= { \xframed__get_length:n { round-corner } }
+           },
+%title
+ left~line/.style={line~width=2pt},
+%arc
+ inner~arc/.style={rounded~corners=10pt},
+ outer~arc/.style={rounded~corners=5pt},
+%frame
+ right~line/.style={line~width=2pt},
+ left~line/.style={line~width=2pt},
+ top~line/.style={line~width=2pt},
+ bottom~line/.style={line~width=2pt},
+ line~color/.style={draw=blue},
+%subtitle
+ subtitle~bg/.style={fill=red},
+ subtitle~above~rule/.style={draw=black,line~width=2pt},
+ subtitle~below~rule/.style={draw=black,line~width=2pt},
+ subtitle~rule/.style={subtitle~above~rule=#1,subtitle~below~rule=#1},
+%clear definition 
+}
+
+\cs_new:Npn \xframed__draw_tikz_frame:N #1
+ {
+  \begin{tikzpicture}
+   \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
+   \node[xframed/bg] 
+        (xframed) { \xframed__display_coffins:N #1  };
+  \end{tikzpicture}
+ }

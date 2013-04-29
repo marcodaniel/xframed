@@ -36,7 +36,14 @@
       }
     \tex_endinput:D
   }
-
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\ExplSyntaxOff
+\RequirePackage{tikz}
+\usetikzlibrary{backgrounds,shadows,calc,}
+\ExplSyntaxOn
 %%============================================%%
 %%============================================%%
 %%============================================%%
@@ -87,7 +94,7 @@
 %%============================================%%
 %%============================================%%
 %%============================================%%
-
+\xframed__load_deffiles:n { tikz }
 
 
 % Define user environment
@@ -118,7 +125,7 @@
   \group_end:
  }
  
-
+%%Not recommended
 \cs_new_nopar:Npn \xframedendhead
  {
     \xframed__environment_head_postcode:
@@ -149,7 +156,7 @@
  {
   \group_begin:
     \dim_set:Nn \l_tmpa_dim
-                { \xframed__prop_get:nn { length }{ minimum-space } }
+                { \xframed__get_length:n{ minimum-space } }
     \skip_vertical:n { \c_zero_dim plus \l_tmpa_dim }
     \tex_penalty:D  -100 \scan_stop:
     \skip_vertical:n { \c_zero_dim plus -\l_tmpa_dim }
@@ -166,14 +173,13 @@
   \dim_set:Nn \l__xframed_coffin_width_dim { \linewidth }
   \clist_map_inline:nn
     {
-     left-margin , outer-line-width , middle-line-width , inner-line-width ,    
-     inner-left-margin , inner-right-margin , inner-line-width , 
-     middle-line-width , outer-line-width , right-margin
+     left-margin , line-width-left ,  inner-left-margin , 
+     inner-right-margin , line-width-right , right-margin
     }
     {
      \dim_sub:Nn \l__xframed_coffin_width_dim
            {
-            \xframed__prop_get:nn { length } { ##1 }
+            \xframed__get_length:n { ##1 }
            }
     }
  }
@@ -264,7 +270,7 @@
                       {
                        \exp_args:No \color
                           {
-                           \xframed__prop_get:nn { color }
+                           \xframed__get_color:n
                                                 { title-font-color }
                           }
                         \l__xframed_titlefont_tl
@@ -277,11 +283,11 @@
                  \box_use:N \l__xframed_title_coffin
                  \skip_vertical:n
                            {
-                            \xframed__prop_get:nn { length }{ title-below-skip }
+                            \xframed__get_length:n{ title-below-skip }
                             +
-                            \xframed__prop_get:nn { length }{ title-line-width }
+                            \xframed__get_length:n{ title-line-width }
                             +
-                            \xframed__prop_get:nn { length }{ inner-top-margin }
+                            \xframed__get_length:n{ inner-top-margin }
                            }
                 \vbox_unpack_clear:N \l__xframed_main_coffin
                }
@@ -301,8 +307,8 @@
                      { \l__xframed_coffin_width_dim   }
                      { 
                       \skip_vertical:n 
-                          { \xframed__prop_get:nn { skip } 
-                                     { footnote-distance }
+                          { 
+                           \xframed__get_skip:n { footnote-distance }
                           }
                       \xframed_footnote_rule: 
                       \vbox_unpack_clear:N \@mpfootins
@@ -321,8 +327,8 @@
  {
   \tex_kern:D \c_zero_skip
   \tex_hrule:D
-    width   \xframed__prop_get:nn { length } { footnote-line-lenght }
-    height  \xframed__prop_get:nn { length } { footnote-line-width }
+    width   \xframed__get_length:n { footnote-line-lenght }
+    height  \xframed__get_length:n { footnote-line-width }
    \scan_stop:
   \tex_kern:D 2.6 pt
  }
@@ -333,10 +339,11 @@
  {
   \xframed__coffin_restructure:N \l__xframed_temp_coffin 
   \xframed__coffin_restructure:N \l__xframed_main_coffin 
-  \fboxsep=0pt\fboxrule=2pt
-  \fbox{\xframed__display_coffins:Nn \l__xframed_head_coffin { red!70!black }}
-  \par
-  \fbox{\xframed__display_coffins:Nn \l__xframed_main_coffin { blue!70!black }}
+%  \fboxsep=0pt\fboxrule=2pt
+  \xframed__draw_tikz_frame:N \l__xframed_main_coffin
+%  \fbox{\xframed__display_coffins:N \l__xframed_head_coffin }
+%  \par
+%  \fbox{\xframed__display_coffins:N \l__xframed_main_coffin }
 %%  \box_use:N \l__xframed_main_coffin
  }
 
@@ -361,15 +368,13 @@
        }
   \clist_map_inline:nn
     {
-     extra-skip-above ,
-     outer-line-width , middle-line-width , inner-line-width ,
-     inner-top-margin , inner-bottom-margin ,
-     inner-line-width , middle-line-width , outer-line-width
+     extra-skip-above , line-width-top , inner-top-margin , 
+     inner-bottom-margin , line-width-bottom
     }
     {
      \dim_add:Nn \l__xframed_computed_coffin_height_dim
            {
-            \xframed__prop_get:nn { length } { ##1 }
+            \xframed__get_length:n { ##1 }
            }
     }
  }

@@ -1,5 +1,6 @@
 \coffin_new:N \l__xframed_head_coffin
 \coffin_new:N \l__xframed_main_coffin
+\coffin_new:N \l__xframed_foot_coffin
 \coffin_new:N \l__xframed_temp_coffin
 \coffin_new:N \l__xframed_two_coffin
 \coffin_new:N \l__xframed_save_coffin
@@ -18,4 +19,3 @@
 
 \bool_new:N \l__xframed_head_bool
 
-\tl_new:N \l__xframed_title_tl
