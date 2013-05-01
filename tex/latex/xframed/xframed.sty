@@ -42,7 +42,7 @@
 %%============================================%%
 \ExplSyntaxOff
 \RequirePackage{tikz}
-\usetikzlibrary{backgrounds,shadows,calc,}
+\usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
 %%============================================%%
 %%============================================%%
@@ -84,7 +84,8 @@
 \xframed__load_deffiles:n { msg }
 %!input all new variables
 \xframed__load_deffiles:n { initial }
-
+%!input title-foot-coffin-setup
+\xframed__load_deffiles:n { titlefoot }
 %%============================================%%
 %%============================================%%
 %%============================================%%
@@ -108,6 +109,7 @@
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
      \xframed__environment_inner_precode:
+     \xframed__inner_head:
  }
  {
     \xframed__environment_inner_postcode:
@@ -124,9 +126,28 @@
    \xframedsetup { #1 }
   \group_end:
  }
- 
+
+
+\cs_new:Nn \xframed__inner_head:
+ {
+    \tl_if_blank:VF \l__xframed_head_tl 
+     {
+     \group_begin:
+       \tl_use:N \l__xframed_headprecode_tl
+       \color
+          {
+           \xframed__get_color:n { head-font-color }
+          }
+       \tl_use:N \l__xframed_head_font_tl
+       \tl_use:N \l__xframed_head_tl
+       \tl_use:N \l__xframed_headpostcode_tl
+     \group_end:
+     }
+ }
+
+
 %%Not recommended
-\cs_new_nopar:Npn \xframedendhead
+\cs_new_nopar:Npn \xframeddivide
  {
     \xframed__environment_head_postcode:
     \vcoffin_set_end:
@@ -145,10 +166,12 @@
 
 \cs_new:Npn \xframed__environment_precode:
  {
+  \xframed__developer_tools:
   \xframed__minimum_space:
   \xframed__test_if_splittable:
   \xframed__calculate_width:
   \xframed__declare_footnotes:
+  \xframed__frame_linewidth:
   \l__xframed_user_settings_tl
   \l__xframed_codebefore_tl
  }
@@ -239,14 +262,14 @@
 
 \cs_new:Npn \xframed__environment_postcode:
  {
-  \xframed_check_title_first:
+  \xframed__check_title_first:
   \xframed_check_footnotes:
   \xframed_measure_free_vspace:
   \xframed__coffin_output: 
   \l__xframed_codeafter_tl
  }
 
-\cs_new:Npn \xframed_check_title_first:
+\cs_new:Npn \xframed__check_title_first:
  {
   \tl_if_blank:VTF \l__xframed_title_tl
     {
@@ -254,13 +277,9 @@
     }
     {
      \xframed__msg_log:n { title~isn't~empty,~save~in~coffin }
-     \bool_if:NF \l__xframed_titleline_bool
-       {
-        \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                              { title-line-width }
-                              { \c_zero_dim }
-       }
-     \xframed__join_title_first:
+     \xframed__test_linewidth:nnn 
+        { titleline } { length } { title-line-width }
+    \xframed__join_title_first:
     }
  }
 
@@ -334,6 +353,17 @@
   \tex_kern:D 2.6 pt
  }
  
+\cs_new:Nn \xframed__frame_linewidth:
+ {
+  \xframed__test_linewidth:nnn 
+     { topline } { length } { line-width-top }
+  \xframed__test_linewidth:nnn 
+     { leftline } { length } { line-width-left }
+  \xframed__test_linewidth:nnn 
+     { rightline } { length } { line-width-right }
+  \xframed__test_linewidth:nnn 
+     { bottomline } { length } { line-width-bottom }
+ }
 
  
 \cs_new:Npn \xframed__coffin_output:

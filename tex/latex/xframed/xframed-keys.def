@@ -209,7 +209,6 @@
      #1 = { #2 }
    }
  }
-
 \clist_map_function:nN
  {
    line-color-left         ==  black            ,
@@ -224,6 +223,7 @@
    outer-line-color        ==  white            ,
    middle-line-color       ==  white            ,
    title-font-color        ==  black            ,
+   head-font-color         ==  black            ,
    title-line-color        ==  black            ,
    title-bg-color          ==  white            ,
    subtitle-font-color     ==  black            ,
@@ -239,10 +239,14 @@
 %!font option
 \keys_define:nn { xframed }
  {
-  font              .tl_set:N  = \l__xframed_title_font_tl        ,
+  font              .tl_set:N  = \l__xframed_main_font_tl         ,
   font              .initial:n = \normalfont                      ,
+  head-font         .tl_set:N  = \l__xframed_head_font_tl         ,
+  head-font         .initial:n = \normalfont\sffamily\bfseries    ,
   title-font        .tl_set:N  = \l__xframed_title_font_tl        ,
   title-font        .initial:n = \bfseries\sffamily\large         ,
+  foot-font         .tl_set:N  = \l__xframed_foot_font_tl         ,
+  foot-font         .initial:n = \bfseries\sffamily\small         ,
   subtitle-font     .tl_set:N  = \l__xframed_subtitle_font_tl     ,
   subtitle-font     .initial:n = \bfseries\sffamily               ,
   subsubtitle-font  .tl_set:N  = \l__xframed_subsubtitle_font_tl  ,
@@ -255,8 +259,6 @@
  {
   code-before         .tl_set:N  = \l__xframed_codebefore_tl                 ,
   code-after          .tl_set:N  = \l__xframed_codeafter_tl                  ,
-  title-before        .tl_set:N  = \l__xframed_codebefore_tl                 ,
-  title-after         .tl_set:N  = \l__xframed_codeafter_tl                  ,
   subtitle-before     .tl_set:N  = \l__xframed_codebefore_tl                 ,
   subtitle-after      .tl_set:N  = \l__xframed_codeafter_tl                  ,
   subsubtitle-before  .tl_set:N  = \l__xframed_codebefore_tl                 ,
@@ -271,6 +273,13 @@
   middle-tikz-code    .tl_set:N  = \l__xframed_middletikz_tl                 ,
   last-tikz-code      .tl_set:N  = \l__xframed_lasttikz_tl                   ,
   setup-tikz          .code:n    = { \tikzset{tikzsetting/.style = {#1} } }  ,
+  head-pre-code       .tl_set:N  = \l__xframed_headprecode_tl                ,
+  head-post-code      .tl_set:N  = \l__xframed_headpostcode_tl               ,
+  head-post-code      .initial:n = \space                                    ,
+  title-pre-code      .tl_set:N  = \l__xframed_titleprecode_tl               ,
+  title-post-code     .tl_set:N  = \l__xframed_titlepostcode_tl              ,
+  foot-pre-code       .tl_set:N  = \l__xframed_footprecode_tl                ,
+  foot-post-code      .tl_set:N  = \l__xframed_footpostcode_tl               ,
  }
 %!end hooks
 
@@ -278,9 +287,13 @@
 \keys_define:nn { xframed }
  {
   top-line             .bool_set:N  = \l__xframed_topline_bool          ,
+  top-line             .initial:n   = true                              ,
   left-line            .bool_set:N  = \l__xframed_leftline_bool         ,
+  left-line            .initial:n   = true                              ,
   bottom-line          .bool_set:N  = \l__xframed_bottomline_bool       ,
+  bottom-line          .initial:n   = true                              ,
   right-line           .bool_set:N  = \l__xframed_rightline_bool        ,
+  right-line           .initial:n   = true                              ,
   splitting-lines      .bool_set:N  = \l__xframed_splittings_lines_bool ,
   show-all-lines       .meta:n      = {
                                        top-line    = #1  ,
@@ -290,9 +303,10 @@
                                       }                                 ,
   show-all-lines        .default:n  = true                              ,
   title-line            .bool_set:N = \l__xframed_titleline_bool        ,
+  title-line            .default:n  = true                              ,
   subtitle-line         .bool_set:N = \l__xframed_subtitleline_bool     ,
   subsubtitle-line      .bool_set:N = \l__xframed_subsubtitleline_bool  ,
-  allow-breaking        .bool_set:N = \l__xframed_allowbreaking         ,
+  allow-breaking        .bool_set:N = \l__xframed_allowbreaking_bool    ,
   footnote-inside       .bool_set:N = \l__xframed_footnoteinside_bool   ,
   twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
   repeat-title          .bool_set:N = \l__xframed_repeattitle_bool      ,
@@ -308,10 +322,10 @@
 %!string option
 \keys_define:nn { xframed }
  {
-  head          .tl_set:N  = \l__xframed_head_tl             ,
-  foot          .tl_set:N  = \l__xframed_foot_tl             ,
+  head          .tl_set:N  = \l__xframed_head_tl             ,%inside frame
   title         .tl_set:N  = \l__xframed_title_tl            ,
   first-title   .tl_set:N  = \l__xframed_firsttitle_tl       ,
+  foot          .tl_set:N  = \l__xframed_foot_tl             ,
   last-foot     .tl_set:N  = \l__xframed_lastfoot_tl         ,
  }
 %!end string options

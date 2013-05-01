@@ -29,6 +29,7 @@
  {
   \prop_put:Nnx #1 { #2 } { #3 }
  }
+\cs_generate_variant:Nn \xframed__prop_set:Nnn { cnn }
 
 \cs_new:Npn \xframed__prop_get:nn #1 #2
  {
@@ -47,6 +48,21 @@
  {
   \xframed__prop_get:nn { color }{ #1 }
  }
+
+% \xframed__test_linewidth:nnn {<bool name>}{<prop-list>}{<lenght/skip>}
+\cs_new:Npn \xframed__test_linewidth:nnn #1 #2 #3
+ {
+  \bool_if:cF { l__xframed_ #1 _bool }
+  { 
+   \xframed__prop_set:cnn 
+     { l__xframed_ #2 _option_prop }
+     { #3 }
+     { \c_zero_dim }
+  }
+ } 
+ 
+
+
 
 
 %%Test developer:

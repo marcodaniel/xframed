@@ -12,30 +12,36 @@
 %\documentclass{article}
 \parindent0pt
 \usepackage[]{geometry}
-\usepackage{xcolor}
+\usepackage[x11names]{xcolor}
 \usepackage{lipsum}
 \usepackage{marginnote}
-\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,developer-info=true,bg-color=blue]{xframed}
+\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,developer-info=true,bg-color=Azure1]{xframed}
 \xframedsetup{%
  line-width=2pt,
  line-width-right=20pt,
  line-width-top=10pt, 
  line-width-left=5pt,
- round-corner=20pt,
- line-color=red,
+ round-corner=20pt,left-line=false,
+ line-color=Chocolate4,
 % line-color-left=yellow,
 % line-color-top=red,
 % line-color-bottom=black,
 %line-color-right=orange,
  }
+
+\xframedsetup{%
+ first-title={title},
+ last-foot={a foot title}
+}
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \begin{document}
 
-\begin{xframed}
+\begin{xframed}[head={this is my first box}]
 Hallo TITEL $1+1=2$
-%\xframedendhead
+%\xframeddivide
 \lipsum[1]
+Text\footnote{some footnote}
 \end{xframed}
 \lipsum[1]
 \clearpage
@@ -45,7 +51,7 @@ Hallo TITEL $1+1=2$
 \begin{xframed}
 \centering
 Hallo TITEL $1+1=2$
-\xframedendhead
+\xframeddivide
 \begin{enumerate}
 \item foo%\footnote{footnote}
 \item bar \verb+1+
