@@ -105,7 +105,7 @@
    \xframedsetup { #1 }
    \xframed__set_list:
    \xframed__environment_precode:
-    \vcoffin_set:Nnw   \l__xframed_head_coffin
+    \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
      \xframed__environment_inner_precode:
  }
@@ -129,7 +129,8 @@
 \cs_new_nopar:Npn \xframedendhead
  {
     \xframed__environment_head_postcode:
-    \vcoffin_set_end: 
+    \vcoffin_set_end:
+    \coffin_set_eq:NN \l__xframed_head_coffin \l__xframed_main_coffin
     \bool_set_true:N \l__xframed_head_bool
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                       { \l__xframed_coffin_width_dim }
@@ -170,7 +171,7 @@
 
 \cs_new:Npn \xframed__calculate_width:
  {
-  \dim_set:Nn \l__xframed_coffin_width_dim { \linewidth }
+  \dim_set:Nn \l__xframed_coffin_width_dim { \xframed__get_length:n { width } }
   \clist_map_inline:nn
     {
      left-margin , line-width-left ,  inner-left-margin , 
@@ -338,8 +339,18 @@
 \cs_new:Npn \xframed__coffin_output:
  {
   \xframed__coffin_restructure:N \l__xframed_temp_coffin 
-  \xframed__coffin_restructure:N \l__xframed_main_coffin 
-%  \fboxsep=0pt\fboxrule=2pt
+  \xframed__coffin_restructure:N \l__xframed_main_coffin
+  %Add vertical space to main coffin
+  \vcoffin_set:Nnn   \l__xframed_main_coffin
+                        { 
+                         \l__xframed_coffin_width_dim
+                        }
+                        {
+                         \skip_vertical:n {  \xframed__get_length:n { inner-top-margin } }
+                         \box_use:N \l__xframed_main_coffin
+                         \skip_vertical:n {  \xframed__get_length:n { inner-bottom-margin } }
+                        } 
+ \fboxsep=0pt\fboxrule=2pt
   \xframed__draw_tikz_frame:N \l__xframed_main_coffin
 %  \fbox{\xframed__display_coffins:N \l__xframed_head_coffin }
 %  \par

@@ -13,7 +13,7 @@
 %main
  bg/.style={ 
             fill = { \xframed__get_color:n { bg-color } },
-            rounded~corners= { \xframed__get_length:n { round-corner } }
+            rounded~corners= { \xframed__get_length:n { inner-arc } }
            },
 %title
  left~line/.style={line~width=2pt},
@@ -21,11 +21,32 @@
  inner~arc/.style={rounded~corners=10pt},
  outer~arc/.style={rounded~corners=5pt},
 %frame
- right~line/.style={line~width=2pt},
- left~line/.style={line~width=2pt},
- top~line/.style={line~width=2pt},
- bottom~line/.style={line~width=2pt},
- line~color/.style={draw=blue},
+ right~line/.style=
+       { 
+        draw = \xframed__get_color:n { line-color-right } ,
+        line~width= { \xframed__get_length:n { line-width-right } },
+       },
+ left~line/.style=
+      { 
+       draw = \xframed__get_color:n { line-color-left } ,
+       line~width={ \xframed__get_length:n { line-width-left } },
+      },
+ top~line/.style=
+     {
+      draw = \xframed__get_color:n { line-color-top } ,
+      line~width={ \xframed__get_length:n { line-width-top } },
+     },
+ bottom~line/.style=
+     {
+      draw = \xframed__get_color:n { line-color-bottom } ,
+      line~width={ \xframed__get_length:n { line-width-bottom } },
+     },
+ line~color/.style=
+     {
+      draw = none,
+      fill = red,
+      rounded~corners= { \xframed__get_length:n { inner-arc } },
+     },
 %subtitle
  subtitle~bg/.style={fill=red},
  subtitle~above~rule/.style={draw=black,line~width=2pt},
@@ -37,9 +58,97 @@
 \cs_new:Npn \xframed__draw_tikz_frame:N #1
  {
   \begin{tikzpicture}
-   \coordinate (O) at (0,0);
-   \coordinate (P) at (5,5);      
-   \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
-   \node[xframed/bg](xframed-inner) { \xframed__display_coffins:N #1  };
+%   \coordinate (O) at (0,0);
+   %%Inner part
+   \begin{scope}
+     \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
+     \node[xframed/bg](xframed-inner)
+       {
+        \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-left-margin } }
+        \xframed__display_coffins:N #1  
+        \skip_horizontal:n { \xframed__get_length:n { inner-right-margin } } \hbox:n{} 
+       };
+   \end{scope}
+   \coordinate (fxx) at %fxx=left bottom
+           ($(xframed-inner.south~west)+(-\xframed__get_length:n { line-width-left },-\xframed__get_length:n { line-width-bottom })$); 
+   \coordinate (fyy) at %fyy=right top
+           ($(xframed-inner.north~east)+(\xframed__get_length:n { line-width-right },\xframed__get_length:n { line-width-top })$);
+   %Outer part
+   \begin{scope}[on~background~layer]
+ %  \path[fill = { \xframed__get_color:n { line-color-bottom } },rounded~corners=0pt] (xframed-inner.south~west) rectangle (xframed-inner.east);
+ %  \path[fill = { \xframed__get_color:n { line-color-top } },rounded~corners=0pt] (xframed-inner.north~west) rectangle (xframed-inner.east);
+     %left line       
+   \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}  
+   \dim_set:Nn \l_tmpa_dim { (\xframed__get_length:n { line-width-right } - \xframed__get_length:n { line-width-left })/2 }
+   \dim_set:Nn \l_tmpb_dim { (\xframed__get_length:n { line-width-top } - \xframed__get_length:n { line-width-bottom })/2 } 
+   \node[xframed/line~color] (xframed-outer) 
+      at (\l_tmpa_dim,\l_tmpb_dim)
+      {\tikz[inner~sep=0pt,outer~sep=0pt,]\path[inner~sep=0pt,outer~sep=0pt,](fxx)rectangle(fyy);};
+%%MAYBE LATER   
+ %%%%  %left line
+%%%%%   \path[xframed/left~line]  
+%%%%%      ($(xframed-inner.south~west)+(-.5*\xframed__get_length:n { line-width-left },-\xframed__get_length:n { line-width-bottom })$)
+%%%%%      -- 
+%%%%%      ($(xframed-inner.north~west)+(-.5*\xframed__get_length:n { line-width-left },\xframed__get_length:n { line-width-top })$); ;
+%%%%%    %right line
+%%%%%    \path[xframed/right~line]
+%%%%%      ($(xframed-inner.south~east)+(.5*\xframed__get_length:n { line-width-right },-\xframed__get_length:n { line-width-bottom })$)
+%%%%%      -- 
+%%%%%      ($(xframed-inner.north~east)+(.5*\xframed__get_length:n { line-width-right },\xframed__get_length:n { line-width-top })$); ;
+%%%%%   %top line
+%%%%%   \path[xframed/top~line]
+%%%%%      ($(xframed-inner.north~west)+(-\xframed__get_length:n { line-width-left },.5*\xframed__get_length:n { line-width-top })$)
+%%%%%      -- 
+%%%%%      ($(xframed-inner.north~east)+(\xframed__get_length:n { line-width-right },.5*\xframed__get_length:n { line-width-top })$); ;
+%%%%%    %bottom line
+%%%%%    \path[xframed/bottom~line]
+%%%%%      ($(xframed-inner.south~west)+(-\xframed__get_length:n { line-width-left },-.5*\xframed__get_length:n { line-width-bottom })$)
+%%%%%      -- 
+%%%%%      ($(xframed-inner.south~east)+(\xframed__get_length:n { line-width-right },-.5*\xframed__get_length:n { line-width-bottom })$);
+%%%%%    %round corner 
+%%%%%     \path[draw=black,rounded~corners=\xframed__get_length:n { outer-arc }] (xframed-outer.south~west) rectangle (xframed-outer.north~east);
+  \end{scope}
+  \pgfresetboundingbox
+  \useasboundingbox%
+    ($(xframed-outer.south~west)+(-\xframed__get_length:n { left-margin },0)$) 
+      rectangle
+    ($(xframed-outer.north~east)+(-\xframed__get_length:n { right-margin },0)$) ;
+    \bool_if:NT \l__xframed_developer_info_bool
+    {
+     %Show nodes of inner frame
+     \xframed__draw_tikz_innerdevelopment:
+    }
+
   \end{tikzpicture}
+ }
+ 
+\cs_new:Nn \xframed__draw_tikz_innerdevelopment:
+ {
+  \begin{scope}
+   %%%%%Inner nodes
+   \fill[red] (xframed-inner.north~west) circle (2pt) 
+      node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.north~west}; 
+   \fill[red] (xframed-inner.north~east) circle (2pt) 
+      node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.north~east}; 
+   \fill[red] (xframed-inner.south~west) circle (2pt) 
+      node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.south~west}; 
+   \fill[red] (xframed-inner.south~east) circle (2pt) 
+      node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.south~east};
+   \fill[red] (xframed-inner.center) circle (2pt) 
+      node[draw,rectangle,fill=yellow,above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.center};
+   %%%%%Outer nodes  
+   \fill[blue!70!black] (xframed-outer.north~west) circle (2pt) 
+      node[above=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.north~west}; 
+   \fill[blue!70!black] (xframed-outer.north~east) circle (2pt) 
+      node[above=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.north~east}; 
+   \fill[blue!70!black] (xframed-outer.south~west) circle (2pt) 
+      node[below=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.south~west}; 
+   \fill[blue!70!black] (xframed-outer.south~east) circle (2pt) 
+      node[below=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.south~east};
+   \fill[blue!70!black] (xframed-outer.center) circle (2pt) 
+      node[draw,rectangle,fill=yellow,below=0.5cm,font=\footnotesize\ttfamily] {xframed-outer.center};
+   %%%      
+   \draw[latex-latex] (xframed-outer.east) -- ($(xframed-outer.east)+(\xframed__get_length:n { right-margin },0)$) ;
+   \draw[latex-latex] (xframed-outer.west) -- ($(xframed-outer.west)+(-\xframed__get_length:n { right-margin },0)$) ;
+  \end{scope}
  }

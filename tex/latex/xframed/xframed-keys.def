@@ -74,10 +74,11 @@
    line-width-left         ==  .4pt             ,
    line-width-right        ==  .4pt             ,
    line-width-bottom       ==  .4pt             ,
-   round-corner            ==  5.0pt            ,
+   inner-arc               ==  5.0pt            ,
+   outer-arc               ==  5.0pt            ,
    footnote-line-width     ==  .8pt             ,
    footnote-line-lenght    ==  1 in             ,
-   framed-width            ==  \linewidth       ,
+   width                   ==  \linewidth       ,
    title-above-skip        ==  5pt              ,
    title-below-skip        ==  5pt              ,
    subtitle-above-skip     ==  5pt              ,
@@ -94,6 +95,8 @@
    head-rule-width         ==  0.8pt            ,
  } \xframed__lengthkeys_define:n
 
+
+%!meta options
 \keys_define:nn { xframed }
  {
    margin                  .meta:n  =
@@ -116,12 +119,31 @@
          }                                                             ,
    line-width              .meta:n  =
          {
-          line-width-top          = 1.0 pt           ,
-          line-width-left         = 1.0 pt           ,
-          line-width-right        = 1.0 pt           ,
-          line-width-bottom       = 1.0 pt           ,
-         }
+          line-width-top          = #1           ,
+          line-width-left         = #1           ,
+          line-width-right        = #1           ,
+          line-width-bottom       = #1           ,
+         }                                                              ,
+   line-color              .meta:n  =
+         {
+          line-color-top          = #1           ,
+          line-color-left         = #1           ,
+          line-color-right        = #1           ,
+          line-color-bottom       = #1           ,
+         }                                                              ,
+   round-corner            .meta:n  =
+         {
+          inner-arc               = #1           ,
+          outer-arc               = #1           ,
+         }                                                              ,
+   arc                     .meta:n  =
+         {
+          inner-arc               = #1           ,
+          outer-arc               = #1           ,
+         }                                                              ,
  }
+%!end meta options 
+ 
 %!end length options
 \prop_new:N \l__xframed_skip_option_prop
 
@@ -160,35 +182,6 @@
  } \xframed__skipkeys_define:n
 %!end skip options
 
-%!start meta data
-\keys_define:nn { xframed }
- {
-   margin                  .meta:n  =
-         {
-          left-margin               = #1          ,
-          right-margin              = #1          ,
-          outer-margin              = #1          ,
-          inner-margin              = #1          ,
-         }                                                             ,
-   inner-margin            .meta:n  =
-         {
-          inner-left-margin         = #1          ,
-          inner-right-margin        = #1          ,
-         }                                                             ,
-   skip                    .meta:n  =
-         {
-          skip-above                =  #1         ,
-          skip-below                =  #1         ,
-
-         }                                                             ,
-   line-width              .meta:n  =
-         {
-          inner-line-width          = \c_zero_dim ,
-          middle-line-width         = #1          ,
-          outer-line-width          = \c_zero_dim ,
-         }
- }
-%!end meta data
 
 %!color options
 %\cs_new:Npn \xframed__use_font_settings:N #1
@@ -219,7 +212,10 @@
 
 \clist_map_function:nN
  {
-   line-color              ==  black            ,
+   line-color-left         ==  black            ,
+   line-color-right        ==  black            ,
+   line-color-top          ==  black            ,
+   line-color-bottom       ==  black            ,
    bg-color                ==  white            ,
    head-bg-color           ==  white            ,
    head-rule-color         ==  black            ,

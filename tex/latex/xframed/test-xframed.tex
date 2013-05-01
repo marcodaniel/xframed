@@ -14,27 +14,34 @@
 \usepackage[]{geometry}
 \usepackage{xcolor}
 \usepackage{lipsum}
-
-\usepackage[inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=.5cm,developer-info=true,bg-color=blue]{xframed}
+\usepackage{marginnote}
+\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,developer-info=true,bg-color=blue]{xframed}
+\xframedsetup{%
+ line-width=2pt,
+ line-width-right=20pt,
+ line-width-top=10pt, 
+ line-width-left=5pt,
+ round-corner=20pt,
+ line-color=red,
+% line-color-left=yellow,
+% line-color-top=red,
+% line-color-bottom=black,
+%line-color-right=orange,
+ }
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \begin{document}
+
 \begin{xframed}
-\centering
 Hallo TITEL $1+1=2$
-\xframedendhead
-\begin{enumerate}
-\item foo%\footnote{footnote}
-\item bar \verb+1+
-\end{enumerate}
+%\xframedendhead
 \lipsum[1]
-\lipsum[1]
-\begin{align}
-1+2
-\end{align}
 \end{xframed}
 \lipsum[1]
 \clearpage
+
+
+
 \begin{xframed}
 \centering
 Hallo TITEL $1+1=2$
