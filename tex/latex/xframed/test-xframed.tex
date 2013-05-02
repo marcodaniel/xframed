@@ -15,47 +15,64 @@
 \usepackage[x11names]{xcolor}
 \usepackage{lipsum}
 \usepackage{marginnote}
-\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,developer-info=true,bg-color=Azure1]{xframed}
+\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,bg-color=Azure1]{xframed}
 \xframedsetup{%
+ developer-info=true,
  line-width=2pt,
  line-width-right=20pt,
- line-width-top=10pt, 
- line-width-left=5pt,
- round-corner=20pt,left-line=false,
+ line-width-top=24pt, 
+ line-width-left=20pt,
+ line-width-bottom=25pt,
+ round-corner=20pt,%left-line=false,top-line=true,
  line-color=Chocolate4,
-% line-color-left=yellow,
-% line-color-top=red,
-% line-color-bottom=black,
-%line-color-right=orange,
+ title-bg-color=purple!30,
+ foot-bg-color=purple!90,
+ line-color-left=yellow,
+ line-color-top=red,
+ line-color-bottom=black,
+line-color-right=orange,
+%round-corner=20pt,
+inner-arc=20pt,
+outer-arc=10pt,
+skip-below=0pt,
  }
-
+%\xframedset{title bg/.append style={draw=black,rectangle}}
+%\xframedset{foot bg/.append style={draw=black,rectangle}}
 \xframedsetup{%
  first-title={title},
- last-foot={a foot title}
+ last-foot={a foot title},
+ title-above-skip=0pt,
+ title-below-skip=0pt,
+ foot-above-skip=0pt,
+ foot-below-skip=0pt,
+ inner-top-margin=0pt,
+ line-width-foot=20pt,
+ line-width-title=20pt,
+ foot-line-color=yellow,
+ title-line-color=yellow,
+ inner-left-margin=0pt,
+ inner-right-margin=0pt,
 }
+\usetikzlibrary{plotmarks}
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \begin{document}
 
-\begin{xframed}[head={this is my first box}]
-Hallo TITEL $1+1=2$
-%\xframeddivide
-\lipsum[1]
-Text\footnote{some footnote}
+
+
+\begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},]
+
+\lipsum[2]
+
 \end{xframed}
 \lipsum[1]
 \clearpage
 
 
 
-\begin{xframed}
+\begin{xframed}[head={},title={},foot={},last-foot={},first-title={}]
 \centering
 Hallo TITEL $1+1=2$
-\xframeddivide
-\begin{enumerate}
-\item foo%\footnote{footnote}
-\item bar \verb+1+
-\end{enumerate}
 \lipsum[1]
 \begin{align}
 1+2

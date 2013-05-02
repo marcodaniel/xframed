@@ -41,6 +41,7 @@
 %%============================================%%
 %%============================================%%
 \ExplSyntaxOff
+\RequirePackage{longtable}%needed to display developer Info
 \RequirePackage{tikz}
 \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
@@ -116,14 +117,6 @@
     \vcoffin_set_end:
     \xframed__environment_postcode:
   \group_insert_after:N \xframed__set_endlist:
-  \group_end:
- }
-
-% Define user command for box
-\NewDocumentCommand { \xframedbox } { O{} m }
- {
-  \group_begin:
-   \xframedsetup { #1 }
   \group_end:
  }
 
@@ -262,57 +255,16 @@
 
 \cs_new:Npn \xframed__environment_postcode:
  {
-  \xframed__check_title_first:
+%  \xframed__check_title_first:
   \xframed_check_footnotes:
-  \xframed_measure_free_vspace:
+  \xframed__first_title:
+  \xframed__last_foot:
+ % \xframed_measure_free_vspace:
   \xframed__coffin_output: 
   \l__xframed_codeafter_tl
+  \skip_vertical:n { - \parskip }
  }
 
-\cs_new:Npn \xframed__check_title_first:
- {
-  \tl_if_blank:VTF \l__xframed_title_tl
-    {
-     \xframed__msg_log:n { title~is~empty~or~space~filled }
-    }
-    {
-     \xframed__msg_log:n { title~isn't~empty,~save~in~coffin }
-     \xframed__test_linewidth:nnn 
-        { titleline } { length } { title-line-width }
-    \xframed__join_title_first:
-    }
- }
-
-\cs_new:Npn \xframed__join_title_first:
- {
-     \vcoffin_set:Nnn   \l__xframed_title_coffin
-                      { \l__xframed_coffin_width_dim   }
-                      {
-                       \exp_args:No \color
-                          {
-                           \xframed__get_color:n
-                                                { title-font-color }
-                          }
-                        \l__xframed_titlefont_tl
-                        \tl_trim_spaces:N \l__xframed_title_tl
-                        \tl_use:N \l__xframed_title_tl
-%%                        \tl_to_str:f { \token_to_str:N ##1 }
-                      }
-    \vbox_set_top:Nn \l__xframed_tmpa_box
-               {
-                 \box_use:N \l__xframed_title_coffin
-                 \skip_vertical:n
-                           {
-                            \xframed__get_length:n{ title-below-skip }
-                            +
-                            \xframed__get_length:n{ title-line-width }
-                            +
-                            \xframed__get_length:n{ inner-top-margin }
-                           }
-                \vbox_unpack_clear:N \l__xframed_main_coffin
-               }
-     \xframed__coffin_restructure:N   \l__xframed_main_coffin
- }
 
 \cs_new:Npn \xframed_check_footnotes:
  {
@@ -380,8 +332,7 @@
                          \box_use:N \l__xframed_main_coffin
                          \skip_vertical:n {  \xframed__get_length:n { inner-bottom-margin } }
                         } 
- \fboxsep=0pt\fboxrule=2pt
-  \xframed__draw_tikz_frame:N \l__xframed_main_coffin
+  \xframed__draw_tikz_frame:  %\l__xframed_main_coffin
 %  \fbox{\xframed__display_coffins:N \l__xframed_head_coffin }
 %  \par
 %  \fbox{\xframed__display_coffins:N \l__xframed_main_coffin }
@@ -393,24 +344,22 @@
   \dim_set:Nn \l__xframed_computed_coffin_height_dim
           {
            \coffin_ht:N \l__xframed_main_coffin
-           + \coffin_dp:N \l__xframed_main_coffin
+           + 
+           \coffin_dp:N \l__xframed_main_coffin
+           +
+           \coffin_ht:N \l__xframed_title_coffin
+           + 
+           \coffin_dp:N \l__xframed_title_coffin        
+           +
+           \coffin_ht:N \l__xframed_foot_coffin
+           + 
+           \coffin_dp:N \l__xframed_foot_coffin
           }
-  \bool_if:NT \l__xframed_topline_bool
-       {
-        \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                              { top-line }
-                              { \c_zero_dim }
-       }
-  \bool_if:NT \l__xframed_bottomline_bool
-       {
-        \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                              { bottom-line }
-                              { \c_zero_dim }
-       }
+  \xframed__frame_linewidth:  
   \clist_map_inline:nn
     {
-     extra-skip-above , line-width-top , inner-top-margin , 
-     inner-bottom-margin , line-width-bottom
+     extra-skip-above , line-width-top , line-width-bottom ,
+     line-width-title , line-width-foot 
     }
     {
      \dim_add:Nn \l__xframed_computed_coffin_height_dim
