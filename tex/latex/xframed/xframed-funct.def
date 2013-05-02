@@ -151,9 +151,6 @@
 
 \cs_new:Npn \xframed__trivlist:
  {
-  \group_begin:
-     \@nobreakfalse\addpenalty\z@
-  \group_end:
   \skip_set:Nn {\topsep}{ \xframed__prop_get:nn { skip }{ skip-above } }
   \parsep\parskip
   \@nmbrlistfalse

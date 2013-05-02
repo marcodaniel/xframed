@@ -105,7 +105,7 @@
  {
  \group_begin:
    \xframedsetup { #1 }
-   \xframed__set_list:
+   \xframed__swipe_from_multicol:n { 4cm }%%must be implemented
    \xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
@@ -115,6 +115,7 @@
  {
     \xframed__environment_inner_postcode:
     \vcoffin_set_end:
+  \xframed__set_list:
     \xframed__environment_postcode:
   \group_insert_after:N \xframed__set_endlist:
   \group_end:
@@ -200,7 +201,57 @@
            }
     }
  }
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\cs_new:Npn \xframed__swipe_from_multicol:n #1
+ {
+ \par
+  \enough@room{#1}%
+  \par\addvspace\multicolsep
+  \ifdim \prevdepth = -\@m\p@
+  \else
+    \@tempcnta\prevdepth
+    \@tempcntb\baselineskip
+    \divide\@tempcnta\@tempcntb
+    \advance\@tempcnta\@ne
+    \dimen@\prevdepth
+    \advance\dimen@ -\@tempcnta\baselineskip
+    \advance\dimen@ \topskip
+    \kern-\dimen@
+  \fi
+  \ifdim \prevdepth = -\@m\p@
+  \else
+    \@tempcnta\prevdepth
+    \@tempcntb\baselineskip
+    \divide\@tempcnta\@tempcntb
+    \advance\@tempcnta\@ne
+    \dimen@\prevdepth
+    \advance\dimen@ -\@tempcnta\baselineskip
+    \advance\dimen@ \topskip
+    \kern-\dimen@
+  \fi
+ }
+\def\enough@room#1{%
+   \par
+   \bgroup\@nobreakfalse\addpenalty\z@\egroup
+   \page@free \pagegoal
+   \advance \page@free -\pagetotal
+     \@tempskipa#1\relax
+   \wlog
+       {Current page-\MessageBreak
+        height=%
+        \the\pagegoal- used \the\pagetotal
+        \space -> free=\the\page@free
+        \MessageBreak
+        needed \the\@tempskipa
+              \space(for #1)}%
+   \ifdim \page@free <#1\newpage \fi
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
 \cs_new:Npn \xframed__declare_footnotes:
  {
   %% START

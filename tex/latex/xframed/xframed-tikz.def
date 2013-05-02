@@ -1,6 +1,6 @@
 %%initial~of~styles
-\def\xframedset{\pgfqkeys{/tikz/xframed}}
-\xframedset{
+\def\xframedsetuptikz{\pgfqkeys{/tikz/xframed}}
+\xframedsetuptikz{
 %main
  bg/.style=
       { 
@@ -85,7 +85,6 @@
    \xframed__tikz_drawframe:    
   %\pgfnodealias{xframed-outer}{xframed-inner}
    %use the correct bounding box
-       \fill (0,0) circle (4pt); 
    \pgfresetboundingbox\useasboundingbox%
      ($(xframed-outer.south~west)+(-\xframed__get_length:n { left-margin },0)$) 
        rectangle

@@ -1,0 +1,4 @@
+ \xframedsetup[line-width=2pt,line-width-top=4pt]
+ \begin{xframed}
+   The contents of the frame
+ \end{xframed}

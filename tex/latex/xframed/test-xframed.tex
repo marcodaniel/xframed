@@ -8,14 +8,14 @@
 %%: Start Header
 
 \setcounter{errorcontextlines}{999}
-\documentclass[parskip=full]{scrartcl}
+\documentclass[]{scrartcl}
 %\documentclass{article}
 \parindent0pt
-\usepackage[]{geometry}
+\usepackage[showframe]{geometry}
 \usepackage[x11names]{xcolor}
 \usepackage{lipsum}
 \usepackage{marginnote}
-\usepackage[left-margin=1cm,right-margin=1cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,bg-color=Azure1]{xframed}
+\usepackage[left-margin=0cm,right-margin=0cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,bg-color=Azure1]{xframed}
 \xframedsetup{%
  developer-info=true,
  line-width=2pt,
@@ -35,6 +35,7 @@ line-color-right=orange,
 inner-arc=20pt,
 outer-arc=10pt,
 skip-below=0pt,
+skip-above=0pt,
  }
 %\xframedset{title bg/.append style={draw=black,rectangle}}
 %\xframedset{foot bg/.append style={draw=black,rectangle}}
@@ -57,9 +58,8 @@ skip-below=0pt,
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \begin{document}
-
-
-
+\par
+Test
 \begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},]
 
 \lipsum[2]
