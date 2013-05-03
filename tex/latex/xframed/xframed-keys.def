@@ -89,14 +89,10 @@
    subtitle-below-skip     ==  5pt              ,
    subsubtitle-above-skip  ==  5pt              ,
    subsubtitle-below-skip  ==  5pt              ,
-   title-line-width        ==  .2pt             ,
-   title-left-margin       ==  10pt             ,
-   title-right-margin      ==  10pt             ,
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
    null-skip               ==  \c_zero_dim      ,
    minimum-space           ==  2\baselineskip   ,
-   head-rule-width         ==  0.8pt            ,
  } \xframed__lengthkeys_define:n
 
 
@@ -121,6 +117,16 @@
           skip-below                =  #1         ,
 
          }                                                             ,
+   title-skip              .meta:n  =
+         {
+          title-above-skip        = #1           ,
+          title-below-skip        = #1           ,
+         }                                                              ,
+   foot-skip               .meta:n  =
+         {
+          foot-above-skip        = #1           ,
+          foot-below-skip        = #1           ,
+         }                                                              ,
    line-width              .meta:n  =
          {
           line-width-top          = #1           ,
@@ -217,8 +223,6 @@
    line-color-top          ==  black            ,
    line-color-bottom       ==  black            ,
    bg-color                ==  white            ,
-   head-bg-color           ==  white            ,
-   head-rule-color         ==  black            ,
    font-color              ==  black            ,
    inner-line-color        ==  white            ,
    outer-line-color        ==  white            ,

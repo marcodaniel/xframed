@@ -1,4 +1,8 @@
- \xframedsetup[line-width=2pt,line-width-top=4pt]
- \begin{xframed}
-   The contents of the frame
+ \begin{xframed}[title-bg-color=brown!30,%
+   foot-bg-color=brown!30,line-width=2pt,
+   line-color=brown!60,margin=1.5cm,bg-color=yellow!20,
+   first-title={This is the title of the frame},
+   last-foot={you reached the end},]
+   The contents of the frame and some filling text to
+  provide a second line.
  \end{xframed}

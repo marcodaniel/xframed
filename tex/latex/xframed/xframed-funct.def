@@ -149,6 +149,64 @@
 %%%%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\cs_new:Npn \xframed__start_environment:n #1
+ {
+  \par
+  \xframed__enought_room:n { #1 }
+  \par
+  \dim_compare:nNnF
+    { \tex_prevdepth:D } { = } { - \c_one_thousand \c_one_pt_dim }
+    {
+      \int_set:Nn \l_tmpa_int
+       {
+        \fp_to_int:n 
+          {
+           (\dim_to_fp:n { \tex_prevdepth:D } * 65536) %%\prevdepth as integer in scale points
+            /
+           (\dim_to_fp:n { \baselineskip } * 65536) %%\baselineskip as integer in scale points
+           + \c_one
+          } 
+       }
+    }   
+  \dim_set:Nn \l_tmpa_dim 
+    {
+     \tex_prevdepth:D - \l_tmpa_int\baselineskip + \topskip
+    }  
+  \tex_kern:D \l_tmpa_dim 
+ }
+ 
+\cs_new:Npn \xframed__enought_room:n #1 
+ {
+  \par
+  \group_begin:
+    \@nobreakfalse\addpenalty\z@
+  \group_end:
+  \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_pagegoal:D
+  \dim_add:Nn \l__xframed_free_vspace_dim {  - \tex_pagetotal:D }
+  \dim_set:Nn \l_tmpa_dim { #1 }
+  %\xframed__msg_log:n
+  \msg_log:n
+    {
+     xframed~info~\msg_line_number:\\\\
+     \ dimension~of~the~current~page \\
+     \ height~=~\dim_use:N \tex_pagegoal:D \\
+     \ used~=~\dim_use:N \tex_pagetotal:D \\
+     \ free~=~\dim_use:N \l__xframed_free_vspace_dim \\
+     \ request~=~\dim_use:N \l_tmpa_dim~(Option:~minimum-space)\\
+    }
+  \dim_compare:nNnTF
+   { \l__xframed_free_vspace_dim } { < } { \l_tmpa_dim } 
+   { \newpage }{}%not enough space on current p   
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \cs_new:Npn \xframed__trivlist:
  {
   \skip_set:Nn {\topsep}{ \xframed__prop_get:nn { skip }{ skip-above } }

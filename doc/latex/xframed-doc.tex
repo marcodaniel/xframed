@@ -17,10 +17,10 @@
 \fi
 \makeatother
 \setcounter{errorcontextlines}{999}
-\documentclass[openany,12pt,tocdepth=3,showframe]{ltx-md}
+\documentclass[openany,12pt,tocdepth=3]{ltx-md}
 \RequirePackage{minted}
-\usemintedstyle{friendly}
-\fvset{xleftmargin=1cm,xrightmargin=1cm}
+\usemintedstyle{autumn}
+\fvset{xleftmargin=0.2cm,xrightmargin=.2cm}
 \renewcommand*{\dictumwidth}{.5\textwidth}
 \setcounter{secnumdepth}{3}
 
@@ -33,14 +33,17 @@
   minted   .initial:n = {linenos=true} ,
   language .tl_set:N = \l_mdxex_language_tl,
   language .initial:n = latex,
- }
+  result   .bool_set:N = \l_mdxex_result_bool,
+  result   .initial:n =false,
+}
 
 \NewDocumentEnvironment {ltxexample} { O {} }
- {\group_begin:
+ {
   \keys_set:nn { ltxexample }
    {
     #1
    }
+  \group_begin:
   \tl_set:Nx \l__mdxex_temp_tl
    {
     \exp_not:N \VerbatimEnvironment
@@ -49,16 +52,68 @@
       \scan_stop:
      }
      {
-      \exp_not:N \captionof { lstlisting }{ \exp_not:V \l_mdxex_caption_tl }
-      \tl_if_empty:NF \l_mdxex_label_tl
-       { \exp_not:N \label { \l_mdxex_label_tl } }
+      \exp_not:N \xframedsetup 
+          {
+             line-color=brown!70!black,
+             bg-color=brown!10!white,
+             inner-top-margin=12pt,
+             inner-bottom-margin=0pt,
+             title-above-skip = 6pt,title-below-skip=6pt,
+             title-bg-color = brown!15!white,
+             line-width-top=2pt,margin=1cm,
+             first-title= { \exp_not:N \captionof { lstlisting }{ \exp_not:V \l_mdxex_caption_tl } 
+                                \tl_if_empty:NF \l_mdxex_label_tl
+                                 { \exp_not:N \label { lst\exp_not:N : \l_mdxex_label_tl } }
+                               } 
+         }
      }
-    \exp_not:n { \begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
+    \exp_not:n { \begin{xframed}[]\begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
    }
   \l__mdxex_temp_tl
  }
- {\end{minted}\group_end:}
+ {\end{minted}\end{xframed}%
+  \group_end:\bool_if:NT \l_mdxex_result_bool { \input{\jobname.pyg} }
+}
+%%%\NewDocumentEnvironment {ltxexample} { sO {} }
+%%% {
+%%%  \keys_set:nn { ltxexample }
+%%%   {
+%%%    #2
+%%%   }
+%%%  \tl_set:Nx \l__mdxex_temp_tl
+%%%   {
+%%%    \exp_not:N \VerbatimEnvironment
+%%%    \tl_if_empty:NTF \l_mdxex_caption_tl
+%%%     {
+%%%      \scan_stop:
+%%%     }
+%%%     {
+%%%      \exp_not:N \xframedsetup 
+%%%          {
+%%%             line-color=brown!70!black,
+%%%             bg-color=brown!10!white,
+%%%             inner-top-margin=0pt,
+%%%             inner-bottom-margin=0pt,
+%%%             title-above-skip = 6pt,title-below-skip=6pt,
+%%%             title-bg-color = brown!15!white,
+%%%             line-width-top=2pt,margin=1cm,
+%%%             first-title= { \exp_not:N \captionof { lstlisting }{ \exp_not:V \l_mdxex_caption_tl } 
+%%%                                \tl_if_empty:NF \l_mdxex_label_tl
+%%%                                 { \exp_not:N \label { lst\exp_not:N : \l_mdxex_label_tl } }
+%%%                               } 
+%%%         }
+%%%     }
+%%%    \exp_not:n { \begin{xframed}[]\begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
+%%%   }
+%%%  \l__mdxex_temp_tl
+%%% }
+%%% {\end{minted}\end{xframed}}
 \RenewDocumentCommand\DeleteFile{m}{}
+%\NewDocumentCommand\NotDeleteFile{}{%
+%    \DeleteFile {\jobname.pyg}%
+%    \DeleteFile {\jobname-out.pyg}%
+%    \RenewDocumentCommand\DeleteFile{m}{}
+%}\input{\jobname.pyg}
 \ExplSyntaxOff
 \NewDocumentCommand \Github {} {Github\faGithub\xspace }
 \usepackage{xframed}
@@ -76,6 +131,10 @@ As long as the package has the version alpha I am not deprecated to change names
 of options. My aim is to use as many intuitive options as possible. 
 }
 \maketitle
+\vspace*{\fill}
+\begin{xframed}[line-width=3pt,line-color=purple!30!white,bg-color=yellow!10,developer-info,margin=1cm]
+\rule{0pt}{5cm}
+\end{xframed}
 \clearpage
 \pdfbookmark[1]{\contentsname}{tocbook}
 \tableofcontents
@@ -122,7 +181,9 @@ own \Pack{expl3}-package. Now here it is.
 
 I know most users love examples. So I am trying to provide a lot. All
 frames in this documentation are done by \Env{xframed}. So I hope
-you will have some inspiration.
+you will have some inspiration. The higlight of listings is done
+by \Pack{minted}\footnote{Package \Pack{minted} by Kon­rad Ru­dolph, 
+see \href{http://www.ctan.org/pkg/minted}{CTAN: minted}, now maintained by G. Poore.}.
 
 \vfill
 By the way. The compiliation is of this document is done with the
@@ -236,6 +297,12 @@ Here you can setup the left margin separat.
 \ExplOpt[0\,pt]{right-margin}
 And here the right margin. 
 
+\ExplOpt[0\,pt]{extra-skip}
+Sometimes it's useful to add some vertical white space in front of the frame. This can be useful
+if you want some elements on the lines. To take care of this required space you can
+set the Option \Opt{extra-skip}. Negative dimensions are also allowed whereby I can't
+image any situation to use it. 
+
 \vspace*{\baselineskip}
 This finished the \emph{outside} part for the moment. The package provides also some hooks
 which will can be used as an option. This isn't really a low level issue so these
@@ -262,47 +329,251 @@ Specifies the width of the top line.
 \ExplOpt[0.8\,pt]{line-width-bottom}
 Specifies the width of the bottom line.
 
+The width is only one part of the lines. I am sure you want to change the colors too. 
+\ExplOpt{line-color}
+Normally all lines have the same color. The color for all four lines can be specified 
+with the Option \Opt{line-color}. However the following keys allow the color
+specification separat.
+\ExplOpt[black]{line-color-right}
+Specifies the color of the right line.
+\ExplOpt[black]{line-color-top}
+Specifies the color of the top line.
+\ExplOpt[black]{line-color-bottom}
+Specifies the color of the bottom line.
+
 \minisec{Example}
 I think it's time for a small example. Suppose you want that all lines has a width of
-2\,pt expect the top line which shall have a width of 4pt. This can be achived by
-\begin{ltxexample}[caption=Loading the package,label=loading]
- \begin{xframed}[line-width=2pt,line-width-top=4pt]
+2\,pt expect the top line which shall have a width of 4pt and a different color.
+This can be achived by
+\begin{ltxexample}[caption=Example outer part,label=outer,result=true,]
+ \begin{xframed}[line-width=2pt,line-width-top=4pt,
+          line-color-top=blue]
    The contents of the frame
  \end{xframed}
 \end{ltxexample}
 As a small revision we can achive the same effect with \Cmd{xframedsetup}, 
 whereby the settings are used for the the environemnts \Env{xframed} to follow.
-\begin{ltxexample}[caption=Loading the package,label=loading]
- \xframedsetup[line-width=2pt,line-width-top=4pt]
+\begin{ltxexample}[caption={Example outer part II},]
+ \xframedsetup[line-width=2pt,line-width-top=4pt
+           ,line-color-top=blue]
  \begin{xframed}
    The contents of the frame
  \end{xframed}
 \end{ltxexample}
 
-\begin{xframed}[line-width=2pt,line-width-top=4pt,left-margin=0pt]
-   The contents of the frame
-\end{xframed}
+As you can see the topline gets a smooth transition. 
 
 \section{Main body of the frame}\label{sec:element-main}
+As shown in \autoref{fig:baseelements} the body is the main part of
+the environment \Env{xframed}. Inside the body you can use every
+material also verbatim one. This part is save in a single coffin%
+\footnote{See: \Pack{l3coffin}}  and allows such things. 
+
+\ExplOpt[\string\normalfont]{font}
+The option \Opt{font} allows the specification of the main part of \Env{xframed}.
+It doesn't influence the other part. 
+
+\ExplOpt[black]{font-color}
+If you want to change the font color you can do this with the option \Opt{font-color}.
+
+\ExplOpt[white]{bg-color}
+The complete background of \Env{xframed} is specifed by the color given
+as an argument of \Opt{bg-color}. If you want some shadings or whatever
+you can imagine you can the power of tikz. How to do this
+is explained in \autoref{sec:tikzsetup}.
+
+\ExplOpt[10\,pt]{inner-margin}
+The distance on the left site and the right site of the frame will be 
+controled by \Opt{inner-left-margin} and \Opt{inner-right-margin}. The 
+key \Opt{inner-margin} sets the relevant lengths. However you can 
+setup left and right alone.
+\ExplOpt[10\,pt]{inner-left-margin}
+Specifies the left margin of the frame.
+\ExplOpt[10\,pt]{inner-right-margin}
+Specifies the right margin of the frame.
+
+\faArrowRight Please note: the length will be used for the other elements as shown in 
+\autoref{fig:baseelements}, too.
+
+
+\minisec{Head of the frame}
+Sometimes you want to have a small head without any brek. This
+can be achieved by the key \Opt{head}. I implement this key with 
+some other options to simplify e.g. the creating of a new thereom. There
+is also another option \Opt{first-title} which is used in a new coffin and
+so put in an extra box. At the momemnt all cpations of the provided linstings
+are done in the \Opt{first-title}. 
+
+
+\ExplOpt{head}
+Puts the given argument of \Opt{head} at the beginning
+of the main body.
+\ExplOpt[\string\normalfont\string\sffamily\string\bfseries]{head-font}
+The font is specified by the option \Opt{head-font} which be set set local as
+also the color.
+\ExplOpt[black]{head-font-color}
+Specifies the color of the head.
+
+
+\minisec{Head of the frame}
+I guess at this point an example is useful. Instead of explaining I 
+only provide the example.
+
+\begin{ltxexample}[caption={Example main part},label=main,result=true]
+ \begin{xframed}[%
+   line-width=4pt,line-color=blue,
+   inner-margin=1cm,font-color=blue!70,
+   head={Example of Head},head-font-color={red!70},
+   margin=1.5cm,bg-color=yellow!20,
+  ]
+   The contents of the frame and some filling text to 
+  provide a second line.
+ \end{xframed}
+\end{ltxexample}
+
 
 \section{Title of the frame}\label{sec:element-firsttitle}
+The title of the frame is specied by an option and also save in a coffin. 
+This means the paragraphs of the body can't be influence by material
+of the title. Here you can see the first main differences between
+\Opt{first-title} and \Opt{head}. Let us start with options.
+
+\ExplOpt{first-title}
+First of all we need a title. The title can be specified by \Opt{first-title}. The argument
+is saved in a single token. Of course you can use line breaks but please encapsule
+the whole argument in curly braces. Curly braces must be used if you argument contains
+a comma. May you wonder why it's named \Opt{first-title}. If the frame
+must be splitted the \Opt{first-title} is only used at the first frame. If
+you don't have any splitted frame, you have only one tile the \Opt{first-title}.
+\ExplOpt[\string\bfseries\string\sffamily\string\large]{title-font}
+Normally the title should be highlighted. So I decided to declare the list of
+font commands as default. However you can use the option \Opt{title-font} to
+declare your own font setttings.
+\ExplOpt[black]{title-font-color}
+As usual you can specify the color of the font. This is done by the option
+\Opt{title-font-color}.
+
+\ExplOpt[5pt]{title-skip}
+As written the title is put inside a new coffin. The explained options \Opt{inner-margin},
+\Opt{inner-left-margin} and \Opt{inner-right-margin} will be used on the left and right side of
+the title component. However you can specify the length above and below the contents of the title. 
+The option \Opt{title-skip} passes the argument to the options \Opt{title-above-skip}
+and \Opt{title-below-skip}.
+\ExplOpt[5pt]{title-above-skip}
+Specify the length betweend the top line and the material of \Opt{first-title}.
+\ExplOpt[5pt]{title-below-skip}
+Specify the length betweend the new line \Opt{title-line} and the material of \Opt{first-title}.
+
+\faArrowRight Please note:  I know the name \texttt{skip} leads to irritations. The length are save in a
+dimension register and so any glue will be cut.
+
+\ExplOpt[white]{title-bg-color}
+As the main part you can specify a different color as background for
+the title. This color of the option \Opt{title-bg-color} will be used for it.
+
+
+The package \Pack{xframed} provides a single line between the title and the main body.
+The following options show you the usage. Of course with methods of
+\autoref{sec:tikzsetup} you can draw dashed lines or other one as well.
+\ExplOpt[true]{title-line}
+The option \Opt{title-line} is a bool key. If you say \texttt{true} a line to separat
+the material will be drawn. If you say \texttt{false}, you will get no line.
+\ExplOpt[0.6pt]{line-width-title}
+The width of the line is specified by the option \Opt{line-width-title} whereby
+the width doesn't influence the length \Opt{inner-top-margin} and \Opt{title-below-skip}.
+\ExplOpt[black]{title-line-color}
+Last but not least the color of the line is done by \Opt{title-line-color}.
+
+\minisec{Example}
+It's time for a new example to demonstrate the title.
+
+\begin{ltxexample}[caption={Example title part},label=title,result=true]
+ \begin{xframed}[title-bg-color=brown!30,%
+   line-width=2pt,line-color=brown!60,
+  first-title={This is the title of the frame},
+   margin=1.5cm,bg-color=yellow!20, ]
+   The contents of the frame and some filling text to 
+  provide a second line.
+ \end{xframed}
+\end{ltxexample}
+
+
 
 \section{Foot of the frame}\label{sec:element-lastfoot}
+The settings of the foot element are equal to the title element. So 
+the explanation will be short. 
+\ExplOpt{last-foot}
+The foot can be specifed by \Opt{last-foot}. Of course now you
+know why it is named \Opt{last-foot} (related to \Opt{first-title},
+\ExplOpt[\string\bfseries\string\sffamily\string\small]{foot-font}
+The foot is normally a little bit smaller so I decided to use \Cmd{small} as
+default.
 
 
+\ExplOpt[black]{foot-font-color}
+Specify the color of the font.
 
-\section{Tikz elements of  \texorpdfstring{\Pack{xframed}}{xframed}}
+\ExplOpt[5pt]{foot-skip}
+The option \Opt{foot-skip} passes the argument to the options \Opt{foot-above-skip}
+and \Opt{foot-below-skip}.
+\ExplOpt[5pt]{foot-above-skip}
+Specify the length betweend the separation line between the main part and the material of \Opt{last-foot}.
+\ExplOpt[5pt]{foot-below-skip}
+Specify the length betweend the frame and the material of \Opt{last-foot}.
+
+\faArrowRight Please note:  I know the name \texttt{skip} leads to irritations. The length are save in a
+dimension register and so any glue will be cut.
+
+\ExplOpt[white]{foot-bg-color}
+As the main part you can specify a different color as background for
+the foot. This color of the option \Opt{title-bg-color} will be used for it.
 
 
+The package \Pack{xframed} provides a single line between the foot and the main body.
+The following options show you the usage. Of course with methods of
+\autoref{sec:tikzsetup} you can draw dashed lines or other one as well.
+\ExplOpt[true]{foot-line}
+The option \Opt{foot-line} is a bool key. If you say \texttt{true} a line to separat
+the material will be drawn. If you say \texttt{false}, you will get no line.
+\ExplOpt[0.6pt]{line-width-foot}
+The width of the line is specified by the option \Opt{line-width-foot}.
+\ExplOpt[black]{foot-line-color}
+Last but not least the color of the line is done by \Opt{foot-line-color}.
+
+
+\minisec{Example}
+It's time for a new example to demonstrate the title.
+
+\begin{ltxexample}[caption={Example foot part},label=foot,result=true]
+ \begin{xframed}[title-bg-color=brown!30,%
+   foot-bg-color=brown!30,line-width=2pt,
+   line-color=brown!60,margin=1.5cm,bg-color=yellow!20, 
+   first-title={This is the title of the frame},
+   last-foot={you reached the end},]
+   The contents of the frame and some filling text to 
+  provide a second line.
+ \end{xframed}
+\end{ltxexample}
+
+
+\section{Tikz elements of  \texorpdfstring{\Pack{xframed}}{xframed}}\label{sec:tikzsetup}
+Text 
+\section{Footnotes}\label{sec:footnotes}
+Text 
 \section{Hooks}\label{sec:hook}
-
-\label{se:tikzsetup}
-
+Text 
+\chapter{Breaking across pages}\label{chap:break}
+Text 
 \chapter{Developer Info}\label{chap:developer-info}
+Text 
 
+\chapter{Examples}\label{chap:examples}
+Text 
 
+\appendix
 \chapter{Appendix}\label{chap:appendix}
 \section{Thanks}
-
+Text 
 \section{Bugs}
+Text 
 \end{document}

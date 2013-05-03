@@ -88,7 +88,7 @@
 \RequirePackage{amsmath}
 
 \RequirePackage{listings}
-\captionsetup[lstlisting]{font=sf,labelfont=bf,aboveskip=-5pt,position=above,belowskip=14pt}
+\captionsetup[lstlisting]{font=sf,labelfont=bf,aboveskip=0pt,belowskip=0pt}
 \captionsetup[figure]{font=sf,labelfont=bf,position=above}
 \RequirePackage[amsmath]{ntheorem}
 \RequirePackage{array,booktabs}

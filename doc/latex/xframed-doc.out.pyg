@@ -1,6 +1,10 @@
 \begin{Verbatim}[commandchars=\\\{\},numbers=left,firstnumber=1,stepnumber=1, ]
- \PY{k}{\PYZbs{}xframedsetup}\PY{n+na}{[line\PYZhy{}width=2pt,line\PYZhy{}width\PYZhy{}top=4pt]}
- \PY{k}{\PYZbs{}begin}\PY{n+nb}{\PYZob{}}xframed\PY{n+nb}{\PYZcb{}}
-   The contents of the frame
+ \PY{k}{\PYZbs{}begin}\PY{n+nb}{\PYZob{}}xframed\PY{n+nb}{\PYZcb{}}[title\PYZhy{}bg\PYZhy{}color=brown!30,\PY{c}{\PYZpc{}}
+   foot\PYZhy{}bg\PYZhy{}color=brown!30,line\PYZhy{}width=2pt,
+   line\PYZhy{}color=brown!60,margin=1.5cm,bg\PYZhy{}color=yellow!20,
+   first\PYZhy{}title=\PY{n+nb}{\PYZob{}}This is the title of the frame\PY{n+nb}{\PYZcb{}},
+   last\PYZhy{}foot=\PY{n+nb}{\PYZob{}}you reached the end\PY{n+nb}{\PYZcb{}},]
+   The contents of the frame and some filling text to
+  provide a second line.
  \PY{k}{\PYZbs{}end}\PY{n+nb}{\PYZob{}}xframed\PY{n+nb}{\PYZcb{}}
 \end{Verbatim}

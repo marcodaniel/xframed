@@ -61,7 +61,7 @@
       draw = none ,
       fill = \xframed__get_color:n { line-color-left },
       rounded~corners= { \xframed__get_length:n { outer-arc } },
-     },
+     },minimum-space
 %subtitle
  subtitle~bg/.style={fill=red},
  subtitle~above~rule/.style={draw=black,line~width=2pt},
@@ -88,7 +88,8 @@
    \pgfresetboundingbox\useasboundingbox%
      ($(xframed-outer.south~west)+(-\xframed__get_length:n { left-margin },0)$) 
        rectangle
-     ($(xframed-outer.north~east)+( \xframed__get_length:n { right-margin },0)$) ;
+     ($(xframed-outer.north~east)+( \xframed__get_length:n { right-margin },0)
+       +(0,\xframed__get_length:n { extra-skip-above })$) ;
       %Show development tools
   \xframed__nodepoints_development:
   \end{tikzpicture} 
@@ -164,12 +165,6 @@
          (xframed-outer) at (xframed-foot.south)
          {\tikz\path(fxx) rectangle (fyy);};
     \clip[xframed/outer~arc](xframed-outer.south~west) rectangle (xframed-outer.north~east);
-    
-
-
-
-
-
     \xframed__tikz_drawframe_lines:
     \xframed__tikz_drawframe_titlefoot:
   \end{scope}
@@ -187,7 +182,7 @@
      (xframed-outer.north~east) --  (xframed-outer.north~west) -- (xframed-inner.center) --cycle;
    %bottom line
     \path[fill = \xframed__get_color:n { line-color-bottom }] 
-     (xframed-outer.south~east) --  (xframed-outer.south~west) -- (xframed-inner.center) --cycle;
+     (xframed-outer.south~east) --  (xframed-outer.south~west) -- (xframed-inner.center) --cycle;   
  } 
 
 \cs_new:Nn \xframed__tikz_drawframe_titlefoot:

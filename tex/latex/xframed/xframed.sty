@@ -105,10 +105,11 @@
  {
  \group_begin:
    \xframedsetup { #1 }
-   \xframed__swipe_from_multicol:n { 4cm }%%must be implemented
+   \xframed__start_environment:n { 1cm }
    \xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
+     \xframed_prevent_firstindent:
      \xframed__environment_inner_precode:
      \xframed__inner_head:
  }
@@ -121,6 +122,10 @@
   \group_end:
  }
 
+\cs_new:Nn \xframed_prevent_firstindent: 
+ {
+  \@afterindentfalse\@afterheading
+ }
 
 \cs_new:Nn \xframed__inner_head:
  {
@@ -201,56 +206,7 @@
            }
     }
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\cs_new:Npn \xframed__swipe_from_multicol:n #1
- {
- \par
-  \enough@room{#1}%
-  \par\addvspace\multicolsep
-  \ifdim \prevdepth = -\@m\p@
-  \else
-    \@tempcnta\prevdepth
-    \@tempcntb\baselineskip
-    \divide\@tempcnta\@tempcntb
-    \advance\@tempcnta\@ne
-    \dimen@\prevdepth
-    \advance\dimen@ -\@tempcnta\baselineskip
-    \advance\dimen@ \topskip
-    \kern-\dimen@
-  \fi
-  \ifdim \prevdepth = -\@m\p@
-  \else
-    \@tempcnta\prevdepth
-    \@tempcntb\baselineskip
-    \divide\@tempcnta\@tempcntb
-    \advance\@tempcnta\@ne
-    \dimen@\prevdepth
-    \advance\dimen@ -\@tempcnta\baselineskip
-    \advance\dimen@ \topskip
-    \kern-\dimen@
-  \fi
- }
-\def\enough@room#1{%
-   \par
-   \bgroup\@nobreakfalse\addpenalty\z@\egroup
-   \page@free \pagegoal
-   \advance \page@free -\pagetotal
-     \@tempskipa#1\relax
-   \wlog
-       {Current page-\MessageBreak
-        height=%
-        \the\pagegoal- used \the\pagetotal
-        \space -> free=\the\page@free
-        \MessageBreak
-        needed \the\@tempskipa
-              \space(for #1)}%
-   \ifdim \page@free <#1\newpage \fi
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
  
 \cs_new:Npn \xframed__declare_footnotes:
  {
@@ -310,7 +266,6 @@
   \xframed_check_footnotes:
   \xframed__first_title:
   \xframed__last_foot:
- % \xframed_measure_free_vspace:
   \xframed__coffin_output: 
   \l__xframed_codeafter_tl
   \skip_vertical:n { - \parskip }
@@ -419,38 +374,6 @@
            }
     }
  }
-
-
-\cs_new:Npn \xframed_measure_free_vspace:
- {
-  \group_begin:
-     \@nobreakfalse\addpenalty\z@
-  \group_end:
-    \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_pagegoal:D
-    \dim_sub:Nn    \l__xframed_free_vspace_dim { \tex_pagetotal:D }
-    \xframed__msg_log:n {
-                        computet~vertical~space~is~
-                        \dim_use:N \l__xframed_free_vspace_dim \\
-                        text~height~is~\the\textheight        \\
-                        maxdimen~is~\the\maxdimen
-                       }
-   \dim_compare:nNnT \l__xframed_free_vspace_dim = \c_max_dim
-         {
-          \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_vsize:D
-          \xframed__msg_log:n
-                {
-                 free~vertical~space~was~caclulated~as~maxdimen\\
-                 vsize~will~be~use
-                }
-         }
-
- }
-
-
-
-
-
-
 
 
 \tex_endinput:D
