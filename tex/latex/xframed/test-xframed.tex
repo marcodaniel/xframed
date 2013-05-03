@@ -13,9 +13,9 @@
 \parindent0pt
 \usepackage[showframe]{geometry}
 \usepackage[x11names]{xcolor}
-\usepackage{lipsum}
+\usepackage{lipsum,}
 \usepackage{marginnote}
-\usepackage[left-margin=0cm,right-margin=0cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=2cm,bg-color=Azure1]{xframed}
+\usepackage[left-margin=0cm,right-margin=0cm,inner-top-margin=0pt,footnote-distance=1cm,inner-top-margin=1.5cm,inner-bottom-margin=0cm,bg-color=Azure1]{xframed}
 \xframedsetup{%
  developer-info=true,
  line-width=2pt,
@@ -57,7 +57,23 @@ skip-above=0pt,
 \usetikzlibrary{plotmarks}
 \usepackage{etoolbox}
 \usepackage{amsmath}
+%\show\begin
+%\show\end
 \begin{document}
+
+\begin{itemize}
+\item foo
+\item foo bar
+\item bar
+\end{itemize}
+
+\Surroundwithxframed{itemize}
+\begin{itemize}
+\item foo
+\item foo bar
+\item bar
+\end{itemize}
+
 Test
 \begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},]
 

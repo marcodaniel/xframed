@@ -314,6 +314,7 @@
   shadow                .bool_set:N = \l__xframed_shadow_bool           ,
   ignore-last-descender .bool_set:N = \l__xframed_descenders_bool       ,
   ignore-last-skip      .bool_set:N = \l__xframed_ignore_lastskip_bool  ,
+  ignore-last-skip      .initial:n  = true                              ,
   developer-info        .bool_set:N = \l__xframed_developer_info_bool   ,
  }
 %!end bool options
