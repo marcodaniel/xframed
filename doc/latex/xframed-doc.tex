@@ -18,6 +18,9 @@
 \makeatother
 \setcounter{errorcontextlines}{999}
 \documentclass[openany,12pt,tocdepth=3]{ltx-md}
+
+\usepackage{frcursive}
+\usetikzlibrary{decorations.pathmorphing}
 \RequirePackage{minted}
 \usemintedstyle{autumn}
 \fvset{xleftmargin=0.2cm,xrightmargin=.2cm}
@@ -138,6 +141,17 @@ of options. My aim is to use as many intuitive options as possible.
 \clearpage
 \pdfbookmark[1]{\contentsname}{tocbook}
 \tableofcontents
+
+
+\setchapterpreamble[o]{\dictum[\href{http://tex.stackexchange.com/a/18360/5239}{Gonzalo Medina at TeX.SX}]{%
+Expand $(a+b)^n$:
+\begin{center}
+  \count255=0
+  \loop\advance\count255 by 10
+  \ifnum\count255<40
+    $(a\hskip\count255 pt +\hskip\count255 pt b)^n$\\
+  \repeat
+\end{center}}}
 \addchap{Preface}
 \addsec{Introduction}\label{sec:intro}
 I am interested in \LaTeX\ and specially in \LaTeX3. With this package I want
@@ -176,8 +190,10 @@ I registered at \href{http://tex.stackexchange.com/}{TeX.SX}  and learned someth
 about the new language \Pack{expl3}\footnote{see: 
 \href{http://latex-project.org/latex3.html}{http://latex-project.org/latex3.html}}. 
 I was so fascinated about the great work of the \LaTeX3 core team that I started 
-my first steps with simple function. After a while I wanted to provide my
-own \Pack{expl3}-package. Now here it is.
+my first steps with simple functions. I also wrote a small article about the 
+frontend \Pack{xparse} for the German community. The article was published
+in   \emph{Die \TeX nische Komödie 2/2012}. 
+After a while I wanted to provide my own \Pack{expl3}-package. Now here it is.
 
 I know most users love examples. So I am trying to provide a lot. All
 frames in this documentation are done by \Env{xframed}. So I hope
@@ -186,16 +202,25 @@ by \Pack{minted}\footnote{Package \Pack{minted} by Kon­rad Ru­dolph,
 see \href{http://www.ctan.org/pkg/minted}{CTAN: minted}, now maintained by G. Poore.}.
 
 \vfill
-By the way. The compiliation is of this document is done with the
+By the way. The compiliation of this document is done with the
 typesetting enginge \LuaLaTeX. To simplify my compilation steps
-I am using \Pack{arara}\footnote{Tool \Pack{arara} by Paulo Cereda, 
+I am using the cool tool \Pack{arara}\footnote{Tool \Pack{arara} by Paulo Cereda, 
 see \href{http://www.ctan.org/pkg/arara}{CTAN: arara}}.
 
 \vfill
 Now it's time to introduce the package.
 
 
-
+\setchapterpreamble[o]{\dictum[\href{http://tex.stackexchange.com/a/18370/5239}{Jaime Soto at TeX.SX}]{%
+\begin{eqnarray*}
+    \begin{bmatrix}
+    \cos 90^{\circ} & \sin 90^{\circ}\\
+   -\sin 90^{\circ} & \cos 90^{\circ}
+\end{bmatrix}
+\begin{bmatrix} a1 \\ a2 \end{bmatrix}
+=
+\rotatebox[origin=c]{270}{$\begin{bmatrix} a1 \\ a2 \end{bmatrix}$}
+\end{eqnarray*}}}
 \chapter{Usage}\label{chap:usage}
 The following sections descripe the options of the package and the provided 
 environments. The basic environment is equal to the package name \Env{xframed}.
@@ -261,9 +286,19 @@ main issue. It descripes the three base elements of the frame drawn by \Env{xfra
 \vspace*{\baselineskip}
 Now let's start with all options. Be aware the list ist long. 
 
-\setchapterpreamble[o]{\dictum[]{%
-The quality of the frame depends on your skill to use
-the options.}}
+\setchapterpreamble[o]{\dictum[\href{http://tex.stackexchange.com/a/18354/5239}{Paulo Cereda at TeX.SX}]{%
+Find $x$.
+
+\begin{tikzpicture}
+\draw (0,0) -- (4,0) node[midway,below] {4 cm}
+   -- (4,3) node[midway,right] {3 cm}
+   -- (0,0) node[midway,left,circle,draw=blue,decorate,decoration={random steps,segment length=1pt,amplitude=0.5pt}]{$x$}
+   -- (4,0) rectangle (3.7,0.3)
+   -- cycle;
+\draw (0.4,0) arc (0:30:0.5);
+\draw (4,2.6) arc (270:226:0.5);
+\draw (1,2.1) node []{\color{blue}\fontfamily{frc}\selectfont{It's here!}};
+\end{tikzpicture}}}
 
 \chapter{Package options}\label{chap:options}
 Every user has his/her own wishes. It's very difficult to implement an evironment 
