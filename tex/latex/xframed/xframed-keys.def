@@ -66,10 +66,8 @@
    right-margin            ==  \c_zero_dim      ,
    inner-left-margin       ==  10pt             ,
    inner-right-margin      ==  10pt             ,
-   inner-top-margin        ==  0.4\baselineskip ,
-   inner-bottom-margin     ==  0.4\baselineskip ,
-   outer-margin            ==  \c_zero_dim      ,
-   inner-margin            ==  \c_zero_dim      ,
+   inner-top-margin        ==  5.0pt            ,
+   inner-bottom-margin     ==  5.0pt            ,
    line-width-top          ==  0.8pt            ,
    line-width-left         ==  0.8pt            ,
    line-width-right        ==  0.8pt            ,
@@ -91,7 +89,6 @@
    subsubtitle-below-skip  ==  5pt              ,
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
-   null-skip               ==  \c_zero_dim      ,
    minimum-space           ==  2\baselineskip   ,
  } \xframed__lengthkeys_define:n
 
@@ -103,8 +100,6 @@
          {
           left-margin               = #1          ,
           right-margin              = #1          ,
-          outer-margin              = #1          ,
-          inner-margin              = #1          ,
          }                                                             ,
    inner-margin            .meta:n  =
          {
@@ -151,6 +146,13 @@
           inner-arc               = #1           ,
           outer-arc               = #1           ,
          }                                                              ,
+  show-all-lines       .meta:n    = 
+         {
+          top-line                = #1           ,
+          left-line               = #1           ,
+          bottom-line             = #1           ,
+          right-line              = #1           ,
+         }                                                               ,
  }
 %!end meta options 
  
@@ -224,9 +226,6 @@
    line-color-bottom       ==  black            ,
    bg-color                ==  white            ,
    font-color              ==  black            ,
-   inner-line-color        ==  white            ,
-   outer-line-color        ==  white            ,
-   middle-line-color       ==  white            ,
    title-font-color        ==  black            ,
    foot-font-color         ==  black            ,
    head-font-color         ==  black            ,
@@ -264,7 +263,7 @@
 
 %!hooks
 \keys_define:nn { xframed }
- {
+ {#
   code-before         .tl_set:N  = \l__xframed_codebefore_tl                 ,
   code-after          .tl_set:N  = \l__xframed_codeafter_tl                  ,
   subtitle-before     .tl_set:N  = \l__xframed_codebefore_tl                 ,
@@ -280,7 +279,7 @@
   first-tikz-code     .tl_set:N  = \l__xframed_firsttikz_tl                  ,
   middle-tikz-code    .tl_set:N  = \l__xframed_middletikz_tl                 ,
   last-tikz-code      .tl_set:N  = \l__xframed_lasttikz_tl                   ,
-  setup-tikz          .code:n    = { \tikzset{tikzsetting/.style = {#1} } }  ,
+  setup-tikz          .code:n    = { \xframedsetuptikz {#1} }                ,
   head-pre-code       .tl_set:N  = \l__xframed_headprecode_tl                ,
   head-post-code      .tl_set:N  = \l__xframed_headpostcode_tl               ,
   head-post-code      .initial:n = \space                                    ,
@@ -301,18 +300,10 @@
   bottom-line          .bool_set:N  = \l__xframed_bottomline_bool       ,
   bottom-line          .initial:n   = true                              ,
   right-line           .bool_set:N  = \l__xframed_rightline_bool        ,
-  right-line           .initial:n   = true                              ,
-  splitting-lines      .bool_set:N  = \l__xframed_splittings_lines_bool ,
-  show-all-lines       .meta:n      = {
-                                       top-line    = #1  ,
-                                       left-line   = #1  ,
-                                       bottom-line = #1  ,
-                                       right-line  = #1  ,
-                                      }                                 ,
-  show-all-lines        .default:n  = true                              ,
+  right-line           .initial:n   = true                              ,   
   title-line            .bool_set:N = \l__xframed_titleline_bool        ,
   title-line            .initial:n  = true                              ,
-  foot-line             .bool_set:N = \l__xframed_footline_bool        ,
+  foot-line             .bool_set:N = \l__xframed_footline_bool         ,
   foot-line             .initial:n  = true                              ,
   subtitle-line         .bool_set:N = \l__xframed_subtitleline_bool     ,
   subsubtitle-line      .bool_set:N = \l__xframed_subsubtitleline_bool  ,
@@ -321,7 +312,6 @@
   twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
   repeat-title          .bool_set:N = \l__xframed_repeattitle_bool      ,
   shadow                .bool_set:N = \l__xframed_shadow_bool           ,
-  draw-everyline        .bool_set:N = \l__xframed_everyline_bool        ,
   ignore-last-descender .bool_set:N = \l__xframed_descenders_bool       ,
   ignore-last-skip      .bool_set:N = \l__xframed_ignore_lastskip_bool  ,
   developer-info        .bool_set:N = \l__xframed_developer_info_bool   ,

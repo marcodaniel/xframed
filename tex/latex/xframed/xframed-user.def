@@ -16,3 +16,127 @@
 %%  version 1.0 or, at your option, any later version.   %%
 %%=======================================================%%
 %%=======================================================%%
+
+
+%%Defining new document environment based on xframed
+%%syntax \Newxframedenv[option list]{env name}
+\NewDocumentCommand \Newxframedenv { O{} m }
+ {
+  \NewDocumentenvironment { #2 }{ O{} }
+   { 
+     \xframedsetup{#1}
+     \begin{xframed}[##1] 
+   }
+   { 
+    \end{xframed} 
+   }
+ }
+%%Redefining document environment based on xframed
+%%syntax \Renewxframedenv[option list]{env name}
+\NewDocumentCommand \Renewxframedenv { O{} m }
+ {
+  \RenewDocumentenvironment { #2 }{ O{} }
+   { 
+    \xframedsetup{#1}
+    \begin{xframed}[##1] 
+   }
+   { 
+    \end{xframed} 
+   }
+ }
+ 
+%%Allows the usage of length defined by key=value
+%%\usexframendlength{key}
+\NewDocumentCommand \usexframendlength { m }
+ {
+  \xframed__get_length:n { #1 }
+ }
+%%\showxframendlength{key}
+\NewDocumentCommand \showxframendlength { m }
+ {
+  %needed if value was length
+  \dim_set:Nn \l_tmpa_dim { \xframed__get_length:n { #1 } } length
+  \dim_use:N  \l_tmpa_dim
+ }
+%%Allows the usage of skips defined by key=value
+%%\usexframendskips{key}
+\NewDocumentCommand \usexframendskip { m }
+ {
+  \xframed__get_skips:n { #1 }
+ }
+%%\showxframendskip{key}
+\NewDocumentCommand \showxframendskip { m }
+ {
+  %needed if value was a skip
+  \skip_set:Nn \l_tmpa_skip { \xframed__get_skip:n { #1 } }
+  \dim_use:N   \l_tmpa_skip
+ }
+%%Allows the usage of color defined by key=value
+%%\usexframendcolor{key}
+\NewDocumentCommand \usexframendcolor { m }
+ {
+  \color { \xframed__get_color:n { #1 } }
+ }
+%%\showxframendcolor{key}
+\NewDocumentCommand \showxframendcolor { m }
+ {
+  \xframed__get_color:n { #1 }
+ }
+
+ 
+%%Surround predefined environments with xframed
+%%syntax \Surroundwithxframed[option list]{env name}
+\NewDocumentCommand \Surroundwithxframed { O{} m }
+ {
+   \xframed_before_env:n { #2 } { \begin{xframed}[#1] }
+   \xframed_after_env:n  { #2 } { \end{xframed}       }
+ }
+
+%%use the command only if exists 
+\cs_new:Npn  \xframed_csuse_withouterrors:n #1
+ {
+  \cs_if_exist:cT { #1 } 
+    { \use_c { #1 } }
+ }
+ 
+%%puts material before the environment 
+%%  \xframed_before_env:n{env-name}{material}
+\cs_new:Npn \xframed_before_env:n #1 
+ {
+  \tl_gput_left:cn {xframed_beforebegin_#1_hook}
+ }
+%%puts material after the environment 
+%%  \xframed_after_env:n{env-name}{material}
+\cs_new:Npn \xframed_after_env:n #1 
+ {
+  \tl_gput_right:cn {xframed_afterend_#1_hook} 
+ }
+
+%%expand all begin commands
+\xapptocmd 
+ { \begin }
+ {  
+  \xframed_csuse_withouterrors:n  { xframed_beforebegin_#1_hook } 
+ }
+ {
+  \msg_info:nnn {xframed} { patching-worked } { \begin }
+ }
+ {
+  \msg_warning:nnn {xframed} { patching-failed } { \begin }
+ }
+%%expand all end commands
+\xpatchcmd 
+ { \end }
+ {\if@ignore}  
+ {  
+  \xframed_csuse_withouterrors:n  { xframed_afterend_#1_hook } 
+  \if@ignore
+ }
+ {
+  \msg_info:nnn {xframed} { patching-worked } { \end }
+ }
+ {
+  \msg_warning:nnn {xframed} { patching-failed } { \end }
+ }
+
+\tex_endinput:D

@@ -264,6 +264,59 @@ All other options can be setup by the command \Cmd{xframedsetup}.
 This command has one mandatory argument. All allowed options are explained
 in \autoref{chap:options}. 
 
+\section{Helper functions}\label{sec:helperfunctions}
+The next function will normally be used by advanced users. However
+I decided to put this information here instead of in
+\autoref{chap:developer-info}~\nameref{chap:developer-info}.
+All commands have one mandatory argument. The mandatory argument
+is one of the explained keys in the following sections. Please note 
+that the argument doesn't accept a meta key.
+
+\ExplCmd{usexframendlength}[\MArgs[key]]
+This command  allows you to use the
+provided length inside an other command. The \texttt{key} is one of
+the length keys explained in the following sections. 
+\ExplCmd{showxframendlength}[\MArgs[key]]
+The command \Cmd{showxframendlength} has one important
+difference to \Cmd{usexframendlength}. The provided length
+can be printed inside the document. For you my \TeX-hacker
+that means the primitive \Cmd{the} is used. 
+
+\ExplCmd{usexframendskip}[\MArgs[key]]
+This command is equal to \Cmd{usexframendlength} whereby
+a skip key is required.
+\ExplCmd{showxframendskip}[\MArgs[key]]
+I think you know what happen here. See \Cmd{showxframendlength}, 
+it's only for skip length.
+\ExplCmd{usexframendcolor}[\MArgs[key]]
+This command is similar to the command \Cmd{color}, whereby the
+color of the provided option is used.
+\ExplCmd{showxframendcolor}[\MArgs[key]]
+This command print out the color which is hidden under the key.
+
+\minisec{Example}
+Next to the explanation I want to provide an example. 
+
+\begin{ltxexample}[caption=Example of helper functions,label=helper,result=false,]
+ \begin{xframed}
+    \showxframendskip{ski-above}%
+    \hspace{\usexframendlength{inner-left-margin}}%
+    \showxframendcolor{fon-color}
+ \end{xframed}
+\end{ltxexample}
+
+
+\section{Creating new environments}\label{sec:newenv}
+
+\ExplCmd{Newxframedenv}[\OArgs\MArgs[env-name]]
+\ExplCmd{Renewxframedenv}[\OArgs[env-name]]
+\ExplCmd{Surroundwithxframed}[\OArgs\MArgs[env-name]]
+
+
+
+
+
+
 Before we start with options we need to understand the provided elements of the frame. 
 
 \section{Elements of the frame drawn by \texorpdfstring{\Pack{xframed}}{xframed}}
@@ -314,6 +367,10 @@ or the skips above or below the frame. Related to the meaning of the keys, all k
 requiers a length or skip dimension. That mean that the length variables defined as
 \texttt{dim} have a fixed length, whereas \texttt{skip} length can have a rupper (stretch/shrink) component. 
 
+\ExplOpt{width}
+
+\ExplOpt{minimum-space}
+
 \ExplOpt{skip}
 This is the length represented the space before and after the environment \Env{xframed}.  
 This options is a meta key and sets the \Opt{skip-below} and \Opt{skip-above} to the given skip length. 
@@ -337,6 +394,14 @@ Sometimes it's useful to add some vertical white space in front of the frame. Th
 if you want some elements on the lines. To take care of this required space you can
 set the Option \Opt{extra-skip}. Negative dimensions are also allowed whereby I can't
 image any situation to use it. 
+\ExplOpt{top-line}%bool-option
+\ExplOpt{left-line}%bool-option
+\ExplOpt{bottom-line}%bool-option
+\ExplOpt{right-line}%bool-option
+
+\ExplOpt{round-corner}%metakeys
+\ExplOpt{arc}%metakeys
+\ExplOpt{outer-arc}
 
 \vspace*{\baselineskip}
 This finished the \emph{outside} part for the moment. The package provides also some hooks
@@ -376,6 +441,8 @@ Specifies the color of the top line.
 \ExplOpt[black]{line-color-bottom}
 Specifies the color of the bottom line.
 
+\ExplOpt{inner-arc}
+
 \minisec{Example}
 I think it's time for a small example. Suppose you want that all lines has a width of
 2\,pt expect the top line which shall have a width of 4pt and a different color.
@@ -397,6 +464,8 @@ whereby the settings are used for the the environemnts \Env{xframed} to follow.
 \end{ltxexample}
 
 As you can see the topline gets a smooth transition. 
+
+\ExplOpt{show-all-lines}%metakeys
 
 \section{Main body of the frame}\label{sec:element-main}
 As shown in \autoref{fig:baseelements} the body is the main part of
@@ -427,8 +496,14 @@ Specifies the left margin of the frame.
 \ExplOpt[10\,pt]{inner-right-margin}
 Specifies the right margin of the frame.
 
-\faArrowRight Please note: the length will be used for the other elements as shown in 
+\faArrowRight Please note: the length will be used for the other two elements as shown in 
 \autoref{fig:baseelements}, too.
+
+ Related to the left and right margin you can set the top and bottom margin.
+\ExplOpt{inner-top-margin}
+This keys sets the top margin of the main part.
+\ExplOpt{inner-bottom-margin}
+This keys sets the bottom margin of the main part.
 
 
 \minisec{Head of the frame}
@@ -593,15 +668,82 @@ It's time for a new example to demonstrate the title.
 
 \section{Tikz elements of  \texorpdfstring{\Pack{xframed}}{xframed}}\label{sec:tikzsetup}
 Text 
+\ExplOpt{setup-tikz}%hooks--tl
+
+
 \section{Footnotes}\label{sec:footnotes}
-Text 
+\ExplOpt{footnote-distance}%skip keys
+\ExplOpt{footnote-line-width}
+\ExplOpt{footnote-line-lenght}
+\ExplOpt{footnote-inside}%bool-option
+
+\section{Subtitle(s)}\label{sec:subtitle}
+\ExplOpt{subtitle-above-skip}
+\ExplOpt{subtitle-below-skip}
+\ExplOpt{subsubtitle-above-sk}
+\ExplOpt{subsubtitle-below-sk}
+\ExplOpt{subtitle-above-skip}%skip keys
+\ExplOpt{subtitle-below-skip}%skip keys
+\ExplOpt{subsubtitle-above-skip}%skip keys
+\ExplOpt{subsubtitle-below-skip}%skip keys
+\ExplOpt{subtitle-font-color}%colorkeys
+\ExplOpt{subtitle-line-color}%colorkeys
+\ExplOpt{subtitle-bg-color}%colorkeys
+\ExplOpt{subsubtitle-font-color}%colorkeys
+\ExplOpt{subsubtitle-line-color}%colorkeys
+\ExplOpt{subsubtitle-bg-color}%colorkeys
+\ExplOpt{shadow-color}%colorkeys
+\ExplOpt{subtitle-font}%fontoptions--tl
+\ExplOpt{subsubtitle-font}%fontoptions--tl
+\ExplOpt{subtitle-line}%bool-option
+\ExplOpt{subsubtitle-line}%bool-option
+
+\section{shadow}\label{sec:shadow}
+\ExplOpt{shadow-size}
+\ExplOpt{shadow}%bool-option
+
 \section{Hooks}\label{sec:hook}
 Text 
+\ExplOpt{code-before}%hooks--tl
+\ExplOpt{code-after}%hooks--tl
+\ExplOpt{subtitle-before}%hooks--tl
+\ExplOpt{subtitle-after}%hooks--tl
+\ExplOpt{subsubtitle-before}%hooks--tl
+\ExplOpt{subsubtitle-after}%hooks--tl
+\ExplOpt{code-single-frame}%hooks--tl
+\ExplOpt{code-first-frame}%hooks--tl
+\ExplOpt{code-middle-frame}%hooks--tl
+\ExplOpt{code-last-frame}%hooks--tl
+\ExplOpt{user-settings}%hooks--tl
+\ExplOpt{post-tikz-code}%hooks--tl
+\ExplOpt{first-tikz-code}%hooks--tl
+\ExplOpt{middle-tikz-code}%hooks--tl
+\ExplOpt{last-tikz-code}%hooks--tl
+\ExplOpt{head-pre-code}%hooks--tl
+\ExplOpt{head-post-code}%hooks--tl
+\ExplOpt{head-post-code}%hooks--tl
+\ExplOpt{title-pre-code}%hooks--tl
+\ExplOpt{title-post-code}%hooks--tl
+\ExplOpt{foot-pre-code}%hooks--tl
+\ExplOpt{foot-post-code}%hooks--tl
+
+\section{Important typographical notes}
+\ExplOpt{ignore-last-descender}%bool-option
+\ExplOpt{ignore-last-skip}%bool-option
+
 \chapter{Breaking across pages}\label{chap:break}
 Text 
-\chapter{Developer Info}\label{chap:developer-info}
-Text 
+\ExplOpt{allow-breaking}%bool-option
+\ExplOpt{split-topskip}%skip keys
+\ExplOpt{split-bottomskip}%skip keys
+\ExplOpt{repeat-title}%bool-option
+\ExplOpt{first-title}%stringoptions
+\ExplOpt{last-foot}%stringoptions
 
+\chapter{Developer Info}\label{chap:developer-info}
+
+Text 
+\ExplOpt{developer-info}%bool-option
 \chapter{Examples}\label{chap:examples}
 Text 
 
@@ -611,4 +753,7 @@ Text
 Text 
 \section{Bugs}
 Text 
+
+\section{ToDo}
+\ExplOpt{twoside-mode}%bool-option
 \end{document}

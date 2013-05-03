@@ -41,10 +41,11 @@
 %%============================================%%
 %%============================================%%
 \ExplSyntaxOff
-\RequirePackage{longtable}%needed to display developer Info
 \RequirePackage{tikz}
 \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
+\RequirePackage{longtable}%needed to display developer Info
+\RequirePackage{xpatch}
 %%============================================%%
 %%============================================%%
 %%============================================%%
@@ -67,7 +68,8 @@
 \msg_new:nnnn { xframed } { def-not-available }
   { File~xframed-'#1'.def~is~not~available. }
   {
-    The~file~xframed-#1-de~is~not available~but~xframed~needs~the~filee~.\\
+    The~file~xframed-#1-.def~is~not available\\
+    but~xframed~needs~the~file~.\\
     I~guess~you~installed~xframed~wrong.
   }
 
@@ -75,18 +77,30 @@
 %%============================================%%
 %%============================================%%
 %%============================================%%
-%!input helper functions
-\xframed__load_deffiles:n { funct }
-%!input user keys
-\xframed__load_deffiles:n { keys }
-%!input head
-%%\xframed__load_deffiles:n { head }%%empty
-%!input messages
-\xframed__load_deffiles:n { msg }
 %!input all new variables
 \xframed__load_deffiles:n { initial }
+%!input helper functions
+\xframed__load_deffiles:n { funct }
+%!input messages
+\xframed__load_deffiles:n { msg }
+%!input user keys
+\xframed__load_deffiles:n { keys }
 %!input title-foot-coffin-setup
 \xframed__load_deffiles:n { titlefoot }
+%!input split
+\xframed__load_deffiles:n { split }
+%!input listings
+\xframed__load_deffiles:n { listings }
+%!input minted
+\xframed__load_deffiles:n { minted }
+%!input theorem
+\xframed__load_deffiles:n { theorem }
+%!input drawing method tikz
+\xframed__load_deffiles:n { tikz }
+%!input user commands
+\xframed__load_deffiles:n { user }
+%!input listings -- later, much later
+%\xframed__load_deffiles:n { mdframed }
 %%============================================%%
 %%============================================%%
 %%============================================%%
@@ -96,7 +110,7 @@
 %%============================================%%
 %%============================================%%
 %%============================================%%
-\xframed__load_deffiles:n { tikz }
+
 
 
 % Define user environment

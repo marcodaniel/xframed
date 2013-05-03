@@ -47,4 +47,11 @@
     perhaps~it~is~spelled~incorrectly.
   }
   
+\msg_new:nnn { xframed } { patching-worked }
+  { Patching~the~command~#1~was~successful.  }
+
+\msg_new:nnn { xframed } { patching-failed }
+  { Patching~the~command~#1~failed.  }
+  
+  
 \tex_endinput:D

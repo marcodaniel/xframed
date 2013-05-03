@@ -39,3 +39,6 @@
 \bool_new:N \l__xframed_head_bool
 
 \dim_const:Nn \c_one_pt_dim { 1~pt }
+
+
+\tex_endinput:D

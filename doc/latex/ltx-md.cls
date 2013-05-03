@@ -260,7 +260,7 @@
                      \skip_horizontal:n { -2em }
                      \@bsphack\def\arraystretch{1.25}
                       \begin{tabular}{@{}l@{}}\hline
-                       \MacroFont #2
+                       \MacroFont #2~=~<value>
                        \SpecialOptIndex{#2}\\\hline
                       \end{tabular} 
                      \@esphack
@@ -302,7 +302,7 @@
     \@afterheading
  }
 
-\NewDocumentCommand \ExplCmd { o m }
+\NewDocumentCommand \ExplCmd { o m O{} }
  {
     \par
     \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
@@ -314,7 +314,7 @@
                      \skip_horizontal:n { -2em }
                      \@bsphack\def\arraystretch{1.25}
                       \begin{tabular}{@{}l@{}}\hline
-                      \MacroFont\textbackslash #2
+                      \MacroFont\textbackslash #2 #3
                       \SpecialUsageIndex{#2}\\\hline
                       \end{tabular} 
                      \@esphack
