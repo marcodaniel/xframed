@@ -1,21 +1,22 @@
-%%
-%% xframed-msg.def
-%%
-%% file to define log messages
-%%
-%% ----------------------------------------------------------------
-%% Working with the command fbox or fcolorbox, one has to
-%% handle page breaks by hand. The present package defines the
-%% environment xframed which automatically deals with page breaks.
-%% 
-%% Author's name: Marco Daniel
-%% License type: lppl
-%% 
-%%  Copyright (c) 2010 Marco Daniel
-%% 
-%%  This package may be distributed under the terms of the LaTeX Project
-%%  Public License, as described in lppl.txt in the base LaTeX distribution.
-%%  Either version 1.0 or, at your option, any later version.
+%%=======================================================%%
+%%=======================================================%%
+%% xframed-msg.def                                       %%
+%%                                                       %%
+%% file to define all needed messanges                   %%
+%% file is part of the package xframed                   %%
+%%                                                       %%
+%% Author's name: Marco Daniel                           %%
+%% License type: lppl                                    %%
+%%                                                       %%
+%%  Copyright (c) 2013 Marco Daniel                      %%
+%%                                                       %%
+%%  This package may be distributed under the terms      %%
+%%  of the LaTeX Project Public License, as described    %%
+%%  in lppl.txt in the base LaTeX distribution.Either    %%
+%%  version 1.0 or, at your option, any later version.   %%
+%%=======================================================%%
+%%=======================================================%%
+
  
 \msg_new:nnnn { xframed } { inside-box }
   { Environment~xframed~is~used~inside~a~non~breakable~box. }

@@ -1,8 +1,8 @@
 %%=======================================================%%
 %%=======================================================%%
-%% xframed-mdframed.def                                  %%
+%% xframed-user.def                                      %%
 %%                                                       %%
-%% file to use xframed instead of mdframed               %%
+%% file to define frontends for users                    %%
 %% file is part of the package xframed                   %%
 %%                                                       %%
 %% Author's name: Marco Daniel                           %%

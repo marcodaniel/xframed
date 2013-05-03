@@ -1,21 +1,18 @@
-%%%LATER
-%%% Define user command for box
-%%\NewDocumentCommand { \xframedbox } { O{} m }
-%% {
-%%  \group_begin:
-%%   \xframedsetup { #1 }
-%%   \xframedsetup{title={},foot={},first-title={},last-foot={}}
-%%   \xframed__environment_precode:
-%%    \hcoffin_set:Nn   
-%%       \l__xframed_main_coffin
-%% %%    { \l__xframed_coffin_width_dim }
-%%     {
-%%      % \xframed__environment_inner_precode:
-%%       \xframed__inner_head:
-%%       #2
-%%       %\xframed__environment_inner_postcode:
-%%     }  
-%%     %\xframed__environment_postcode:
-%%     \xframed__coffin_output: 
-%%  \group_end:
-%% }
+%%=======================================================%%
+%%=======================================================%%
+%% xframed-todo.def                                      %%
+%%                                                       %%
+%% file for developming -- only a small list of todos    %%
+%% file is part of the package xframed                   %%
+%%                                                       %%
+%% Author's name: Marco Daniel                           %%
+%% License type: lppl                                    %%
+%%                                                       %%
+%%  Copyright (c) 2013 Marco Daniel                      %%
+%%                                                       %%
+%%  This package may be distributed under the terms      %%
+%%  of the LaTeX Project Public License, as described    %%
+%%  in lppl.txt in the base LaTeX distribution.Either    %%
+%%  version 1.0 or, at your option, any later version.   %%
+%%=======================================================%%
+%%=======================================================%%

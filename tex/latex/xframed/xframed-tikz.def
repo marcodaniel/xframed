@@ -1,3 +1,23 @@
+%%=======================================================%%
+%%=======================================================%%
+%% xframed-tikz.def                                      %%
+%%                                                       %%
+%% file to define all tikz functions to draw the frame   %%
+%% file is part of the package xframed                   %%
+%%                                                       %%
+%% Author's name: Marco Daniel                           %%
+%% License type: lppl                                    %%
+%%                                                       %%
+%%  Copyright (c) 2013 Marco Daniel                      %%
+%%                                                       %%
+%%  This package may be distributed under the terms      %%
+%%  of the LaTeX Project Public License, as described    %%
+%%  in lppl.txt in the base LaTeX distribution.Either    %%
+%%  version 1.0 or, at your option, any later version.   %%
+%%=======================================================%%
+%%=======================================================%%
+
+
 %%initial~of~styles
 \def\xframedsetuptikz{\pgfqkeys{/tikz/xframed}}
 \xframedsetuptikz{
