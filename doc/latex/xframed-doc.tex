@@ -18,7 +18,7 @@
 \makeatother
 \setcounter{errorcontextlines}{999}
 \documentclass[openany,12pt,tocdepth=3]{ltx-md}
-
+\usepackage{xframed}
 \usepackage{frcursive}
 \usetikzlibrary{decorations.pathmorphing}
 \RequirePackage{minted}
@@ -61,8 +61,8 @@
              line-color=brown!70!black,
              bg-color=brown!10!white,
              inner-top-margin=12pt,
-             inner-bottom-margin=0pt,
-             title-above-skip = 6pt,title-below-skip=6pt,
+             inner-bottom-margin=6pt,
+             title-skip-above = 6pt,title-skip-below=6pt,
              title-bg-color = brown!15!white,
              line-width-top=2pt,margin=1cm,
              first-title= { \exp_not:N \captionof { lstlisting }{ \exp_not:V \l_mdxex_caption_tl } 
@@ -80,49 +80,17 @@
  {\end{minted}\end{xframed}%
   \group_end:\bool_if:NT \l_mdxex_result_bool { \input{\jobname.pyg} }
 }
-%%%\NewDocumentEnvironment {ltxexample} { sO {} }
-%%% {
-%%%  \keys_set:nn { ltxexample }
-%%%   {
-%%%    #2
-%%%   }
-%%%  \tl_set:Nx \l__mdxex_temp_tl
-%%%   {
-%%%    \exp_not:N \VerbatimEnvironment
-%%%    \tl_if_empty:NTF \l_mdxex_caption_tl
-%%%     {
-%%%      \scan_stop:
-%%%     }
-%%%     {
-%%%      \exp_not:N \xframedsetup 
-%%%          {
-%%%             line-color=brown!70!black,
-%%%             bg-color=brown!10!white,
-%%%             inner-top-margin=0pt,
-%%%             inner-bottom-margin=0pt,
-%%%             title-above-skip = 6pt,title-below-skip=6pt,
-%%%             title-bg-color = brown!15!white,
-%%%             line-width-top=2pt,margin=1cm,
-%%%             first-title= { \exp_not:N \captionof { lstlisting }{ \exp_not:V \l_mdxex_caption_tl } 
-%%%                                \tl_if_empty:NF \l_mdxex_label_tl
-%%%                                 { \exp_not:N \label { lst\exp_not:N : \l_mdxex_label_tl } }
-%%%                               } 
-%%%         }
-%%%     }
-%%%    \exp_not:n { \begin{xframed}[]\begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
-%%%   }
-%%%  \l__mdxex_temp_tl
-%%% }
-%%% {\end{minted}\end{xframed}}
+
 \RenewDocumentCommand\DeleteFile{m}{}
-%\NewDocumentCommand\NotDeleteFile{}{%
-%    \DeleteFile {\jobname.pyg}%
-%    \DeleteFile {\jobname-out.pyg}%
-%    \RenewDocumentCommand\DeleteFile{m}{}
-%}\input{\jobname.pyg}
+\Newxframedenv
+ [
+  line-color=green!60!black,
+  bg-color=green!10,
+  head = { \textcolor{green!60!black}{ \faInfoSign } },
+ ]{Note}
 \ExplSyntaxOff
 \NewDocumentCommand \Github {} {Github\faGithub\xspace }
-\usepackage{xframed}
+\def\theFancyVerbLine{\rlap{\rmfamily\tiny\arabic{FancyVerbLine}}}
 \begin{document}
 \title{The \Pack{xframed} package}
 \subtitle{This is an alpha-version}
@@ -200,13 +168,13 @@ After a while I wanted to provide my own \Pack{expl3}-package. Now here it is.
 
 I know most users love examples. So I am trying to provide a lot. All
 frames in this documentation are done by \Env{xframed}. So I hope
-you will have some inspiration. The higlight of listings is done
+you will have some inspiration. The highlight of listings is done
 by \Pack{minted}\footnote{Package \Pack{minted} by Kon­rad Ru­dolph, 
 see \href{http://www.ctan.org/pkg/minted}{CTAN: minted}, now maintained by G. Poore.}.
 
 \vfill
-By the way. The compiliation of this document is done with the
-typesetting enginge \LuaLaTeX. To simplify my compilation steps
+By the way. The compilation of this document is done with the
+typesetting engine \LuaLaTeX. To simplify my compilation steps
 I am using the cool tool \Pack{arara}\footnote{Tool \Pack{arara} by Paulo Cereda, 
 see \href{http://www.ctan.org/pkg/arara}{CTAN: arara}}.
 
@@ -225,7 +193,7 @@ Now it's time to introduce the package.
 \rotatebox[origin=c]{270}{$\begin{bmatrix} a1 \\ a2 \end{bmatrix}$}
 \end{eqnarray*}}}
 \chapter{Usage}\label{chap:usage}
-The following sections descripe the options of the package and the provided 
+The following sections describe the options of the package and the provided 
 environments. The basic environment is equal to the package name \Env{xframed}.
 
 \section{Loading the package}
@@ -260,7 +228,7 @@ you enclose these commands inside a group the settings will be local, too.
  
 \ExplCmd{xframedsetuptikz\MArgs}
 The command has one mandatory argument. The mandatory argument accepts only
-defined options which are explaind in \autoref{se:tikzsetup}
+defined options which are explained in \autoref{se:tikzsetup}
 
 All other options can be setup by the command \Cmd{xframedsetup}.
 \ExplCmd{xframedsetup\MArgs}
@@ -284,14 +252,14 @@ a legal value of the option \Opt{style}.
 If you wan to redefine an existing style you can do this by 
 \Cmd{renewxframedstyle}. The syntax of the command
 is equal to \Cmd{newxframedstyle}. If the style doesn't exist
-\Pack{xframed} uses the commmand \Cmd{newxframedstyle} and
+\Pack{xframed} uses the command \Cmd{newxframedstyle} and
 provides a warning.
 
 \ExplCmd{addtoxframedstyle}[\MArgs[style-name]\MArgs]
 If you want to extend a predefined style you can do this
 with \Cmd{addtoxframedstyle}. The command has the same
 syntax as \Cmd{newxframedstyle}. If the style doesn't exist
-\Pack{xframed} uses the commmand \Cmd{newxframedstyle} and
+\Pack{xframed} uses the command \Cmd{newxframedstyle} and
 provides a warning.
 
 \ExplOpt{style}
@@ -305,8 +273,11 @@ The next function will normally be used by advanced users. However
 I decided to put this information here instead of in
 \autoref{chap:developer-info}~\nameref{chap:developer-info}.
 All commands have one mandatory argument. The mandatory argument
-is one of the explained keys in the following sections. Please note 
-that the argument doesn't accept a meta key.
+is one of the explained keys in the following sections. 
+
+\begin{Note}
+The mandatory argument of any helper function doesn't accept a meta key.
+\end{Note}
 
 \ExplCmd{usexframendlength}[\MArgs[key]]
 This command  allows you to use the
@@ -336,9 +307,9 @@ Next to the explanation I want to provide an example.
 \begin{ltxexample}[caption=Example of helper functions,label=helper,result=true,]
  \begin{xframed}[margin=3cm]
     \centering
-    \xframedsetup{inner-left-margin=1cm}
+    \xframedsetup{inner-margin-left=1cm}
     \showxframendskip{skip-above}%
-    \rule{\usexframendlength{inner-left-margin}}{2pt}%
+    \rule{\usexframendlength{inner-margin-left}}{2pt}%
     \showxframendcolor{font-color}
  \end{xframed}
 \end{ltxexample}
@@ -355,8 +326,8 @@ by \Pack{xparse}. However \Pack{xframed} tries to simplify
 the process by the following commands.
 
 \ExplCmd{Newxframedenv}[\OArgs\MArgs[env-name]]
-Creat a new environment with the name of the mandatory argument
-of {Newxframedenv}. The optional argument accepts all
+Create a new environment with the name of the mandatory argument
+of \Env{Newxframedenv}. The optional argument accepts all
 defined keys of \Pack{xframed}.
 
 \ExplCmd{Renewxframedenv}[\OArgs[env-name]]
@@ -369,14 +340,16 @@ where you want to get a colored background. To do this you can
 surround existing environments with \Cmd{Surroundwithxframed}
 where the mandatory argument is the name of the existing environment.
 The optional argument accepts all keys defined by \Pack{xframed}.
-Please note that this declaration works global.
+\begin{Note}
+The declaration by \Cmd{Surroundwithxframed} works global.
+\end{Note}
 
 Before we start with options we need to understand the provided elements of the frame. 
 
 \section{Elements of the frame drawn by \texorpdfstring{\Pack{xframed}}{xframed}}
 It should be clear the a frame has some rules around. So we can check mark the first
-relevant point.The next point of the agende is the main body, the title and the foot. These
-three elements are very important to understand the behaviour. The simple picture below
+relevant point.The next point of the agenda is the main body, the title and the foot. These
+three elements are very important to understand the behavior. The simple picture below
 should show the elements and the provided names inside the package.
 
 \begin{center}
@@ -388,7 +361,7 @@ should show the elements and the provided names inside the package.
 \end{tikzpicture}
 \end{center}
 I know the picture looks very poor at the beginning but we want to concentrate on the
-main issue. It descripes the three base elements of the frame drawn by \Env{xframed}.
+main issue. It describes the three base elements of the frame drawn by \Env{xframed}.
 
 \vspace*{\baselineskip}
 Now let's start with all options. Be aware the list ist long. 
@@ -415,11 +388,17 @@ the package uses \Pack{expl3} in the background. So I can provide more intuitive
 During the explanation I refer to the environment \Env{framed}. However this is only
 symbolic. The options are also working for other derivations. 
 
+\Pack{xframed} provides some meta keys. That means if you pass a value
+to the meta option more than one other option is influenced. Every meta
+option has a star right of the name. On this page you can see it for the
+meta option \Opt{skip}.
+
+
 \section{Outside the frame}
-Drawing a frame requires some modifcations around. So you want to setup the margins
+Drawing a frame requires some modifications around. So you want to setup the margins
 or the skips above or below the frame. Related to the meaning of the keys, all keys 
 requiers a length or skip dimension. That mean that the length variables defined as
-\texttt{dim} have a fixed length, whereas \texttt{skip} length can have a rupper (stretch/shrink) component. 
+\texttt{dim} have a fixed length, whereas \texttt{skip} length can have a rubber (stretch/shrink) component. 
 
 \ExplOpt[\string\linewidth]{width}
 This key allows you to specify the width of the complete frame. 
@@ -427,23 +406,17 @@ Normally you don't need this key. All related length (left margin, right margin)
 can be specified by options. 
 
 
-\ExplOpt{skip}
-This is the length represented the space before and after the environment \Env{xframed}.  
-This options is a meta key and sets the \Opt{skip-below} and \Opt{skip-above} to the given skip length. 
-\ExplOpt[10pt]{skip-above}
-As described at \Opt{skip} this skip length specify the space above the frame.
-\ExplOpt[10pt]{skip-below}
-Related to the other options here you can setup the space after the environment.
+\ExplOpt[10\,pt]{skip*,skip-above,skip-below}
+The lengths represent the space before and after the environment \Env{xframed}.  
+This option \Opt{skip} is a meta key and sets the \Opt{skip-below} and \Opt{skip-above} to the given skip length. 
 
 
-\ExplOpt{margin}
+\ExplOpt[0\,pt]{margin*,margin-left,margin-right}
 Normally the frame \Env{xframed} is drawn about the complete text width. However this isn't
-often very common. This keys accept a dimension length which specify the left and the right margin.
-You can also use negativ values. In this case the frame is drawn inside the margin of the page.
-\ExplOpt[0\,pt]{left-margin}
-Here you can setup the left margin separat. 
-\ExplOpt[0\,pt]{right-margin}
-And here the right margin. 
+often very common shrinking the outer margin. This keys accept a dimension length 
+which specify the left and the right margin. You can also use negative values. In this case the frame 
+is drawn inside the margin of the page.
+
 
 \ExplOpt[0\,pt]{extra-skip}
 Sometimes it's useful to add some vertical white space in front of the frame. This can be useful
@@ -456,55 +429,41 @@ image any situation to use it.
 \vspace*{\baselineskip}
 This finished the \emph{outside} part for the moment. The package provides also some hooks
 which will can be used as an option. This isn't really a low level issue so these
-options are desribed in \autoref{sec:hook}. 
+options are described in \autoref{sec:hook}. 
 
 \vspace*{\baselineskip}
-Before I will descripe the options related to there base element as shown in \autoref{fig:baseelements}, 
+Before I will describe the options related to there base element as shown in \autoref{fig:baseelements}, 
 I will start with the rules around the frame.
 
 \section{Rules around the frame}\label{sec:lines}
 A normal frame has four sides. The frame of \Env{xframed} isn't an exception. Of course
 you can manipulate as possible to get a triangle or a star.
 
-\ExplOpt{line-width}
+\ExplOpt[0.8\,pt]{line-width*,line-width-left,line-width-right,line-width-top,line-width-bottom}
 The first option in this section specify the width of all four lines around the material of \Env{xframed}.
-This implices the title and the foot of the frame. If you want to setupt the rule width of the elements
+This implies the title and the foot of the frame. If you want to setup the rule width of the elements
 separate you can do this by the following options.
-\ExplOpt[0.8\,pt]{line-width-left}
-Specifies the width of the left line.
-\ExplOpt[0.8\,pt]{line-width-right}
-Specifies the width of the right line.
-\ExplOpt[0.8\,pt]{line-width-top}
-Specifies the width of the top line.
-\ExplOpt[0.8\,pt]{line-width-bottom}
-Specifies the width of the bottom line.
+
 
 The width is only one part of the lines. I am sure you want to change the colors too. 
-\ExplOpt{line-color}
+\ExplOpt[black]{line-color*,line-color-right,line-color-top,line-color-bottom}
 Normally all lines have the same color. The color for all four lines can be specified 
 with the Option \Opt{line-color}. However the following keys allow the color
-specification separat.
-\ExplOpt[black]{line-color-right}
-Specifies the color of the right line.
-\ExplOpt[black]{line-color-top}
-Specifies the color of the top line.
-\ExplOpt[black]{line-color-bottom}
-Specifies the color of the bottom line.
+specification separate.
 
-\ExplOpt{inner-arc}
 
 \minisec{Example}
 I think it's time for a small example. Suppose you want that all lines has a width of
 2\,pt expect the top line which shall have a width of 4pt and a different color.
-This can be achived by
+This can be achieved by
 \begin{ltxexample}[caption=Example outer part,label=outer,result=true,]
  \begin{xframed}[line-width=2pt,line-width-top=4pt,
           line-color-top=blue]
    The contents of the frame
  \end{xframed}
 \end{ltxexample}
-As a small revision we can achive the same effect with \Cmd{xframedsetup}, 
-whereby the settings are used for the the environemnts \Env{xframed} to follow.
+As a small revision we can achieve the same effect with \Cmd{xframedsetup}, 
+whereby the settings are used for the the environments \Env{xframed} to follow.
 \begin{ltxexample}[caption={Example outer part II},]
  \xframedsetup[line-width=2pt,line-width-top=4pt
            ,line-color-top=blue]
@@ -515,50 +474,38 @@ whereby the settings are used for the the environemnts \Env{xframed} to follow.
 
 As you can see the topline gets a smooth transition. 
 
-\ExplOpt[true]{show-all-lines}%metakeys
+\ExplOpt{show-all-lines*}%metakeys
 By default a frame has four lines around it. Drawing no
 lines can be achieved by the boolean flag \Opt{show-all-lines}.
 If you don't want to draw any lines you can pass the value \texttt{false}
 to the option \Opt{show-all-lines}
 
-\ExplOpt[true]{top-line}%bool-option
-The option \Opt{show-all-lines} controls the behaviour
-of all lines. But yu can control every line separat. The option 
-\Opt{top-line} influence the line above the frame. It's also 
-a boolean key and accepts either \texttt{true} or \texttt{false}.
+\ExplOpt[true]{top-line,left-line,bottom-line,right-line}%bool-option
+The option \Opt{show-all-lines} controls the behavior
+of all lines. But you can control every line separate. The option 
+\Opt{top-line} and friend influence the lines of the frame. All four are 
+boolean keys and accepts either \texttt{true} or \texttt{false}.
 
-\ExplOpt[true]{left-line}%bool-option
-It's similar to \Opt{top-line} but it controls the left line.
 
-\ExplOpt[true]{bottom-line}%bool-option
-It's similar to \Opt{top-line} but it controls the bottom line.
-\ExplOpt[true]{right-line}%bool-option
-It's similar to \Opt{top-line} but it controls the right line.
-
-\ExplOpt{round-corner}%metakeys
-This is a meta key. That means the value of \Opt{round-corner} is passed
-to the options \Opt{outer-arc} and \Opt{inner-arc}.
-
-\ExplOpt{arc}
-It's a short synonym for \Opt{round-cornerns}.
-
-\ExplOpt[10pt]{outer-arc}
-The frame around the provided material of \Env{xframed} 
-has a defined width. The outer part of the line gets
-rounded corners by the dimension of the value by \Opt{outer-arc}.
+\ExplOpt[10\,pt]{round-corner*,arc*,arc-outer,arc-inner}
+The arc of the corners can be controlled by the provided keys. Thereby
+you can manipulate the outer arc and the inner arc separate.
+I provided two meta keys because I couldn't provide a correct name.
+That means the value of \Opt{round-corner} or \Opt{arc} is passed
+to the options \Opt{arc-outer} and \Opt{arc-inner}. 
 
 \minisec{Example}
 I think it's time for a small example.
 
-\begin{ltxexample}[caption=Example outer part III,result=true,]
+\begin{ltxexample}[caption=Example outer part III,result=true,label=arc]
 \newxframedstyle{example-outerpart}
    { line-width=4pt,margin=1cm,line-color=red!40!black,
-     bg-color=red!20,round-corner=20pt,outer-arc=5pt}
+     bg-color=red!20,round-corner=20pt,arc-outer=5pt}
 \begin{xframed}[style=example-outerpart]
  \begin{minted}{latex}
    \newxframedstyle{example-outerpart}
      { line-width=4pt,margin=1cm,line-color=red!40!black,
-       bg-color=red!20,round-corner=20pt,outer-arc=5pt}
+       bg-color=red!20,round-corner=20pt,arc-outer=5pt}
  \end{minted}
  The contents of the frame with some text
  and some more text. And more text.
@@ -579,23 +526,20 @@ It doesn't influence the other part.
 If you want to change the font color you can do this with the option \Opt{font-color}.
 
 \ExplOpt[white]{bg-color}
-The complete background of \Env{xframed} is specifed by the color given
+The complete background of \Env{xframed} is specified by the color given
 as an argument of \Opt{bg-color}. If you want some shadings or whatever
-you can imagine you can the power of tikz. How to do this
+you can imagine you can the power of TikZ. How to do this
 is explained in \autoref{sec:tikzsetup}.
 
-\ExplOpt[10\,pt]{inner-margin}
+\ExplOpt[10\,pt]{inner-margin*,inner-margin-left,inner-margin-right}
 The distance on the left site and the right site of the frame will be 
-controled by \Opt{inner-left-margin} and \Opt{inner-right-margin}. The 
-key \Opt{inner-margin} sets the relevant lengths. However you can 
-setup left and right alone.
-\ExplOpt[10\,pt]{inner-left-margin}
-Specifies the left margin of the frame.
-\ExplOpt[10\,pt]{inner-right-margin}
-Specifies the right margin of the frame.
+controlled by \Opt{inner-margin-left} and \Opt{inner-margin-right}. The 
+key \Opt{inner-margin} pass the value to the relevant lengths. 
 
-\faArrowRight Please note: the length will be used for the other two elements as shown in 
+\begin{Note}
+The length will be used for the other two elements as shown in 
 \autoref{fig:baseelements}, too.
+\end{Note}
 
  Related to the left and right margin you can set the top and bottom margin.
 \ExplOpt{inner-top-margin}
@@ -605,11 +549,11 @@ This keys sets the bottom margin of the main part.
 
 
 \minisec{Head of the frame}
-Sometimes you want to have a small head without any brek. This
+Sometimes you want to have a small head without any break. This
 can be achieved by the key \Opt{head}. I implement this key with 
-some other options to simplify e.g. the creating of a new thereom. There
+some other options to simplify e.g. the creating of a new theorem. There
 is also another option \Opt{first-title} which is used in a new coffin and
-so put in an extra box. At the momemnt all cpations of the provided linstings
+so put in an extra box. At the moment all captions of the provided listings
 are done in the \Opt{first-title}. 
 
 
@@ -641,14 +585,14 @@ only provide the example.
 
 
 \section{Title of the frame}\label{sec:element-firsttitle}
-The title of the frame is specied by an option and also save in a coffin. 
+The title of the frame is specified by an option and also save in a coffin. 
 This means the paragraphs of the body can't be influence by material
 of the title. Here you can see the first main differences between
 \Opt{first-title} and \Opt{head}. Let us start with options.
 
 \ExplOpt{first-title}
 First of all we need a title. The title can be specified by \Opt{first-title}. The argument
-is saved in a single token. Of course you can use line breaks but please encapsule
+is saved in a single token. Of course you can use line breaks but please en capsule
 the whole argument in curly braces. Curly braces must be used if you argument contains
 a comma. May you wonder why it's named \Opt{first-title}. If the frame
 must be splitted the \Opt{first-title} is only used at the first frame. If
@@ -656,24 +600,23 @@ you don't have any splitted frame, you have only one tile the \Opt{first-title}.
 \ExplOpt[\string\bfseries\string\sffamily\string\large]{title-font}
 Normally the title should be highlighted. So I decided to declare the list of
 font commands as default. However you can use the option \Opt{title-font} to
-declare your own font setttings.
+declare your own font settings.
 \ExplOpt[black]{title-font-color}
 As usual you can specify the color of the font. This is done by the option
 \Opt{title-font-color}.
 
-\ExplOpt[5pt]{title-skip}
+\ExplOpt[5pt]{title-skip*,title-skip-above,title-skip-below}
 As written the title is put inside a new coffin. The explained options \Opt{inner-margin},
-\Opt{inner-left-margin} and \Opt{inner-right-margin} will be used on the left and right side of
+\Opt{inner-margin-left} and \Opt{inner-margin-right} will be used on the left and right side of
 the title component. However you can specify the length above and below the contents of the title. 
-The option \Opt{title-skip} passes the argument to the options \Opt{title-above-skip}
-and \Opt{title-below-skip}.
-\ExplOpt[5pt]{title-above-skip}
-Specify the length betweend the top line and the material of \Opt{first-title}.
-\ExplOpt[5pt]{title-below-skip}
-Specify the length betweend the new line \Opt{title-line} and the material of \Opt{first-title}.
+The option \Opt{title-skip} passes the argument to the options \Opt{title-skip-above}
+and \Opt{title-skip-below}.
 
-\faArrowRight Please note:  I know the name \texttt{skip} leads to irritations. The length are save in a
-dimension register and so any glue will be cut.
+
+\begin{Note}
+I know the name \texttt{skip} leads to irritations. The length are saving in a
+dimension register and so any glue  is cut off.
+\end{Note}
 
 \ExplOpt[white]{title-bg-color}
 As the main part you can specify a different color as background for
@@ -684,11 +627,11 @@ The package \Pack{xframed} provides a single line between the title and the main
 The following options show you the usage. Of course with methods of
 \autoref{sec:tikzsetup} you can draw dashed lines or other one as well.
 \ExplOpt[true]{title-line}
-The option \Opt{title-line} is a bool key. If you say \texttt{true} a line to separat
+The option \Opt{title-line} is a boolean key. If you say \texttt{true} a line to separate
 the material will be drawn. If you say \texttt{false}, you will get no line.
 \ExplOpt[0.6pt]{line-width-title}
 The width of the line is specified by the option \Opt{line-width-title} whereby
-the width doesn't influence the length \Opt{inner-top-margin} and \Opt{title-below-skip}.
+the width doesn't influence the length \Opt{inner-top-margin} and \Opt{title-skip-below}.
 \ExplOpt[black]{title-line-color}
 Last but not least the color of the line is done by \Opt{title-line-color}.
 
@@ -711,7 +654,7 @@ It's time for a new example to demonstrate the title.
 The settings of the foot element are equal to the title element. So 
 the explanation will be short. 
 \ExplOpt{last-foot}
-The foot can be specifed by \Opt{last-foot}. Of course now you
+The foot can be specified by \Opt{last-foot}. Of course now you
 know why it is named \Opt{last-foot} (related to \Opt{first-title},
 \ExplOpt[\string\bfseries\string\sffamily\string\small]{foot-font}
 The foot is normally a little bit smaller so I decided to use \Cmd{small} as
@@ -721,16 +664,17 @@ default.
 \ExplOpt[black]{foot-font-color}
 Specify the color of the font.
 
-\ExplOpt[5pt]{foot-skip}
-The option \Opt{foot-skip} passes the argument to the options \Opt{foot-above-skip}
-and \Opt{foot-below-skip}.
-\ExplOpt[5pt]{foot-above-skip}
-Specify the length betweend the separation line between the main part and the material of \Opt{last-foot}.
-\ExplOpt[5pt]{foot-below-skip}
-Specify the length betweend the frame and the material of \Opt{last-foot}.
+\ExplOpt[5pt]{foot-skip*,foot-skip-above,foot-skip-below}
+The option \Opt{foot-skip} passes the argument to the options \Opt{foot-skip-above}
+and \Opt{foot-skip-below}. The distance between the separation line between the 
+main part and the material of \Opt{last-foot} is controlled by \Opt{foot-skip-above}.
+On the other hand \Opt{foot-skip-below} specifies
+the length between the frame and the material of \Opt{last-foot}.
 
-\faArrowRight Please note:  I know the name \texttt{skip} leads to irritations. The length are save in a
+\begin{Note}
+I know the name \texttt{skip} leads to irritations. The length are save in a
 dimension register and so any glue will be cut.
+\end{Note}
 
 \ExplOpt[white]{foot-bg-color}
 As the main part you can specify a different color as background for
@@ -741,7 +685,7 @@ The package \Pack{xframed} provides a single line between the foot and the main 
 The following options show you the usage. Of course with methods of
 \autoref{sec:tikzsetup} you can draw dashed lines or other one as well.
 \ExplOpt[true]{foot-line}
-The option \Opt{foot-line} is a bool key. If you say \texttt{true} a line to separat
+The option \Opt{foot-line} is a boolean key. If you say \texttt{true} a line to separate
 the material will be drawn. If you say \texttt{false}, you will get no line.
 \ExplOpt[0.6pt]{line-width-foot}
 The width of the line is specified by the option \Opt{line-width-foot}.
@@ -766,17 +710,17 @@ It's time for a new example to demonstrate the title.
 
 \section{Tikz elements of  \texorpdfstring{\Pack{xframed}}{xframed}}\label{sec:tikzsetup}
 I often refer this section. The reason is very simple. \LaTeX without any 
-extension can draw nice graphics. Therefor bundels like PSTricks
+extension can draw nice graphics. Therefor bundles like PSTricks
 or TikZ/PGF are needen. This sections shows the implementation
 using TikZ and so it allows a lot of modification. Please note this
-documentation doesn't explain TikZ. Therefor you shall consulitate
+documentation doesn't explain TikZ. Therefor you shall consolidate
 the documentation of TikZ.
 
 \ExplOpt{setup-tikz}%hooks--tl
 The command to setup all TikZ styles was introduced in \autoref{sec:specopt}.
 The needed command is \Cmd{xframedsetup}. Of course you can also use 
 the option \Opt{setup-tikz} of \Env{xframed}. Nevertheless the syntax of
-the implementation is equal, becaus the value of
+the implementation is equal, because the value of
 \Opt{setup-tikz} is passed to \Cmd{xframedsetup}. 
 
 
@@ -822,9 +766,9 @@ is specified by \Opt{foot-bg-color}.
 \ExplTOpt[draw = \Opt{foot-line-color},line~width = \Opt{line-width-foot}]{foot~rule/.style}
 This style controls the separation line between the foot and the title element.
 
-\ExplTOpt[rounded~corners = \Opt{inner-arc}]{inner~arc/.style}
+\ExplTOpt[rounded~corners = \Opt{arc-inner}]{inner~arc/.style}
 This style controls inner arc of the frame.
-\ExplTOpt[rounded~corners = \Opt{outer-arc}]{outer~arc/.style}
+\ExplTOpt[rounded~corners = \Opt{arc-outer}]{outer~arc/.style}
 This style controls outer arc of the frame.
 \ExplTOpt[draw = \Opt{line-color-right},line width = \Opt{line-width-right}]{right~line/.style}
 This style controls the right line of the frame.
@@ -839,61 +783,87 @@ This style controls the bottom line of the frame.
 
 
 \section{Footnotes}\label{sec:footnotes}
-\let\nobreak\relax
-\ExplOpt{footnote-distance}%skip keys
-\ExplOpt{footnote-line-width}
-\ExplOpt{footnote-line-lenght}
-\ExplOpt{footnote-inside}%bool-option
+I provided an extra section about footnotes because 
+footnotes can't be handled as in a normal text. May you
+know the issue from environments like \Env{table} or \Env{figure}. 
+Boxes used by \Pack{xframed} have the same limitation. If you use 
+footnotes inside the environment \Pack{xframed} they are printed
+inside \Env{xframed}. If you have any page breaks the footnotes
+are always printed at the end of the environment before \Opt{last-foot}.
 
-\section{Subtitle(s)}\label{sec:subtitle}
-\ExplOpt{subtitle-above-skip}
-\ExplOpt{subtitle-below-skip}
-\ExplOpt{subsubtitle-above-sk}
-\ExplOpt{subsubtitle-below-sk}
-\ExplOpt{subtitle-above-skip}%skip keys
-\ExplOpt{subtitle-below-skip}%skip keys
-\ExplOpt{subsubtitle-above-skip}%skip keys
-\ExplOpt{subsubtitle-below-skip}%skip keys
-\ExplOpt{subtitle-font-color}%colorkeys
-\ExplOpt{subtitle-line-color}%colorkeys
-\ExplOpt{subtitle-bg-color}%colorkeys
-\ExplOpt{subsubtitle-font-color}%colorkeys
-\ExplOpt{subsubtitle-line-color}%colorkeys
-\ExplOpt{subsubtitle-bg-color}%colorkeys
-\ExplOpt{shadow-color}%colorkeys
-\ExplOpt{subtitle-font}%fontoptions--tl
-\ExplOpt{subsubtitle-font}%fontoptions--tl
-\ExplOpt{subtitle-line}%bool-option
-\ExplOpt{subsubtitle-line}%bool-option
+The following options may help you to format the footnotes.
+\ExplOpt[10\,pt]{footnote-distance}%skip keys
+This skip length is describes the distance between 
+the last line of \Env{xframed} and the the footnote rule.
+\ExplOpt[.8pt]{footnote-line-width}
+The thickness of the footnote rule is specified by this option.
+\ExplOpt[1\,in]{footnote-line-length}
+The width of the footnote rule is provided by the value of the option \Opt{footnote-line-length}
 
-\section{shadow}\label{sec:shadow}
-\ExplOpt{shadow-size}
-\ExplOpt{shadow}%bool-option
+%%%%\section{Subtitle(s)}\label{sec:subtitle}
+%%%%\ExplOpt{subtitle-skip-above}
+%%%%\ExplOpt{subtitle-skip-below}
+%%%%\ExplOpt{subtitle-skip-above}%skip keys
+%%%%\ExplOpt{subtitle-skip-below}%skip keys
+%%%%\ExplOpt{subtitle-font-color}%colorkeys
+%%%%\ExplOpt{subtitle-line-color}%colorkeys
+%%%%\ExplOpt{subtitle-bg-color}%colorkeys
+%%%%\ExplOpt{subtitle-font}%fontoptions--tl
+%%%%\ExplOpt{subtitle-line}%bool-option
+
+
+%%\section{shadow}\label{sec:shadow}
+%%\ExplOpt{shadow-size}
+%%\ExplOpt{shadow}%bool-option
+%%\ExplOpt{shadow-color}%colorkeys
 
 \section{Hooks}\label{sec:hook}
-Text 
-\ExplOpt{code-before}%hooks--tl
-\ExplOpt{code-after}%hooks--tl
-\ExplOpt{subtitle-before}%hooks--tl
-\ExplOpt{subtitle-after}%hooks--tl
-\ExplOpt{subsubtitle-before}%hooks--tl
-\ExplOpt{subsubtitle-after}%hooks--tl
-\ExplOpt{code-single-frame}%hooks--tl
-\ExplOpt{code-first-frame}%hooks--tl
-\ExplOpt{code-middle-frame}%hooks--tl
-\ExplOpt{code-last-frame}%hooks--tl
-\ExplOpt{user-settings}%hooks--tl
-\ExplOpt{post-tikz-code}%hooks--tl
-\ExplOpt{first-tikz-code}%hooks--tl
-\ExplOpt{middle-tikz-code}%hooks--tl
-\ExplOpt{last-tikz-code}%hooks--tl
-\ExplOpt{head-pre-code}%hooks--tl
-\ExplOpt{head-post-code}%hooks--tl
-\ExplOpt{head-post-code}%hooks--tl
-\ExplOpt{title-pre-code}%hooks--tl
-\ExplOpt{title-post-code}%hooks--tl
-\ExplOpt{foot-pre-code}%hooks--tl
-\ExplOpt{foot-post-code}%hooks--tl
+What is hook? First time I read hook I thought on Captain Hook of Peter Pan.
+However hooks in \LaTeX aren't pirates. 
+A hook is a macro that isn't used by the package itself. Normally those
+macros are empty. So the user can redefine hooks to influence the
+behavior. Common hooks are \Cmd{AtBeginDocument} or \Cmd{@minipagerestore}.
+
+To allow the user a lot of modifications \Pack{xframed} provides a lot of hooks next to the options.
+
+\ExplOpt{code-before,code-after}%hooks--tl
+These two hooks are executed before  respectively after the material 
+of \Env{xframed}. 
+
+\ExplOpt{code-begin,code-end}%hooks--tl
+These two hooks are executed inside the main element, that means
+inside the coffin directly before respectively after the material
+of \Env{xframed}. 
+
+
+\ExplOpt{head-pre-code,head-post-code}%hooks--tl
+These hooks are nearly equal to \Opt{code-begin} and \Opt{code-end}.
+They are executed inside the grouped head.
+
+\ExplOpt{title-pre-code,title-post-code}%hooks--tl
+These hooks are nearly equal to \Opt{code-begin} and \Opt{code-end}.
+They are executed inside the coffin for the title.
+
+\ExplOpt{foot-pre-code,foot-post-code}%hooks--tl
+These hooks are nearly equal to \Opt{code-begin} and \Opt{code-end}.
+They are executed inside the coffin for the foot.
+
+
+\ExplOpt{tikz-code-post}
+If the frame is drawn by TikZ, the value of the 
+option \Opt{post-tikz-code} is executed at all
+TikZ environments. 
+
+\ExplOpt{tikz-code-single,tikz-code-first,tikz-code-middle,tikz-code-last}%hooks--tl
+The last part of the option name leads to the execution location.
+If the frame isn't splitted the option \Opt{tikz-code-single} is executed. The
+other elements are equal.
+
+\ExplOpt{code-frame-single,code-frame-first,code-frame-middle,code-frame-last}%hooks--tl
+At the moment these hooks are provided but not implemented.
+
+
+%%%\ExplOpt{subtitle-before,subtitle-after}%hooks--tl
 
 \section{Important typographical notes}
 My first package \Pack{mdframed} got a lot of feature request and
@@ -992,8 +962,51 @@ Text
 
 \chapter{Developer Info}\label{chap:developer-info}
 
-Text 
+The following lines provide some notes for developers and advanced users. 
+
+As explained in the introduction these package uses the new
+language \Pack{expl3}. So if you have a look at the \Pack{sty} file
+you will see the new syntax. Maybe the syntax is new for you, but
+I provides self-explaining function names which should help you.
+
+However instead of the normal \TeX or \LaTeX  commands \Cmd{box} or \Cmd{setbox}
+I am using the modul \Pack{l3coffin}. So all parts are saved as coffins. Of course after
+all expansion you have a simple box.
+
+At the begin of every environment the package writes the following information 
+to the log file:
+\begin{ltxexample}[caption={Info dimension},result=false,]
+.................................................
+. xframed info 108
+. 
+.  dimension of the current page
+.  height = 16383.99998pt
+.  used = 0.0pt
+.  free = 16383.99998pt
+.  request = 28.45274pt(Option: minimum-space)
+. 
+.................................................
+\end{ltxexample}
+
+It helps you to setup your environment. 
+
 \ExplOpt{developer-info}%bool-option
+Next to the information to the \texttt{log} file
+I provided some helper methods which will be displayed
+if you set \Opt{developer-info} to \texttt{true}.
+An example is shown at the title page. It shows you all
+defined TikZ nodes.
+
+
+\begin{ltxexample}[caption={Example \Opt{developer-info}},result=true,]
+\begin{xframed}[developer-info=true,margin=1cm,
+  first-title={Sheldon Cooper Quotes},
+  last-foot={End Sheldon Cooper Quotes}]
+You know, I'm given to understand that there's an entire city in Nevada designed specifically to help people like Howard forget their problems. They can replace them with new problems, like alcoholism, gambling addiction and sexually transmitted diseases.   
+\end{xframed}
+\end{ltxexample}
+
+
 \chapter{Examples}\label{chap:examples}
 Text 
 

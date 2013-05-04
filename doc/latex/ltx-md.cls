@@ -247,34 +247,11 @@
   \texttt{\{#1\}}
  }
 
-
-\NewDocumentCommand \ExplOpt { o m }
+\NewDocumentCommand \Metakey {}
  {
-    \par
-    \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
-    \noindent
-    \hypertarget{ltx-md-opt-#2}
-      {
-       \hbox_to_wd:nn { \c_zero_dim }
-                   {
-                     \skip_horizontal:n { -2em }
-                     \@bsphack\def\arraystretch{1.25}
-                      \begin{tabular}{@{}l@{}}\hline
-                       \MacroFont #2~=~<value>
-                       \SpecialOptIndex{#2}\\\hline
-                      \end{tabular} 
-                     \@esphack
-                    }
-      }
-    \hfill\null
-    \IfNoValueF { #1 }
-      {
-       \hbox:n { \small default=\ttfamily #1 }
-      }
-    \par\nobreak
-    \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
-    \@afterheading
+  \quad\textcolor{red!70!black}{\tiny\faStar}
  }
+
 
 \NewDocumentCommand \ExplEnv { o m O{[option-list]} }
  {
@@ -330,13 +307,65 @@
     \@afterheading
  }
 
+\NewDocumentCommand \ExplOpt { o m }
+ {
+  \par
+  \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+  \noindent
+   \hbox_to_wd:nn { \c_zero_dim }
+     {
+      \skip_horizontal:n { -2em }
+      \group_begin:
+       \@bsphack\def\arraystretch{1.25}
+        \tl_set:Nn \l_tmpa_tl { \begin{tabular}{@{}ll@{}}\hline }
+        \clist_map_inline:nn {#2} 
+         {
+          \tl_if_in:nnTF { ##1 }{ * }
+           {
+            \tl_set:Nn \l_tmpb_tl { ##1 }
+            \tl_remove_once:Nn \l_tmpb_tl { * }
+            \tl_put_right:Nx \l_tmpa_tl 
+             {
+              \exp_not:N \hypertarget{ltx-md-opt-\l_tmpb_tl}
+               {
+                \exp_not:N \MacroFont \l_tmpb_tl \exp_not:N \Metakey
+               }    
+             }
+            \SpecialOptIndex{ ##1 } 
+            \tl_put_right:Nn \l_tmpa_tl { &\\ }
+           }
+           {
+            \tl_put_right:Nn \l_tmpa_tl 
+             {
+              \hypertarget{ltx-md-opt-##1}
+               {
+                \MacroFont ##1&=~<value> 
+               }    
+              \SpecialOptIndex{##1}
+              \\
+             }
+           }            
+         }              
+        \tl_put_right:Nn \l_tmpa_tl {\hline\end{tabular} }                        
+       \tl_use:N \l_tmpa_tl
+      \@esphack
+     \group_end:
+     }
+  \hfill\null
+  \IfNoValueF { #1 }
+    {
+     \hbox:n { \small default=\ttfamily #1 }
+    }
+  \par\nobreak
+  \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+  \@afterheading
+ }
+
 \NewDocumentCommand \ExplTOpt { o m }
  {
     \par
     \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
     \noindent
-    \hypertarget{ltx-md-opt-#2}
-      {
        \hbox_to_wd:nn { \c_zero_dim }
                    {
                      \skip_horizontal:n { -2em }
@@ -347,7 +376,7 @@
                       \end{tabular} 
                      \@esphack
                     }
-      }
+      \hypertarget{ltx-md-opt-#2}{}
     \hfill\null
     \IfNoValueF { #1 }
       {

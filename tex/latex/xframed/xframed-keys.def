@@ -62,10 +62,10 @@
 
 \clist_map_function:nN
  {
-   left-margin             ==  \c_zero_dim      ,
-   right-margin            ==  \c_zero_dim      ,
-   inner-left-margin       ==  10pt             ,
-   inner-right-margin      ==  10pt             ,
+   margin-left             ==  \c_zero_dim      ,
+   margin-right            ==  \c_zero_dim      ,
+   inner-margin-left       ==  10pt             ,
+   inner-margin-right      ==  10pt             ,
    inner-top-margin        ==  5.0pt            ,
    inner-bottom-margin     ==  5.0pt            ,
    line-width-top          ==  0.8pt            ,
@@ -74,19 +74,17 @@
    line-width-bottom       ==  0.8pt            ,
    line-width-title        ==  0.6pt            ,
    line-width-foot         ==  0.6pt            ,
-   inner-arc               ==  5.0pt            ,
-   outer-arc               ==  5.0pt            ,
+   arc-inner               ==  5.0pt            ,
+   arc-outer               ==  5.0pt            ,
    footnote-line-width     ==  .8pt             ,
-   footnote-line-lenght    ==  1 in             ,
+   footnote-line-length    ==  1 in             ,
    width                   ==  \linewidth       ,
-   title-above-skip        ==  5pt              ,
-   title-below-skip        ==  5pt              ,
-   foot-above-skip         ==  5pt              ,
-   foot-below-skip         ==  5pt              ,
-   subtitle-above-skip     ==  5pt              ,
-   subtitle-below-skip     ==  5pt              ,
-   subsubtitle-above-skip  ==  5pt              ,
-   subsubtitle-below-skip  ==  5pt              ,
+   title-skip-above        ==  5pt              ,
+   title-skip-below        ==  5pt              ,
+   foot-skip-above         ==  5pt              ,
+   foot-skip-below         ==  5pt              ,
+   subtitle-skip-above     ==  5pt              ,
+   subtitle-skip-below     ==  5pt              ,
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
    minimum-space           ==  2\baselineskip   ,
@@ -98,13 +96,13 @@
  {
    margin                  .meta:n  =
          {
-          left-margin               = #1          ,
-          right-margin              = #1          ,
+          margin-left               = #1          ,
+          margin-right              = #1          ,
          }                                                             ,
    inner-margin            .meta:n  =
          {
-          inner-left-margin         = #1          ,
-          inner-right-margin        = #1          ,
+          inner-margin-left         = #1          ,
+          inner-margin-right        = #1          ,
          }                                                             ,
    skip                    .meta:n  =
          {
@@ -114,13 +112,13 @@
          }                                                             ,
    title-skip              .meta:n  =
          {
-          title-above-skip        = #1           ,
-          title-below-skip        = #1           ,
+          title-skip-above        = #1           ,
+          title-skip-below        = #1           ,
          }                                                              ,
    foot-skip               .meta:n  =
          {
-          foot-above-skip        = #1           ,
-          foot-below-skip        = #1           ,
+          foot-skip-above        = #1           ,
+          foot-skip-below        = #1           ,
          }                                                              ,
    line-width              .meta:n  =
          {
@@ -138,13 +136,13 @@
          }                                                              ,
    round-corner            .meta:n  =
          {
-          inner-arc               = #1           ,
-          outer-arc               = #1           ,
+          arc-inner               = #1           ,
+          arc-outer               = #1           ,
          }                                                              ,
    arc                     .meta:n  =
          {
-          inner-arc               = #1           ,
-          outer-arc               = #1           ,
+          arc-inner               = #1           ,
+          arc-outer               = #1           ,
          }                                                              ,
   show-all-lines       .meta:n    = 
          {
@@ -184,10 +182,8 @@
    split-topskip           ==  10pt      ,
    split-bottomskip        ==  10pt      ,
    footnote-distance       ==  10pt      ,
-   subtitle-above-skip     ==  5pt       ,
-   subtitle-below-skip     ==  5pt       ,
-   subsubtitle-above-skip  ==  5pt       ,
-   subsubtitle-below-skip  ==  5pt       ,
+   subtitle-skip-above     ==  5pt       ,
+   subtitle-skip-below     ==  5pt       ,
  } \xframed__skipkeys_define:n
 %!end skip options
 
@@ -236,9 +232,6 @@
    subtitle-font-color     ==  black            ,
    subtitle-line-color     ==  black            ,
    subtitle-bg-color       ==  white            ,
-   subsubtitle-font-color  ==  black            ,
-   subsubtitle-line-color  ==  black            ,
-   subsubtitle-bg-color    ==  white            ,
    shadow-color            ==  black!50         ,
  } \xframed__colorkeys_define:n
 %!end color options
@@ -256,8 +249,6 @@
   foot-font         .initial:n = \bfseries\sffamily\small         ,
   subtitle-font     .tl_set:N  = \l__xframed_subtitle_font_tl     ,
   subtitle-font     .initial:n = \bfseries\sffamily               ,
-  subsubtitle-font  .tl_set:N  = \l__xframed_subsubtitle_font_tl  ,
-  subsubtitle-font  .initial:n = \sffamily                        ,
  }
 %!end font option
 
@@ -266,19 +257,19 @@
  {#
   code-before         .tl_set:N  = \l__xframed_codebefore_tl                 ,
   code-after          .tl_set:N  = \l__xframed_codeafter_tl                  ,
+  code-begin          .tl_set:N  = \l__xframed_codebegin_tl                  ,
+  code-end            .tl_set:N  = \l__xframed_codeend_tl                    ,
   subtitle-before     .tl_set:N  = \l__xframed_codebefore_tl                 ,
   subtitle-after      .tl_set:N  = \l__xframed_codeafter_tl                  ,
-  subsubtitle-before  .tl_set:N  = \l__xframed_codebefore_tl                 ,
-  subsubtitle-after   .tl_set:N  = \l__xframed_codeafter_tl                  ,
-  code-single-frame   .tl_set:N  = \l__xframed_code_single_frame_tl          ,
-  code-first-frame    .tl_set:N  = \l__xframed_code_first_frame_tl           ,
-  code-middle-frame   .tl_set:N  = \l__xframed_code_middle_frame_tl          ,
-  code-last-frame     .tl_set:N  = \l__xframed_code_last_frame_tl            ,
-  user-settings       .tl_set:N  = \l__xframed_user_settings_tl              ,
-  post-tikz-code      .tl_set:N  = \l__xframed_extratikz_tl                  ,
-  first-tikz-code     .tl_set:N  = \l__xframed_firsttikz_tl                  ,
-  middle-tikz-code    .tl_set:N  = \l__xframed_middletikz_tl                 ,
-  last-tikz-code      .tl_set:N  = \l__xframed_lasttikz_tl                   ,
+  code-frame-single   .tl_set:N  = \l__xframed_code_single_frame_tl          ,
+  code-frame-first    .tl_set:N  = \l__xframed_code_first_frame_tl           ,
+  code-frame-middle   .tl_set:N  = \l__xframed_code_middle_frame_tl          ,
+  code-frame-last     .tl_set:N  = \l__xframed_code_last_frame_tl            ,
+  tikz-code-post      .tl_set:N  = \l__xframed_posttikz_tl                   ,
+  tikz-code-single    .tl_set:N  = \l__xframed_singletikz_tl                 ,
+  tikz-code-first     .tl_set:N  = \l__xframed_firsttikz_tl                  ,
+  tikz-code-middle    .tl_set:N  = \l__xframed_middletikz_tl                 ,
+  tikz-code-last      .tl_set:N  = \l__xframed_lasttikz_tl                   ,
   setup-tikz          .code:n    = { \xframedsetuptikz {#1} }                ,
   head-pre-code       .tl_set:N  = \l__xframed_headprecode_tl                ,
   head-post-code      .tl_set:N  = \l__xframed_headpostcode_tl               ,
@@ -306,8 +297,8 @@
   foot-line             .bool_set:N = \l__xframed_footline_bool         ,
   foot-line             .initial:n  = true                              ,
   subtitle-line         .bool_set:N = \l__xframed_subtitleline_bool     ,
-  subsubtitle-line      .bool_set:N = \l__xframed_subsubtitleline_bool  ,
   allow-breaking        .bool_set:N = \l__xframed_allowbreaking_bool    ,
+%%!!  footnote-inside not used and not described yet
   footnote-inside       .bool_set:N = \l__xframed_footnoteinside_bool   ,
   twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
   repeat-title          .bool_set:N = \l__xframed_repeattitle_bool      ,

@@ -43,10 +43,10 @@
           \l__xframed_title_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n {  \xframed__get_length:n { title-above-skip } - \parskip }
+         \skip_vertical:n {  \xframed__get_length:n { title-skip-above } - \parskip }
          \skip_vertical:n { - \parskip }
          \box_use:N \l__xframed_title_coffin
-         \skip_vertical:n {  \xframed__get_length:n { title-below-skip } }
+         \skip_vertical:n {  \xframed__get_length:n { title-skip-below } }
         }     
     }    
  } 
@@ -75,10 +75,10 @@
           \l__xframed_title_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n { \xframed__get_length:n { title-above-skip } - \parskip }
+         \skip_vertical:n { \xframed__get_length:n { title-skip-above } - \parskip }
          %\skip_vertical:n { - \parskip }
          \box_use:N \l__xframed_title_coffin
-         \skip_vertical:n { \xframed__get_length:n { title-below-skip } }
+         \skip_vertical:n { \xframed__get_length:n { title-skip-below } }
         }    
     }
  }
@@ -109,9 +109,9 @@
           \l__xframed_foot_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n {  \xframed__get_length:n { foot-above-skip } - \parskip }
+         \skip_vertical:n {  \xframed__get_length:n { foot-skip-above } - \parskip }
          \box_use:N \l__xframed_foot_coffin
-         \skip_vertical:n {  \xframed__get_length:n { foot-below-skip } }
+         \skip_vertical:n {  \xframed__get_length:n { foot-skip-below } }
         }    
     }
  }
@@ -141,9 +141,9 @@
           \l__xframed_foot_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n {  \xframed__get_length:n { foot-above-skip } - \parskip }
+         \skip_vertical:n {  \xframed__get_length:n { foot-skip-above } - \parskip }
          \box_use:N \l__xframed_foot_coffin
-         \skip_vertical:n {  \xframed__get_length:n { foot-below-skip } }
+         \skip_vertical:n {  \xframed__get_length:n { foot-skip-below } }
         }    
     }
  }

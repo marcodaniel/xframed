@@ -119,7 +119,7 @@
  {
  \group_begin:
    \xframedsetup { #1 }
-%   \xframed__start_environment:n { 1cm }
+   \xframed__start_environment:n { 1cm }
    \xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
@@ -185,8 +185,7 @@
   \xframed__calculate_width:
   \xframed__declare_footnotes:
   \xframed__frame_linewidth:
-  \l__xframed_user_settings_tl
-  \l__xframed_codebefore_tl
+  \tl_use:N \l__xframed_codebefore_tl
  }
 
 \cs_new:Npn \xframed__minimum_space:
@@ -210,8 +209,8 @@
   \dim_set:Nn \l__xframed_coffin_width_dim { \xframed__get_length:n { width } }
   \clist_map_inline:nn
     {
-     left-margin , line-width-left ,  inner-left-margin , 
-     inner-right-margin , line-width-right , right-margin
+     margin-left , line-width-left ,  inner-margin-left , 
+     inner-margin-right , line-width-right , margin-right
     }
     {
      \dim_sub:Nn \l__xframed_coffin_width_dim
@@ -239,12 +238,14 @@
   \skip_vertical:n { - \parskip }
   \tl_use:N \l__xframed_main_font_tl
   \color { \xframed__get_color:n { font-color } }
+  \tl_use:N \l__xframed_codebegin_tl
  }
 
 \cs_new:Npn \xframed__environment_inner_postcode:
  {
   \xframed__ignore_last_skip:
   \xframed__ignore_last_descenders:
+  \tl_use:N \l__xframed_codeend_tl
  }
 
 \cs_new:Npn \xframed__ignore_last_skip:
@@ -282,7 +283,7 @@
   \xframed__first_title:
   \xframed__last_foot:
   \xframed__coffin_output: 
-  \l__xframed_codeafter_tl
+  \tl_use:N \l__xframed_codeafter_tl
   \skip_vertical:n { - \parskip }
  }
 
@@ -320,7 +321,7 @@
  {
   \tex_kern:D \c_zero_skip
   \tex_hrule:D
-    width   \xframed__get_length:n { footnote-line-lenght }
+    width   \xframed__get_length:n { footnote-line-length }
     height  \xframed__get_length:n { footnote-line-width }
    \scan_stop:
   \tex_kern:D 2.6 pt

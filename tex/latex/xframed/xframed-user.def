@@ -22,10 +22,10 @@
 %%syntax \Newxframedenv[option list]{env name}
 \NewDocumentCommand \Newxframedenv { O{} m }
  {
-  \NewDocumentenvironment { #2 }{ O{} }
+  \NewDocumentEnvironment { #2 }{ }
    { 
      \xframedsetup{#1}
-     \begin{xframed}[##1] 
+     \begin{xframed}
    }
    { 
     \end{xframed} 
@@ -35,10 +35,10 @@
 %%syntax \Renewxframedenv[option list]{env name}
 \NewDocumentCommand \Renewxframedenv { O{} m }
  {
-  \RenewDocumentenvironment { #2 }{ O{} }
+  \RenewDocumentEnvironment { #2 }{ O{} }
    { 
     \xframedsetup{#1}
-    \begin{xframed}[##1] 
+    \begin{xframed}
    }
    { 
     \end{xframed} 

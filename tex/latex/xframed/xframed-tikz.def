@@ -53,8 +53,8 @@
 %%%%%%%title
 %%%%%% left~line/.style={line~width=2pt},
 %%%%%%%arc
- inner~arc/.style={rounded~corners=\xframed__get_length:n { inner-arc }},
- outer~arc/.style={rounded~corners=\xframed__get_length:n { outer-arc }},
+ inner~arc/.style={rounded~corners=\xframed__get_length:n { arc-inner }},
+ outer~arc/.style={rounded~corners=\xframed__get_length:n { arc-outer }},
 %frame
  right~line/.style=
        { 
@@ -87,7 +87,7 @@
 
 \cs_new:Nn \xframed__draw_tikz_frame:
  {
-  \begin{tikzpicture}[remember~picture]  
+  \begin{tikzpicture}[remember~picture]    
    %%Inner part -- defines node xframed-inner
    \xframed__tikz_innerpart:
    %%title part -- defines node xframed-title
@@ -100,12 +100,16 @@
   %\pgfnodealias{xframed-outer}{xframed-inner}
    %use the correct bounding box
    \pgfresetboundingbox\useasboundingbox%
-     ($(xframed-outer.south~west)+(-\xframed__get_length:n { left-margin },0)$) 
+     ($(xframed-outer.south~west)+(-\xframed__get_length:n { margin-left },0)$) 
        rectangle
-     ($(xframed-outer.north~east)+( \xframed__get_length:n { right-margin },0)
+     ($(xframed-outer.north~east)+( \xframed__get_length:n { margin-right },0)
        +(0,\xframed__get_length:n { extra-skip-above })$) ;
       %Show development tools
-  \xframed__nodepoints_development:
+   %%User hook
+   \tl_use:N \l__xframed_posttikz_tl   
+   \l__xframed_singletikz_tl
+   %%xframed-developer info      
+   \xframed__nodepoints_development:
   \end{tikzpicture} 
 %%%%  \xframed__all_option_output:
  }
@@ -116,9 +120,9 @@
     \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
     \node[](xframed-inner)
       {
-       \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-left-margin } }
+       \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
        \xframed__display_coffins:N \l__xframed_main_coffin 
-       \skip_horizontal:n { \xframed__get_length:n { inner-right-margin } } \hbox:n{} 
+       \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
       };        
   \end{scope}
  }
@@ -135,9 +139,9 @@
       \node[anchor=south,
        yshift= \xframed__get_length:n { line-width-title } ] (xframed-title) at (xframed-inner.north)
         {
-         \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-left-margin } }
+         \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
          \xframed__display_coffins:N \l__xframed_title_coffin 
-         \skip_horizontal:n { \xframed__get_length:n { inner-right-margin } } \hbox:n{} 
+         \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
         };
         
     \end{scope}
@@ -156,9 +160,9 @@
         yshift= {-\xframed__get_length:n { line-width-foot }}, 
         ] (xframed-foot) at (xframed-inner.south)
          {
-          \skip_horizontal:n { \xframed__get_length:n { inner-left-margin } }
+          \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
           \xframed__display_coffins:N \l__xframed_foot_coffin
-          \skip_horizontal:n { \xframed__get_length:n { inner-right-margin } } \hbox:n{} 
+          \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
          };
      \end{scope}
     } 
@@ -317,8 +321,8 @@
  
 \cs_new:Nn \xframed__outerlength_development:
  {
-  \draw[latex-latex] (xframed-outer.east)  --++ ( \xframed__get_length:n { right-margin },0) ;
-  \draw[latex-latex] (xframed-outer.west)  --++ (-\xframed__get_length:n { left-margin }, 0) ;
+  \draw[latex-latex] (xframed-outer.east)  --++ ( \xframed__get_length:n { margin-right },0) ;
+  \draw[latex-latex] (xframed-outer.west)  --++ (-\xframed__get_length:n { margin-left }, 0) ;
   \draw[latex-latex] (xframed-outer.north) --++ ( 0 , \xframed__get_skip:n { skip-above }  ) ;
   \draw[latex-latex] (xframed-outer.south)  --++ ( 0 , -\xframed__get_skip:n { skip-below } ) ;
  }

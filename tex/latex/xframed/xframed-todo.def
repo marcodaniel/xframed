@@ -17,10 +17,6 @@
 %%=======================================================%%
 %%=======================================================%%
 
-
-
-
-
 %%http://chat.stackexchange.com/transcript/message/9270880#9270880
 
 \cs_new:Npn  \xframed_csuse_withouterrors:n #1
