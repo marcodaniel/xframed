@@ -76,17 +76,11 @@
       draw = \xframed__get_color:n { line-color-bottom } ,
       line~width={ \xframed__get_length:n { line-width-bottom } },
      },
- line~color/.style=
-     {
-      draw = none ,
-      fill = \xframed__get_color:n { line-color-left },
-      rounded~corners= { \xframed__get_length:n { outer-arc } },
-     },minimum-space
 %subtitle
- subtitle~bg/.style={fill=red},
- subtitle~above~rule/.style={draw=black,line~width=2pt},
- subtitle~below~rule/.style={draw=black,line~width=2pt},
- subtitle~rule/.style={subtitle~above~rule=#1,subtitle~below~rule=#1},
+% subtitle~bg/.style={fill=red},
+% subtitle~above~rule/.style={draw=black,line~width=2pt},
+% subtitle~below~rule/.style={draw=black,line~width=2pt},
+% subtitle~rule/.style={subtitle~above~rule=#1,subtitle~below~rule=#1},
 %clear definition 
 }
 

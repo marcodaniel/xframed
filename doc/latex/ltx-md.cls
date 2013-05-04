@@ -330,7 +330,41 @@
     \@afterheading
  }
 
-
+\NewDocumentCommand \ExplTOpt { o m }
+ {
+    \par
+    \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+    \noindent
+    \hypertarget{ltx-md-opt-#2}
+      {
+       \hbox_to_wd:nn { \c_zero_dim }
+                   {
+                     \skip_horizontal:n { -2em }
+                     \@bsphack\def\arraystretch{1.25}
+                      \begin{tabular}{@{}l@{}}\hline
+                       \MacroFont #2~
+                       \SpecialOptIndex{#2}\\\hline
+                      \end{tabular} 
+                     \@esphack
+                    }
+      }
+    \hfill\null
+    \IfNoValueF { #1 }
+      {
+       \group_begin:\small \ttfamily
+       \tl_set:Nn \l_tmpa_tl { \begin{tabular}[t]{@{}r@{}} }
+       \clist_map_inline:nn {#1} 
+         {
+          \tl_put_right:Nn \l_tmpa_tl { ##1 \\ }
+         }    
+       \tl_put_right:Nn \l_tmpa_tl { \end{tabular} }    
+       \tl_use:N \l_tmpa_tl
+       \group_end:
+      }
+    \par\nobreak
+    \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+    \@afterheading
+ }
 
 \IndexPrologue{
   \section*{Index}%

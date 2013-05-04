@@ -1,0 +1,5 @@
+#!/bin/bash
+# written by Marco
+# only for me
+cp *.def `kpsewhich -var-value TEXMFHOME`/tex/latex/xframed/
+cp *.sty `kpsewhich -var-value TEXMFHOME`/tex/latex/xframed/

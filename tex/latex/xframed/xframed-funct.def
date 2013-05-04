@@ -34,20 +34,29 @@
 
 \cs_new:Npn \xframed__prop_get:nn #1 #2
  {
-  \prop_get:cn  { l__xframed_#1_option_prop } { #2 }
+  \prop_get:cn { l__xframed_#1_option_prop } { #2 } 
  }
 
 \cs_new:Npn \xframed__get_skip:n #1
  {
-  \xframed__prop_get:nn { skip }{ #1 }
+  \skip_eval:n 
+    { 
+     \prop_get:Nn \l__xframed_skip_option_prop { #1 }
+     %\xframed__prop_get:nn { skip } { #1 } 
+    }
  }
 \cs_new:Npn \xframed__get_length:n #1
  {
-  \xframed__prop_get:nn { length }{ #1 }
+  \dim_eval:n 
+    { 
+     \prop_get:Nn \l__xframed_length_option_prop { #1 }
+%     \xframed__prop_get:nn { length } { #1 } 
+    }
  }
 \cs_new:Npn \xframed__get_color:n #1
  {
-  \xframed__prop_get:nn { color }{ #1 }
+  \prop_get:Nn \l__xframed_color_option_prop { #1 }
+%  \xframed__prop_get:nn { color } { #1 }
  }
 
 % \xframed__test_linewidth:nnn {<bool name>}{<prop-list>}{<lenght/skip>}
@@ -62,8 +71,8 @@
   }
  } 
  
-
-
+%http://tex.stackexchange.com/a/112345/5239
+\cs_generate_variant:Nn \tl_if_empty:nTF { f } 
 
 
 %%Test developer:
@@ -157,7 +166,7 @@
 \cs_new:Npn \xframed__start_environment:n #1
  {
   \par
-  \xframed__enought_room:n { #1 }
+    \xframed__enought_room:n { #1 }
   \par
   \dim_compare:nNnF
     { \tex_prevdepth:D } { = } { - \c_one_thousand \c_one_pt_dim }

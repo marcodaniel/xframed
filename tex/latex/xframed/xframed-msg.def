@@ -36,7 +36,7 @@
 \msg_new:nnnn { xframed } { unknown-option }
   { Unknown~option~'#1'. }
   {
-    The~option~file~'#1'~is~not~known~by~xframed:
+    The~option~file~'#1'~is~not~known~by~xframed\\
     perhaps~it~is~spelled~incorrectly.
   }
 
@@ -46,7 +46,30 @@
     The~style~'#1'~is~not~known~by~xframed:
     perhaps~it~is~spelled~incorrectly.
   }
-  
+
+\msg_new:nnn { xframed } { style-not-defined }
+  {
+    You~are~trying~to~expand~the~style~#1.\\
+    The~style~is~undefined.~xframed~uses \\
+    the~command~\newxframedstyle~instead.
+  }
+
+\msg_new:nnn { xframed } { style-already-defined }
+  {
+    You~are~trying~to~define~the~style~#1.\\
+    The~style~is~alread~defined.~xframed~uses \\
+    the~command~\addtoxframedstyle~instead.
+  }
+
+
+\msg_new:nnn { xframed } { prop-key-not-available }
+  { 
+    The~key~'#1'~is~not~defined~\\
+    in~current~property~list~of~#2.\\                
+    Perhaps~it~is~spelled~incorrectly.
+  }
+
+
 \msg_new:nnn { xframed } { patching-worked }
   { Patching~the~command~#1~was~successful.  }
 

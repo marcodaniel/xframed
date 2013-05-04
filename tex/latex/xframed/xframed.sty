@@ -45,7 +45,7 @@
 \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
 \RequirePackage{longtable}%needed to display developer Info
-\RequirePackage{regexpatch}
+\RequirePackage{etoolbox}%as long as regexpatch has alpha status
 %%============================================%%
 %%============================================%%
 %%============================================%%
@@ -119,7 +119,7 @@
  {
  \group_begin:
    \xframedsetup { #1 }
-   \xframed__start_environment:n { 1cm }
+%   \xframed__start_environment:n { 1cm }
    \xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
@@ -237,12 +237,14 @@
 \cs_new:Npn \xframed__environment_inner_precode:
  {
   \skip_vertical:n { - \parskip }
+  \tl_use:N \l__xframed_main_font_tl
+  \color { \xframed__get_color:n { font-color } }
  }
 
 \cs_new:Npn \xframed__environment_inner_postcode:
  {
-  \xframed__ignore_last_descenders:
   \xframed__ignore_last_skip:
+  \xframed__ignore_last_descenders:
  }
 
 \cs_new:Npn \xframed__ignore_last_skip:
@@ -256,20 +258,19 @@
 
 %% Question on TeX.SX leads to the code
 %% http://tex.stackexchange.com/questions/47584/how-to-make-mdframed-ignore-descenders-in-last-line
+%%at the moment I need the interface to LaTeX2e
 \cs_new:Npn \xframed__ignore_last_descenders:
  {
   \bool_if:NT \l__xframed_descenders_bool
     {
-     \par
-     \hbox:n {
-              \tex_vrule:D width  0   pt
-                           height 0.7 \tex_baselineskip:D
-                           depth  0.3 \tex_baselineskip:D
-              \scan_stop:
-             }
-     \par \tex_unskip:D \tex_unskip:D
-     \setbox0=\lastbox
-     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+%    \par\strut\par
+%    \unskip\unskip\setbox0=\lastbox
+%    \vspace*{\dimexpr\ht\strutbox-\baselineskip\relax}
+    \par
+    \strut
+    \par \tex_unskip:D \tex_unskip:D
+    \setbox0=\tex_lastbox:D
+    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
     }
  }
 

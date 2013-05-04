@@ -38,6 +38,7 @@
   language .initial:n = latex,
   result   .bool_set:N = \l_mdxex_result_bool,
   result   .initial:n =false,
+ xframed .tl_set:N = \l_mdxex_xframed_tl,
 }
 
 \NewDocumentEnvironment {ltxexample} { O {} }
@@ -70,7 +71,9 @@
                                } 
          }
      }
-    \exp_not:n { \begin{xframed}[]\begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
+    \exp_not:n { \begin{xframed}}
+      [ \exp_not:V \l_mdxex_xframed_tl ]
+    \exp_not:n { \begin{minted} } [ \l_mdxex_minted_tl ] { \l_mdxex_language_tl }
    }
   \l__mdxex_temp_tl
  }
@@ -244,7 +247,7 @@ which are only used for this frame. The following listings demonstrates the usag
  \end{xframed}
 \end{ltxexample}
 
-\section{Specifying the options}
+\section{Specifying the options}\label{sec:specopt}
 Before you setup any options you must understand hot the frame is drawn.
 The default method is by using \Pack{TikZ}\footnote{Package \Pack{TikZ} by 
 Till Tantau \& friends, see \href{http://www.ctan.org/pkg/pgf}{CTAN: TikZ}}. 
@@ -263,6 +266,39 @@ All other options can be setup by the command \Cmd{xframedsetup}.
 \ExplCmd{xframedsetup\MArgs}
 This command has one mandatory argument. All allowed options are explained
 in \autoref{chap:options}. 
+
+\ExplCmd{newxframedstyle}[\MArgs[style-name]\MArgs]
+Often it is useful to declare a style with the needed options. Therefor
+you can use the command \Cmd{newxframedstyle}. The command
+has two mandatory arguments. The first mandatory argument
+is the name of the style. Internal the style name is saved
+as \verb+xframed_style_<style-name>_user+. That means normally
+you can use every style name without any risk. If the style already exists
+\Pack{xframed} uses the commmand \Cmd{renewxframedstyle} and
+provides a warning.
+
+After you have defined a style you can use the name of the style as
+a legal value of the option \Opt{style}.
+
+\ExplCmd{renewxframedstyle}[\MArgs[style-name]\MArgs]
+If you wan to redefine an existing style you can do this by 
+\Cmd{renewxframedstyle}. The syntax of the command
+is equal to \Cmd{newxframedstyle}. If the style doesn't exist
+\Pack{xframed} uses the commmand \Cmd{newxframedstyle} and
+provides a warning.
+
+\ExplCmd{addtoxframedstyle}[\MArgs[style-name]\MArgs]
+If you want to extend a predefined style you can do this
+with \Cmd{addtoxframedstyle}. The command has the same
+syntax as \Cmd{newxframedstyle}. If the style doesn't exist
+\Pack{xframed} uses the commmand \Cmd{newxframedstyle} and
+provides a warning.
+
+\ExplOpt{style}
+The option \Opt{style} needs the name of a predefined style
+by \Cmd{newxframedstyle} . All options declared with \Cmd{newxframedstyle} 
+will be used.
+
 
 \section{Helper functions}\label{sec:helperfunctions}
 The next function will normally be used by advanced users. However
@@ -297,25 +333,43 @@ This command print out the color which is hidden under the key.
 \minisec{Example}
 Next to the explanation I want to provide an example. 
 
-\begin{ltxexample}[caption=Example of helper functions,label=helper,result=false,]
- \begin{xframed}
-    \showxframendskip{ski-above}%
-    \hspace{\usexframendlength{inner-left-margin}}%
-    \showxframendcolor{fon-color}
+\begin{ltxexample}[caption=Example of helper functions,label=helper,result=true,]
+ \begin{xframed}[margin=3cm]
+    \centering
+    \xframedsetup{inner-left-margin=1cm}
+    \showxframendskip{skip-above}%
+    \rule{\usexframendlength{inner-left-margin}}{2pt}%
+    \showxframendcolor{font-color}
  \end{xframed}
 \end{ltxexample}
 
 
 \section{Creating new environments}\label{sec:newenv}
 
+As explained above the package \Pack{xframed} provides
+one basis environment \Env{xframed}. To provide new
+environments which use \Env{xframed} you can work with
+the normal \LaTeXe command \Cmd{newenvironment} or
+the command \Cmd{NewDocumentEnvironment} provided
+by \Pack{xparse}. However \Pack{xframed} tries to simplify
+the process by the following commands.
+
 \ExplCmd{Newxframedenv}[\OArgs\MArgs[env-name]]
+Creat a new environment with the name of the mandatory argument
+of {Newxframedenv}. The optional argument accepts all
+defined keys of \Pack{xframed}.
+
 \ExplCmd{Renewxframedenv}[\OArgs[env-name]]
+This command is similar to \Cmd{Newxframedenv} whereby
+the command must already exist.
+
 \ExplCmd{Surroundwithxframed}[\OArgs\MArgs[env-name]]
-
-
-
-
-
+Sometimes you have predefined environments like \Env{verbatim}
+where you want to get a colored background. To do this you can 
+surround existing environments with \Cmd{Surroundwithxframed}
+where the mandatory argument is the name of the existing environment.
+The optional argument accepts all keys defined by \Pack{xframed}.
+Please note that this declaration works global.
 
 Before we start with options we need to understand the provided elements of the frame. 
 
@@ -328,9 +382,9 @@ should show the elements and the provided names inside the package.
 \begin{center}
 \captionof{figure}{Base elements of \texorpdfstring{\Pack{xframed}}{xframed}}\label{fig:baseelements}
 \begin{tikzpicture}[outer sep=0pt]
- \node[draw,rectangle,minimum width=8cm, minimum height=2cm,font=\bfseries] (main) {Body of the frame~\faArrowRight~\texttt{main}};
- \node[draw,rectangle,minimum width=8cm, minimum height=1cm,font=\bfseries,anchor=south] at (main.north) {Title of the frame~\faArrowRight~\texttt{first-title}};
- \node[draw,rectangle,minimum width=8cm, minimum height=1cm,font=\bfseries,anchor=north] at (main.south) {Foot of the frame~\faArrowRight~\texttt{last-foot}};
+ \node[draw,fill=gray!20,rectangle,minimum width=8cm, minimum height=2cm,font=\bfseries] (main) {Body of the frame~\faArrowRight~\texttt{main}};
+ \node[draw,fill=gray!30,rectangle,minimum width=8cm, minimum height=1cm,font=\bfseries,anchor=south] at (main.north) {Title of the frame~\faArrowRight~\texttt{first-title}};
+ \node[draw,fill=gray!30,rectangle,minimum width=8cm, minimum height=1cm,font=\bfseries,anchor=north] at (main.south) {Foot of the frame~\faArrowRight~\texttt{last-foot}};
 \end{tikzpicture}
 \end{center}
 I know the picture looks very poor at the beginning but we want to concentrate on the
@@ -367,9 +421,11 @@ or the skips above or below the frame. Related to the meaning of the keys, all k
 requiers a length or skip dimension. That mean that the length variables defined as
 \texttt{dim} have a fixed length, whereas \texttt{skip} length can have a rupper (stretch/shrink) component. 
 
-\ExplOpt{width}
+\ExplOpt[\string\linewidth]{width}
+This key allows you to specify the width of the complete frame. 
+Normally you don't need this key. All related length (left margin, right margin)
+can be specified by options. 
 
-\ExplOpt{minimum-space}
 
 \ExplOpt{skip}
 This is the length represented the space before and after the environment \Env{xframed}.  
@@ -394,14 +450,8 @@ Sometimes it's useful to add some vertical white space in front of the frame. Th
 if you want some elements on the lines. To take care of this required space you can
 set the Option \Opt{extra-skip}. Negative dimensions are also allowed whereby I can't
 image any situation to use it. 
-\ExplOpt{top-line}%bool-option
-\ExplOpt{left-line}%bool-option
-\ExplOpt{bottom-line}%bool-option
-\ExplOpt{right-line}%bool-option
 
-\ExplOpt{round-corner}%metakeys
-\ExplOpt{arc}%metakeys
-\ExplOpt{outer-arc}
+
 
 \vspace*{\baselineskip}
 This finished the \emph{outside} part for the moment. The package provides also some hooks
@@ -465,7 +515,55 @@ whereby the settings are used for the the environemnts \Env{xframed} to follow.
 
 As you can see the topline gets a smooth transition. 
 
-\ExplOpt{show-all-lines}%metakeys
+\ExplOpt[true]{show-all-lines}%metakeys
+By default a frame has four lines around it. Drawing no
+lines can be achieved by the boolean flag \Opt{show-all-lines}.
+If you don't want to draw any lines you can pass the value \texttt{false}
+to the option \Opt{show-all-lines}
+
+\ExplOpt[true]{top-line}%bool-option
+The option \Opt{show-all-lines} controls the behaviour
+of all lines. But yu can control every line separat. The option 
+\Opt{top-line} influence the line above the frame. It's also 
+a boolean key and accepts either \texttt{true} or \texttt{false}.
+
+\ExplOpt[true]{left-line}%bool-option
+It's similar to \Opt{top-line} but it controls the left line.
+
+\ExplOpt[true]{bottom-line}%bool-option
+It's similar to \Opt{top-line} but it controls the bottom line.
+\ExplOpt[true]{right-line}%bool-option
+It's similar to \Opt{top-line} but it controls the right line.
+
+\ExplOpt{round-corner}%metakeys
+This is a meta key. That means the value of \Opt{round-corner} is passed
+to the options \Opt{outer-arc} and \Opt{inner-arc}.
+
+\ExplOpt{arc}
+It's a short synonym for \Opt{round-cornerns}.
+
+\ExplOpt[10pt]{outer-arc}
+The frame around the provided material of \Env{xframed} 
+has a defined width. The outer part of the line gets
+rounded corners by the dimension of the value by \Opt{outer-arc}.
+
+\minisec{Example}
+I think it's time for a small example.
+
+\begin{ltxexample}[caption=Example outer part III,result=true,]
+\newxframedstyle{example-outerpart}
+   { line-width=4pt,margin=1cm,line-color=red!40!black,
+     bg-color=red!20,round-corner=20pt,outer-arc=5pt}
+\begin{xframed}[style=example-outerpart]
+ \begin{minted}{latex}
+   \newxframedstyle{example-outerpart}
+     { line-width=4pt,margin=1cm,line-color=red!40!black,
+       bg-color=red!20,round-corner=20pt,outer-arc=5pt}
+ \end{minted}
+ The contents of the frame with some text
+ and some more text. And more text.
+\end{xframed}
+\end{ltxexample}
 
 \section{Main body of the frame}\label{sec:element-main}
 As shown in \autoref{fig:baseelements} the body is the main part of
@@ -667,11 +765,81 @@ It's time for a new example to demonstrate the title.
 
 
 \section{Tikz elements of  \texorpdfstring{\Pack{xframed}}{xframed}}\label{sec:tikzsetup}
-Text 
+I often refer this section. The reason is very simple. \LaTeX without any 
+extension can draw nice graphics. Therefor bundels like PSTricks
+or TikZ/PGF are needen. This sections shows the implementation
+using TikZ and so it allows a lot of modification. Please note this
+documentation doesn't explain TikZ. Therefor you shall consulitate
+the documentation of TikZ.
+
 \ExplOpt{setup-tikz}%hooks--tl
+The command to setup all TikZ styles was introduced in \autoref{sec:specopt}.
+The needed command is \Cmd{xframedsetup}. Of course you can also use 
+the option \Opt{setup-tikz} of \Env{xframed}. Nevertheless the syntax of
+the implementation is equal, becaus the value of
+\Opt{setup-tikz} is passed to \Cmd{xframedsetup}. 
+
+
+\minisec{Excursus}
+Let me do a small excursus. TikZ allows very simple to define
+new styles by using the syntax of \Pack{pgfkeys}. For example
+you wan to define your own style for some rectangles you can do this as follows.
+\begin{ltxexample}[caption={Excursus TikZ style},label=excursus,result=false]
+ \tikzset{my rectangle/.style={fill=green}}
+ \tikz\draw[my rectangle] (0,0) rectangle (2,0.5);
+\end{ltxexample}
+The result will be \input{\jobname.pyg}. \Pack{xframed} does nearly the same.
+Instead of using the family Tikz, \Pack{xframed} uses the family \texttt{xframed}.
+That means every defined style has the prefix \texttt{xframed}. Related to our
+example above \Pack{xframed} do:
+\begin{ltxexample}[caption={Excursus TikZ style},label=excursusi,result=false]
+ \xframedsetuptikz{my rectangle/.style={fill=green}}
+ \tikz\draw[xframed/my rectangle](0,0) rectangle (2,0.5);
+\end{ltxexample}
+And you get the same result \input{\jobname.pyg}.\hfill {\small end excursus}
+
+
+Next are all defined styles explained. You can change every style with the
+syntax of TiKZ.  I hope I don't forget no element.
+
+\ExplTOpt[fill = \Opt{bg-color}]{bg/.style}
+This style controls the background of the main element. The
+default is a full filled rectangle whereby the color
+is specified by \Opt{bg-color}. 
+
+\ExplTOpt[fill = \Opt{title-bg-color}]{title~bg/.style}
+This style controls the background of the title element. The
+default is a full filled rectangle whereby the color
+is specified by \Opt{title-bg-color}. 
+
+\ExplTOpt[draw = \Opt{title-line-color},line width\Opt{line-width-title}]{title~rule/.style}
+This style controls the separation line between the main and the title element.
+
+\ExplTOpt[fill = \Opt{foot-bg-color}]{foot~bg/.style}
+This style controls the background of the foot element. The
+default is a full filled rectangle whereby the color
+is specified by \Opt{foot-bg-color}. 
+\ExplTOpt[draw = \Opt{foot-line-color},line~width = \Opt{line-width-foot}]{foot~rule/.style}
+This style controls the separation line between the foot and the title element.
+
+\ExplTOpt[rounded~corners = \Opt{inner-arc}]{inner~arc/.style}
+This style controls inner arc of the frame.
+\ExplTOpt[rounded~corners = \Opt{outer-arc}]{outer~arc/.style}
+This style controls outer arc of the frame.
+\ExplTOpt[draw = \Opt{line-color-right},line width = \Opt{line-width-right}]{right~line/.style}
+This style controls the right line of the frame.
+\ExplTOpt[draw = \Opt{line-color-left},line width = \Opt{line-width-left}]{left~line/.style}
+This style controls the left line of the frame.
+\ExplTOpt[draw = \Opt{line-color-top},line width = \Opt{line-width-top}]{top~line/.style}
+This style controls the top line of the frame.
+\ExplTOpt[draw = \Opt{line-color-bottom},line width = \Opt{line-width-bottom}]{bottom~line/.style}
+This style controls the bottom line of the frame.
+
+
 
 
 \section{Footnotes}\label{sec:footnotes}
+\let\nobreak\relax
 \ExplOpt{footnote-distance}%skip keys
 \ExplOpt{footnote-line-width}
 \ExplOpt{footnote-line-lenght}
@@ -728,12 +896,94 @@ Text
 \ExplOpt{foot-post-code}%hooks--tl
 
 \section{Important typographical notes}
-\ExplOpt{ignore-last-descender}%bool-option
-\ExplOpt{ignore-last-skip}%bool-option
+My first package \Pack{mdframed} got a lot of feature request and
+bug reports (of course). At the moment most of them are fixed. 
+One very important and interesting question was provided by
+Tobias Weh at \href{http://tex.stackexchange.com/}{TeX.SX}. He asked
+\href{http://tex.stackexchange.com/questions/47584/how-to-make-mdframed-ignore-descenders-in-last-line}%
+{How to make mdframed ignore descenders in last line?}. Inspired by
+the great answer of Stephan Lehmke I implented this feature. 
+However this feature shall be missed in \Pack{xframed}.
+
+\ExplOpt[true]{ignore-last-descender}%bool-option
+The option \Opt{ignore-last-descender} does the same as
+the name say. It ignores the descenders of the last
+line of an element provided by \Pack{xframed}.
+
+\ExplOpt[true]{ignore-last-skip}%bool-option
+This is equal to \Opt{ignore-last-descender} but it ignores the
+last vertical skip. This is often useful if the contents
+of \Env{xframed} ends with an other environment
+like \Env{itemize}. 
+
+
+\clearpage
+\minisec{Example}
+Let me show the meaning of the two options \Opt{ignore-last-descender}
+and \Opt{ignore-last-skip}.
+
+
+\begin{center}
+\captionsetup{format=plain}
+\noindent\begin{minipage}[t]{0.5\linewidth}
+\begin{ltxexample}[caption={Example\newline \Opt{ignore-last-descender}\Opt{=true}},result=true,xframed={margin=5pt}]
+\xframedsetup{%
+   ignore-last-descender=true}
+\begin{xframed}
+  descender not in line
+\end{xframed}
+\begin{xframed}
+  descender in line: skip
+\end{xframed}
+\end{ltxexample}
+\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}
+\begin{ltxexample}[caption={Example \newline\Opt{ignore-last-descender}\Opt{=false}},result=true,xframed={margin=5pt}]
+\xframedsetup{%
+   ignore-last-descender=false}
+\begin{xframed}
+  descender not in line
+\end{xframed}
+\begin{xframed}
+  descender in line: skip
+\end{xframed}
+\end{ltxexample}
+\end{minipage}
+\end{center}
+
+The next example demonstrate the option \Opt{ignore-last-skip}.
+\begin{center}
+\captionsetup{format=plain}
+\noindent\begin{minipage}[t]{0.5\linewidth}
+\begin{ltxexample}[caption={Example\newline \Opt{ignore-last-skip}\Opt{=true}},result=true,xframed={margin=5pt}]
+\xframedsetup{%
+   ignore-last-skip=true}
+\begin{xframed}
+  \begin{itemize}
+   \item foo bar
+ \end{itemize}
+\end{xframed}
+\end{ltxexample}
+\end{minipage}%
+\begin{minipage}[t]{0.5\linewidth}
+\begin{ltxexample}[caption={Example \newline\Opt{ignore-last-skip}\Opt{=false}},result=true,xframed={margin=5pt}]
+\xframedsetup{%
+   ignore-last-skip=false}
+\begin{xframed}
+  \begin{itemize}
+   \item foo bar
+ \end{itemize}
+\end{xframed}
+\end{ltxexample}
+\end{minipage}
+\end{center}
+
+
 
 \chapter{Breaking across pages}\label{chap:break}
 Text 
 \ExplOpt{allow-breaking}%bool-option
+\ExplOpt{minimum-space}
 \ExplOpt{split-topskip}%skip keys
 \ExplOpt{split-bottomskip}%skip keys
 \ExplOpt{repeat-title}%bool-option

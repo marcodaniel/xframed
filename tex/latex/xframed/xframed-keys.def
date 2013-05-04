@@ -52,7 +52,7 @@
    \keys_define:nn { xframed }
     {
       #1 .code:n  =  \xframed__prop_set:Nnn \l__xframed_length_option_prop
-                                  { #1 } { \dim_eval:n { ##1 } }
+                                  { #1 } {  ##1  }
     }
   \keys_set:nn  { xframed }
    {
@@ -349,9 +349,9 @@
  {
   style .code:n =
     {
-     \cs_if_exist:cTF { xframed_stylename_#1 }
+     \cs_if_exist:cTF { xframed_style_#1_user }
       {
-       \xframedsetup { \use:c { xframed_stylename_#1 } }
+       \exp_args:Nf \xframedsetup { \use:c { xframed_style_#1_user } }
       }
       {
        \msg_error:nnx { xframed } { unknown-style }

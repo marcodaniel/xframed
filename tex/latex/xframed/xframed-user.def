@@ -44,43 +44,183 @@
     \end{xframed} 
    }
  }
+
+%%Defining method to save styles
+\NewDocumentCommand \newxframedstyle { m m }
+ {
+  \tl_if_exist:cTF { xframed_style_#1_user }
+   {
+    \msg_warning:nnx { xframed } { style-already-defined } { #1 }
+    \addtoxframedstyle { #1 } { #2 }
+   }
+   {
+    \tl_new:c  { xframed_style_#1_user } 
+    \tl_set:cn { xframed_style_#1_user } { #2 }
+   }
+ }
+
+
+\NewDocumentCommand \renewxframedstyle { m m }
+ {
+  \tl_if_exist:cTF { xframed_style_#1_user }
+   {
+    \tl_set:cn { xframed_style_#1_user } { #2 }
+   }
+   {
+    \msg_warning:nnx { xframed } { style-not-defined } { #1 }
+    \newxframedstyle { #1 } { #2 }
+   }
+ }
+
+ 
+\NewDocumentCommand \addtoxframedstyle { m m }
+ {
+  \tl_if_exist:cTF { xframed_style_#1_user }
+   {\tl_put_right:cn { xframed_style_#1_user } { #2 } }
+   {
+    \msg_warning:nnx { xframed } { style-not-defined } { #1 }
+    \newxframedstyle { #1 } { #2 }
+   }
+ }
+
+ 
+ 
+ 
  
 %%Allows the usage of length defined by key=value
 %%\usexframendlength{key}
+%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendlength { m }
  {
-  \xframed__get_length:n { #1 }
+%  \xframed__get_length:n { #1 }
+  \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_length_option_prop { #1 }  }
+   { 
+    0pt 
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { length }
+   }
+   {  
+    \prop_get:Nn \l__xframed_length_option_prop { #1 } 
+   }  
  }
 %%\showxframendlength{key}
+%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \showxframendlength { m }
  {
   %needed if value was length
-  \dim_set:Nn \l_tmpa_dim { \xframed__get_length:n { #1 } } length
-  \dim_use:N  \l_tmpa_dim
+%  \dim_set:Nn \l_tmpa_dim { \xframed__get_length:n { #1 } } 
+%  \dim_use:N  \l_tmpa_dim
+  \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_length_option_prop { #1 }  }
+   {  
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { length }
+    \textcolor{red}{??}
+   }
+   {  
+    \dim_set:Nn \l_tmpa_dim { \xframed__get_length:n { #1 } } 
+    \dim_use:N  \l_tmpa_dim
+   }  
  }
+
+
+
+
+
+
 %%Allows the usage of skips defined by key=value
 %%\usexframendskips{key}
+%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendskip { m }
  {
-  \xframed__get_skips:n { #1 }
+%  \xframed__get_skips:n { #1 }
+  \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_skip_option_prop { #1 }  }
+   { 
+    0pt 
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { skip }
+   }
+   {  
+    \prop_get:Nn \l__xframed_skip_option_prop { #1 } 
+   }  
  }
 %%\showxframendskip{key}
 \NewDocumentCommand \showxframendskip { m }
  {
   %needed if value was a skip
-  \skip_set:Nn \l_tmpa_skip { \xframed__get_skip:n { #1 } }
-  \dim_use:N   \l_tmpa_skip
+%  \skip_set:Nn \l_tmpa_skip { \xframed__get_skip:n { #1 } }
+%  \skip_use:N   \l_tmpa_skip
+  \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_skip_option_prop { #1 }  }
+   {  
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { skip }
+    \textcolor{red}{??}
+   }
+   {  
+    \skip_set:Nn \l_tmpa_skip { \xframed__get_skip:n { #1 } } 
+    \skip_use:N  \l_tmpa_skip
+   }   
  }
+ 
+ 
+ 
+ 
+ 
+ 
 %%Allows the usage of color defined by key=value
 %%\usexframendcolor{key}
+%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendcolor { m }
- {
-  \color { \xframed__get_color:n { #1 } }
+ { 
+%  \color { \xframed__get_color:n { #1 } }
+  \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_color_option_prop { #1 }  }
+   {  
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { color }
+    \textcolor{red}{??}
+   }
+   {  
+    \color{ \prop_get:Nn \l__xframed_color_option_prop { #1 } }
+   }  
  }
+
 %%\showxframendcolor{key}
+%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \showxframendcolor { m }
  {
-  \xframed__get_color:n { #1 }
+ % \xframed__get_color:n { #1 }  
+ \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
+   {  \prop_get:Nn \l__xframed_color_option_prop { #1 }  }
+   {  
+    \msg_warning:nnnn
+     { xframed } 
+     { prop-key-not-available }
+     { #1 }
+     { color }
+    \textcolor{red}{??}
+   }
+   {  
+    \prop_get:Nn \l__xframed_color_option_prop { #1 }
+   }
  }
 
  
@@ -88,95 +228,12 @@
 %%syntax \Surroundwithxframed[option list]{env name}
 \NewDocumentCommand \Surroundwithxframed { O{} m }
  {
-   \xframed_before_env:nn { #2 } { \begin{xframed}[#1] }
-   \xframed_after_env:nn  { #2 } { \end{xframed}       }
+  \BeforeBeginEnvironment{#2}{\begin{xframed}[#1]}%
+  \AfterEndEnvironment{#2}{\end{xframed}}%
+%   \xframed_before_env:nn { #2 } { \begin{xframed}[#1] }
+%   \xframed_after_env:nn  { #2 } { \end{xframed}       }
  }
-%%use the command only if exists 
-\cs_new:Npn  \xframed_csuse_withouterrors:n #1
- {
-  \cs_if_exist:cT { #1 } 
-    { \use:c { #1 } }
- }
-
-%%puts material before the environment
-%%  \xframed_before_env:n{env-name}{material}
-\cs_new:Npn \xframed_before_env:nn #1 #2
- {
-  \tl_if_exist:cF { xframed_beforebegin_#1_hook }
-   { \tl_new:c { xframed_beforebegin_#1_hook } }
-  \tl_gput_left:cn {xframed_beforebegin_#1_hook}{ #2 }
- }
-%%puts material after the environment
-%%  \xframed_after_env:n{env-name}{material}
-\cs_new:Npn \xframed_after_env:nn #1 #2
- {
-  \tl_if_exist:cF { xframed_afterend_#1_hook }
-   { \tl_new:c { xframed_afterend_#1_hook } }
-  \tl_gput_right:cn {xframed_afterend_#1_hook} { #2 }
- }
-%%%%%
-%%%%
-%%interface to LaTeX23
-%%http://chat.stackexchange.com/transcript/message/9270880#9270880
-\ExplSyntaxOff
-\makeatletter
-\regexpatchcmd{\begin}
-  {\A}
-  {\c{xframed_csuse_withouterrors:n}  \cB\{ xframed_beforebegin_\cP\#1_hook \cE\} }
-  {}{}
-\regexpatchcmd{\begin}
-  {\A}
-  {\c{xframed_csuse_withouterrors:n}  \cB\{ xframed_beforebegin_\cP\#1_hook \cE\} }
-  {}{}
-\regexpatchcmd{\end}
- {\c{if@ignore}}
- {\c{xframed_csuse_withouterrors:n}  \cB\{ xframed_afterend_\cP\#1_hook \cE\}
-  \c{if@ignore}}
- {}{}
  
-
-
  
+\tex_endinput:D 
 
-
-%%%%%%%%%expand all begin commands
-%%%%%%%
-%%%%%%%
-%%%%%%%\cs_set_eq:NN \begin_orig:n \begin
-%%%%%%%\tl_set:Nn \l_tmpa_tl 
-%%%%%%%  { \xframed_csuse_withouterrors:n  { xframed_beforebegin_#1_hook } }
-%%%%%%%\RenewDocumentCommand { \begin } {}
-%%%%%%% {
-%%%%%%%  \exp_not:o { \l_tmpa_tl }
-%%%%%%%  \begin_orig:n
-%%%%%%% }
-%%%%%%%
-%%%%%%%
-%%%%%%%%%%%\xapptocmd 
-%%%%%%%%%%% { \begin }
-%%%%%%%%%%% {  
-%%%%%%%%%%%  \xframed_csuse_withouterrors:n  { xframed_beforebegin_#1_hook } 
-%%%%%%%%%%% }
-%%%%%%%%%%% {
-%%%%%%%%%%%  \msg_info:nnn {xframed} { patching-worked } { \begin }
-%%%%%%%%%%% }
-%%%%%%%%%%% {
-%%%%%%%%%%%  \msg_warning:nnn {xframed} { patching-failed } { \begin }
-%%%%%%%%%%% }
-%%%%%%%%%expand all end commands
-%%%%%%%\xpatchcmd 
-%%%%%%% { \end }
-%%%%%%% {\if@ignore}  
-%%%%%%% {  
-%%%%%%%  \xframed_csuse_withouterrors:n  { xframed_afterend_#1_hook } 
-%%%%%%%  \if@ignore
-%%%%%%% }
-%%%%%%% {
-%%%%%%%  \msg_info:nnn {xframed} { patching-worked } { \end }
-%%%%%%% }
-%%%%%%% {
-%%%%%%%  \msg_warning:nnn {xframed} { patching-failed } { \end }
-%%%%%%% }
-%%%%%%%
-\ExplSyntaxOn
-\tex_endinput:D
