@@ -187,7 +187,7 @@
 \cs_new:Npn \xframed__environment_precode:
  {
   \xframed__developer_tools:
-  \xframed__minimum_space:
+  %%\xframed__minimum_space:
   \xframed__test_if_splittable:
   \xframed__calculate_width:
   \xframed__declare_footnotes:
@@ -195,20 +195,20 @@
   \tl_use:N \l__xframed_codebefore_tl
  }
 
-\cs_new:Npn \xframed__minimum_space:
- {
-  \group_begin:
-    \dim_set:Nn \l_tmpa_dim
-                { \xframed__get_length:n{ minimum-space } }
-    \skip_vertical:n { \c_zero_dim plus \l_tmpa_dim }
-    \tex_penalty:D  -100 \scan_stop:
-    \skip_vertical:n { \c_zero_dim plus -\l_tmpa_dim }
-    \skip_vertical:n { \l_tmpa_dim }
-    \tex_penalty:D  9999 \scan_stop:
-    \skip_vertical:n { -\l_tmpa_dim }
-    \skip_vertical:n { 0pt plus 0pt minus 0pt }
-  \group_end:
- }
+%%\cs_new:Npn \xframed__minimum_space:
+%% {
+%%  \group_begin:
+%%    \dim_set:Nn \l_tmpa_dim
+%%                { \xframed__get_length:n{ minimum-space } }
+%%    \skip_vertical:n { \c_zero_dim plus \l_tmpa_dim }
+%%    \tex_penalty:D  -100 \scan_stop:
+%%    \skip_vertical:n { \c_zero_dim plus -\l_tmpa_dim }
+%%    \skip_vertical:n { \l_tmpa_dim }
+%%    \tex_penalty:D  9999 \scan_stop:
+%%    \skip_vertical:n { -\l_tmpa_dim }
+%%    \skip_vertical:n { 0pt plus 0pt minus 0pt }
+%%  \group_end:
+%% }
 
 
 \cs_new:Npn \xframed__calculate_width:
@@ -361,6 +361,7 @@
                          \box_use:N \l__xframed_main_coffin
                          \skip_vertical:n {  \xframed__get_length:n { inner-bottom-margin } }
                         } 
+  \xframed_needed_height:
   \xframed__draw_tikz_frame:  %\l__xframed_main_coffin
 %  \fbox{\xframed__display_coffins:N \l__xframed_head_coffin }
 %  \par
@@ -396,6 +397,16 @@
             \xframed__get_length:n { ##1 }
            }
     }
+  \msg_log:n
+    {
+     xframed~info~\msg_line_number:\\\\
+     \ coffin~dimension =~\dim_use:N \l__xframed_computed_coffin_height_dim\ =
+            \ \egreg_convertto:nn{cm}{\l__xframed_computed_coffin_height_dim} \\
+     \ used~=~\dim_use:N \tex_pagetotal:D\ =
+            \ \egreg_convertto:nn{cm}{\tex_pagetotal:D} \\
+     \ free~=~\dim_use:N \l__xframed_free_vspace_dim\ =
+            \ \egreg_convertto:nn{cm}{\l__xframed_free_vspace_dim} 
+    }    
  }
 
 

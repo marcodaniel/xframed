@@ -22,34 +22,34 @@
  {
   \bool_if:nTF
     {
-      \cs_if_exist_p:N \@captype             ||
-      \if@minipage 1 \else 0 \fi             ||
-      \ifinner     1 \else 0 \fi             ||
-      \bool_if_p:N \l__xframed_nobreak_bool
+      \if@minipage 1 \else 0 \fi             || %compatible to LaTeX2e
+      \ifinner     1 \else 0 \fi             || %compatible to LaTeX2e
+      \ifnum\@floatpenalty<0\relax  1 \else 0 \fi || %compatible to LaTeX2e
+      \bool_if_p:N \l__xframed_allowbreaking_bool 
     }
     {
-     \bool_if:NF \l__xframed_nobreak_bool
+     \bool_if:NF \l__xframed_allowbreaking_bool 
        {
         \msg_warning:nn { xframed } { inside-box }
        }
      \xframed__msg_log:n { xframed~uses~nonsplittable~output }
-     \bool_set_true:N \l__xframed_nobreak_bool
+%    \bool_set_false:N \l__xframed_allowbreaking_bool 
     }
     {
      \xframed__msg_log:n { xframed~uses~splittable~output }
-     \bool_set_false:N \l__xframed_nobreak_bool
+%     \bool_set_true:N \l__xframed_allowbreaking_bool 
     }
  }
 
 
 \cs_new:Npn \xframed_use_splittable_output:
  {
-  \vcoffin_set:Nn \l__xframed_store_one_coffin
-       { \box_use_clear:N \l__xframed_store_one_coffin }
+%  \vcoffin_set:Nn \l__xframed_store_one_coffin
+%       { \box_use_clear:N \l__xframed_store_one_coffin }
 %  \__coffin_reset_structure:N \l__xframed_store_one_coffin
 %  \__coffin_update_poles:N \l__xframed_store_one_coffin
 %  \__coffin_update_corners:N \l__xframed_store_one_coffin
-  \xframed_needed_height:
+%  \xframed_needed_height:
   \dim_compare:nNnTF
     { \l__xframed_free_vspace_dim }
     >
