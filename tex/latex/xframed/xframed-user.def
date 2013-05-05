@@ -181,8 +181,23 @@
    }   
  }
  
- 
- 
+
+%%Prints all options 
+%% \xframedprintalloption[<option property>]
+\NewDocumentCommand \xframedprintalloption { o }
+ {
+  \IfNoValueTF { #1 }
+   {
+    \xframed__all_option_output:
+   }
+   {
+    \clist_map_inline:nn { #1 }
+     {
+      \cs_if_exist_use:cF { xframed__##1_output_aux: }
+       { \msg_error:nnn { xframed} { output-option-failed } { ##1 } }
+     }
+   } 
+ }
  
  
  

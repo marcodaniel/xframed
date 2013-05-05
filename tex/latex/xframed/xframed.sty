@@ -44,7 +44,7 @@
  \RequirePackage{tikz}
  \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
-
+\RequirePackage{xcolor}%needed to display developer Info
 \RequirePackage{longtable}%needed to display developer Info
 \RequirePackage{etoolbox}%as long as regexpatch has alpha status
 %%============================================%%
@@ -138,8 +138,8 @@
     \xframed__environment_inner_postcode:
     \vcoffin_set_end:
   \xframed__set_list:
-    \xframed__environment_postcode:
-  \group_insert_after:N \xframed__set_endlist:
+    \xframed__environment_postcode:  
+  \xframed__set_endlist:
   \group_end:
  }
 

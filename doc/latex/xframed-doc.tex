@@ -1056,11 +1056,28 @@ if you set \Opt{developer-info} to \texttt{true}.
 An example is shown at the title page. The following
 happens if you use this options
 \begin{itemize}
- \item The output of the coffin is done by \verb+\coffin_display_handles:Nn ##1 { blue!70!black }+ instead of \verb+\box_use:N+.
+ \item The output is done 
+   by \verb+\coffin_display_handles:Nn ##1 { blue!70!black }+\ 
+  instead of \verb+\box_use:N+ 
   So you can provide other coffins which can be joined. 
  \item  It shows you all defined TikZ nodes, if TikZ is in use.
  \item More information are written in the \texttt{log} file.
 \end{itemize}
+
+\ExplCmd{xframedprintalloption}[\OArgs[property]]
+If you want to controll whether all options are corectly passed you can print out the
+option by the provided user commands \Cmd{showxframendskip}, \Cmd{showxframendlength}
+or \Cmd{showxframendcolor}. However this is only useful for one or two options. The 
+\Cmd{xframedprintalloption} closed this gap. It prints all option inside a \Env{longtable} with
+three columns. If you don't use the optional argument all \texttt{skip},
+\texttt{length} and \texttt{color} options are printed. 
+With the help of the optional argument you can specify which option shall be printed. 
+
+\begin{ltxexample}[caption={Example \Cmd{xframedprintalloption}\OArgs[skip]},result=true,]
+\begin{xframed}[margin=1cm,skip=1cm,]
+ \xframedprintalloption[skip]
+\end{xframed}
+\end{ltxexample}
 
 
 
@@ -1077,6 +1094,8 @@ happens if you use this options
 \end{ltxexample}
 
 
+
+
 \chapter{Examples}\label{chap:examples}
 Text 
 
@@ -1089,4 +1108,10 @@ Text
 
 \section{ToDo}
 \ExplOpt{twoside-mode}%bool-option
+\chapter{Revision history}
+
+\minisec{May 5 2013}
+\begin{itemize}
+ \item alpha status
+\end{itemize}
 \end{document}

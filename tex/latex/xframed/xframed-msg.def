@@ -72,5 +72,14 @@
 \msg_new:nnn { xframed } { patching-failed }
   { Patching~the~command~#1~failed.  }
   
+
+\msg_new:nnn { xframed } { output-option-failed }
+  {
+    You~are~trying~to~print~all~#1~options.\\
+    These~options~are~not~defined~by~xframed. \\
+    Allowed~are:~length,~skip~and~color.\\
+    Perhaps~it~is~spelled~incorrectly.
+  }
+ 
   
 \tex_endinput:D

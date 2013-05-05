@@ -24,42 +24,21 @@
 \usepackage{etoolbox}
 \usepackage{amsmath}
 \usepackage{caption}
+\usepackage{multicol}
 %\show\begin
 %\show\end
 \begin{document}
-a%\xframedmethod
 
-%\addtoxframedstyle{test}{foo=bar}
-%
-%\newxframedstyle{test}{foo=bar}
-
-a\hspace*{\usexframendskip{skip-above}}a
-    %\showxframendskip{skip-above}%
-   %\hspace*{\usexframendlength{inner-left-margin}}%
-    \usexframendcolor{foot-bg-colora}a
-
-
-\begin{itemize}
-\item foo
-\item foo bar
-\item bar
-\end{itemize}
-\newxframedstyle{itemize}{line-width=2pt+2pt,bg-color=red,first-title={\captionof{figure}{foobar}}}
-\Surroundwithxframed[style=itemize]{itemize}
-\begin{minipage}{.7\textwidth}
-\begin{itemize}
-\item foo
-\item foo bar
-\item bar
-\end{itemize}
-\end{minipage}
-\clearpage
-Test
-\begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},]
-
+\begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},margin-right=-1cm,
+]
+\begin{multicols}{3}
 \lipsum[2]
-
+\end{multicols}
 \end{xframed}
+
+asd
+\xframedprintalloption[skip,color,length]
+
 \lipsum[1]
 \clearpage
 
