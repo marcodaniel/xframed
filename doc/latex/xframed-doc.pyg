@@ -1,7 +1,0 @@
-\xframedsetup{%
-   ignore-last-skip=false}
-\begin{xframed}
-  \begin{itemize}
-   \item foo bar
- \end{itemize}
-\end{xframed}
