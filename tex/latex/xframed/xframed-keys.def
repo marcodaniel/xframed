@@ -22,20 +22,41 @@
 \tl_new:N \xframed__framemethode_tl
 \cs_new_protected:Npn \xframed__set_framemethod:n #1
  {
-   \clist_if_in:nnT { default , tex , latex , none , 0 }
-                    { \tl_expandable_uppercase:n #1 }
-                    { \tl_gset \xframed__framemethode_tl { default } }
-   \clist_if_in:nnT { pgf , tikz , 1 }
-                    { \tl_expandable_uppercase:n #1 }
-                    { \tl_gset \xframed__framemethode_tl { tikz } }
-   \clist_if_in:nnT { pstricks , ps , postscript , 2 , 3 }
-                    { \tl_expandable_uppercase:n #1 }
-                    { \tl_gset \xframed__framemethode_tl { pstricks } }
+   \tl_set:Nx \l_tmpa_tl { \tl_expandable_lowercase:n { #1 } }
+   \clist_if_in:noTF { pgf , tikz } { \l_tmpa_tl }
+    {
+     \tl_set:Nn \xframed__framemethode_tl { tikz }
+    }
+    {
+     \clist_if_in:noTF { default , tex , latex , none  } { \l_tmpa_tl }
+      {
+       \tl_set:Nn \xframed__framemethode_tl { default }
+      }
+      {
+       \clist_if_in:noTF { pstricks , ps , postscript } { \l_tmpa_tl }
+        {
+         \tl_set:Nn \xframed__framemethode_tl { default }
+        }
+        {
+         \msg_error:nnx { xframed }{ unknown-option } { \l_tmpa_tl }
+        }
+      }
+    }
  }
+
  
  \keys_define:nn { xframed }
   {
-     framemethod .code:n  = \xframed__set_framemethod:n { #1 }
+     frame-method .code:n       = \xframed__set_framemethod:n { #1 } ,
+     frame-method .initial:n    = tikz                               ,
+     no-tikz      .bool_gset:N  = \g_xframed_notikz_bool             ,
+     no-tikz      .initial:n    = false                              ,
+     no-pstricks  .bool_gset:N  = \g_xframed_notikz_bool             ,
+     no-pstricks  .initial:n    = true                               ,
+     default      .code:n       = \xframed__set_framemethod:n { default } ,
+     default      .value_forbidden:                                  ,
+     tikz         .code:n       = \xframed__set_framemethod:n { tikz } , 
+     tikz         .value_forbidden:                                  ,
   }
 %!end framemethod
 
@@ -120,6 +141,11 @@
           foot-skip-above        = #1           ,
           foot-skip-below        = #1           ,
          }                                                              ,
+   split-skip              .meta:n  =
+         {
+          split-skip-top         = #1           ,
+          split-skip-bottom      = #1           ,
+         }                                                              ,
    line-width              .meta:n  =
          {
           line-width-top          = #1           ,
@@ -179,8 +205,8 @@
  {
    skip-above              ==  10pt      ,
    skip-below              ==  10pt      ,
-   split-topskip           ==  10pt      ,
-   split-bottomskip        ==  10pt      ,
+   split-skip-top          ==  10pt      ,
+   split-skip-top bottom   ==  10pt      ,
    footnote-distance       ==  10pt      ,
    subtitle-skip-above     ==  5pt       ,
    subtitle-skip-below     ==  5pt       ,
@@ -254,7 +280,7 @@
 
 %!hooks
 \keys_define:nn { xframed }
- {#
+ {
   code-before         .tl_set:N  = \l__xframed_codebefore_tl                 ,
   code-after          .tl_set:N  = \l__xframed_codeafter_tl                  ,
   code-begin          .tl_set:N  = \l__xframed_codebegin_tl                  ,
@@ -301,7 +327,6 @@
 %%!!  footnote-inside not used and not described yet
   footnote-inside       .bool_set:N = \l__xframed_footnoteinside_bool   ,
   twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
-  repeat-title          .bool_set:N = \l__xframed_repeattitle_bool      ,
   shadow                .bool_set:N = \l__xframed_shadow_bool           ,
   ignore-last-descender .bool_set:N = \l__xframed_descenders_bool       ,
   ignore-last-skip      .bool_set:N = \l__xframed_ignore_lastskip_bool  ,

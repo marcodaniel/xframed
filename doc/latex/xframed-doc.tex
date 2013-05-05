@@ -389,9 +389,37 @@ During the explanation I refer to the environment \Env{framed}. However this is 
 symbolic. The options are also working for other derivations. 
 
 \Pack{xframed} provides some meta keys. That means if you pass a value
-to the meta option more than one other option is influenced. Every meta
-option has a star right of the name. On this page you can see it for the
-meta option \Opt{skip}.
+to the meta option more than one other option are influenced. Every meta
+option has a star~{\let\quad\relax\Metakey}~right of the name. 
+
+\section{Drawing method}\label{sec:method}
+
+As \Pack{mdframed} I decided to support different methods of frame drawing.
+
+The usage of TikZ or PSTricks needs a lot more compilation time then the normal
+\LaTeX\ command \Cmd{rule}. In most cases a simple \Cmd{rule} is ok. However
+instead of \Pack{mdframed} you can choose the method for every frame separate.
+
+\begin{Note}
+Up to know there is no PSTricks implementation.
+\end{Note}
+
+\ExplOpt[tikz]{frame-method}
+The option \Opt{frame-method} allows you to declare the drawing commands.
+All allowed options are:
+\begin{center}
+\def\arraystretch{1.25}
+\begin{tabular}{@{}>{\MacroFont}lp{0.6\linewidth}@{}}\hline
+ default, tex, latex, none& Draw the frame with standard \LaTeXe commands. It needs the least compilation time.\\
+ pgf, tikz& Draw the frame with TikZ. It needed the highest compilation time.\\
+ pstricks, ps , postscript& Draw the frame with PSTricks.  \\\hline
+\end{tabular}
+\end{center}
+
+\ExplOpt{tikz*,default*}
+These options aren't meta option but I want to emphasize them. Theses options are 
+short forms of \Opt{frame-method}\texttt{=tikz} respectively \Opt{frame-method}\texttt{=default}.
+The options don't allow any values.
 
 
 \section{Outside the frame}
@@ -887,7 +915,7 @@ of \Env{xframed} ends with an other environment
 like \Env{itemize}. 
 
 
-\clearpage
+
 \minisec{Example}
 Let me show the meaning of the two options \Opt{ignore-last-descender}
 and \Opt{ignore-last-skip}.
@@ -951,14 +979,41 @@ The next example demonstrate the option \Opt{ignore-last-skip}.
 
 
 \chapter{Breaking across pages}\label{chap:break}
-Text 
-\ExplOpt{allow-breaking}%bool-option
-\ExplOpt{minimum-space}
-\ExplOpt{split-topskip}%skip keys
-\ExplOpt{split-bottomskip}%skip keys
-\ExplOpt{repeat-title}%bool-option
-\ExplOpt{first-title}%stringoptions
-\ExplOpt{last-foot}%stringoptions
+\begin{Note}
+This isn't implemented yet!
+\end{Note}
+
+It became very popular to have frames which automatic break across pages.
+As often said my first package can do this. Because \Pack{xframed} shall
+become the  successor of \Pack{mdframed}, I implement it too. However
+the algorithm differs from the previous one. At the end of the day both
+are using \Cmd{vsplit}.
+
+
+\ExplOpt[true]{allow-breaking}%bool-option
+To decide whether a break is allowed or not you can use the \Opt{allow-breaking}.
+If you say \Opt{allow-breaking}\texttt{=false} the frame will never break. This
+happens also if you use \Env{xframed} inside floating objects or other boxes. 
+
+\ExplOpt[\Opt{line-width-top}+\Opt{line-width-bottom}+2\string\baselineskip]{minimum-space}
+When you start the environment \Env{xframed} you can specify
+the minimum space before the first split occurs. This height is
+controlled by \Opt{minimum-space}. 
+
+\ExplOpt{split-skip*,split-skip-top,split-skip-bottom}%skip keys
+The splitting leads always to added space. The space
+before and after a split. The option \Opt{split-skip-top}
+controls the distance between the top of the page and the splitted
+material, whereby \Opt{split-skip-top} is part of the frame. The
+option \Opt{split-skip-bottom} does the same for the end of
+a splitted frame. 
+
+
+\ExplOpt{title,foot}%stringoptions
+I explained the options \Opt{first-title,last-foot}. If a frame is splitted
+you can specify the a title and a foot for all splitted frames. However 
+the options \Opt{first-title,last-foot} don't loose there meaning.
+These options are inspired by \Pack{longtable}.
 
 \chapter{Developer Info}\label{chap:developer-info}
 
@@ -973,18 +1028,22 @@ However instead of the normal \TeX or \LaTeX  commands \Cmd{box} or \Cmd{setbox}
 I am using the modul \Pack{l3coffin}. So all parts are saved as coffins. Of course after
 all expansion you have a simple box.
 
+It's also important to know that \Pack{xframed} does all the computation
+of length etc. on the \LaTeXe\ site. This is easier to support different
+\Opt{frame-method}. 
+
 At the begin of every environment the package writes the following information 
 to the log file:
 \begin{ltxexample}[caption={Info dimension},result=false,]
 .................................................
-. xframed info 108
+. xframed info 58
 . 
 .  dimension of the current page
-.  height = 16383.99998pt
-.  used = 0.0pt
-.  free = 16383.99998pt
-.  request = 28.45274pt(Option: minimum-space)
-. 
+.  height = 591.53027pt = 20.78991 cm
+.  used = 11.0pt = 0.38661 cm
+.  free = 580.53027pt 20.40331 cm
+.  request = 27.20001pt = 0.95597 cm
+.  request is provided by the option: minimum-space
 .................................................
 \end{ltxexample}
 
@@ -994,15 +1053,26 @@ It helps you to setup your environment.
 Next to the information to the \texttt{log} file
 I provided some helper methods which will be displayed
 if you set \Opt{developer-info} to \texttt{true}.
-An example is shown at the title page. It shows you all
-defined TikZ nodes.
+An example is shown at the title page. The following
+happens if you use this options
+\begin{itemize}
+ \item The output of the coffin is done by \verb+\coffin_display_handles:Nn ##1 { blue!70!black }+ instead of \verb+\box_use:N+.
+  So you can provide other coffins which can be joined. 
+ \item  It shows you all defined TikZ nodes, if TikZ is in use.
+ \item More information are written in the \texttt{log} file.
+\end{itemize}
+
 
 
 \begin{ltxexample}[caption={Example \Opt{developer-info}},result=true,]
-\begin{xframed}[developer-info=true,margin=1cm,
-  first-title={Sheldon Cooper Quotes},
-  last-foot={End Sheldon Cooper Quotes}]
-You know, I'm given to understand that there's an entire city in Nevada designed specifically to help people like Howard forget their problems. They can replace them with new problems, like alcoholism, gambling addiction and sexually transmitted diseases.   
+\begin{xframed}[developer-info=true,margin=1cm,skip=1cm,
+ first-title={Sheldon Cooper Quote},
+ last-foot={End Sheldon Cooper Quote}]
+  You know, I'm given to understand that there's an entire 
+  city in Nevada designed specifically to help people like 
+  Howard forget their problems. They can replace them with
+  new problems, like alcoholism, gambling addiction and 
+  sexually transmitted diseases.   
 \end{xframed}
 \end{ltxexample}
 

@@ -15,52 +15,11 @@
 \usepackage[x11names]{xcolor}
 \usepackage{lipsum,}
 \usepackage{marginnote}
-\usepackage[]{xframed}
+\usepackage[tikz]{xframed}
 \xframedsetup{%
-%left-margin=0cm,
-%right-margin=0cm,
-%inner-top-margin=0pt,
-%footnote-distance=1cm,
-%inner-top-margin=1.5cm,
-%inner-bottom-margin=0cm,
-%bg-color=Azure1
-% developer-info=true,
-% line-width=2pt,
-% line-width-right=20pt,
-% line-width-top=24pt, 
-% line-width-left=20pt,
-% line-width-bottom=25pt,
-% round-corner=20pt,%left-line=false,top-line=true,
-% line-color=Chocolate4,
-% title-bg-color=purple!30,
-% foot-bg-color=purple!90,
-% line-color-left=yellow,
-% line-color-top=red,
-% line-color-bottom=black,
-%line-color-right=orange,
-%%round-corner=20pt,
-%inner-arc=20pt,
-%outer-arc=10pt,
-%skip-below=0pt,
-%skip-above=0pt,
+%
  }
-%\xframedset{title bg/.append style={draw=black,rectangle}}
-%\xframedset{foot bg/.append style={draw=black,rectangle}}
-%\xframedsetup{%
-% first-title={title},
-% last-foot={a foot title},
-% title-above-skip=0pt,
-% title-below-skip=0pt,
-% foot-above-skip=0pt,
-% foot-below-skip=0pt,
-% inner-top-margin=0pt,
-% line-width-foot=20pt,
-% line-width-title=20pt,
-% foot-line-color=yellow,
-% title-line-color=yellow,
-% inner-left-margin=0pt,
-% inner-right-margin=0pt,
-%}
+
 \usetikzlibrary{plotmarks}
 \usepackage{etoolbox}
 \usepackage{amsmath}
@@ -68,6 +27,7 @@
 %\show\begin
 %\show\end
 \begin{document}
+a%\xframedmethod
 
 %\addtoxframedstyle{test}{foo=bar}
 %
@@ -86,7 +46,7 @@ a\hspace*{\usexframendskip{skip-above}}a
 \end{itemize}
 \newxframedstyle{itemize}{line-width=2pt+2pt,bg-color=red,first-title={\captionof{figure}{foobar}}}
 \Surroundwithxframed[style=itemize]{itemize}
-\begin{minipage}{.4\textwidth}
+\begin{minipage}{.7\textwidth}
 \begin{itemize}
 \item foo
 \item foo bar

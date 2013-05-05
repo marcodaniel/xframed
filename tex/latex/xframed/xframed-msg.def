@@ -18,31 +18,27 @@
 %%=======================================================%%
 
  
-\msg_new:nnnn { xframed } { inside-box }
-  { Environment~xframed~is~used~inside~a~non~breakable~box. }
-  {
+\msg_new:nnn { xframed } { inside-box }
+  { 
     You~are~using~the~environment~xframed~inside~a~non~breakable\\
     box.~By~this~the~option~nobreak~is~used.~For~further~information\\
     see~the~documentation.
   }
 
-\msg_new:nnnn { xframed } { package-not-available }
-  { Package~'#1'~is~not~available. }
-  {
+\msg_new:nnn { xframed } { package-not-available }
+  { 
     The~#1~package~is~not available~but~xframed~needs~the~package~.\\
     For~further~information~see~the~documenation.
   }
 
-\msg_new:nnnn { xframed } { unknown-option }
-  { Unknown~option~'#1'. }
-  {
-    The~option~file~'#1'~is~not~known~by~xframed\\
-    perhaps~it~is~spelled~incorrectly.
+\msg_new:nnn { xframed } { unknown-option }
+  { 
+    The~option~file~'#1'~is~not~known~by~xframed.\\
+    Perhaps~it~is~spelled~incorrectly.
   }
 
-\msg_new:nnnn { xframed } { unknown-style }
-  { Unknown~style~'#1'. }
-  {
+\msg_new:nnn { xframed } { unknown-style }
+  { 
     The~style~'#1'~is~not~known~by~xframed:
     perhaps~it~is~spelled~incorrectly.
   }

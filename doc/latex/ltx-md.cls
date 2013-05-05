@@ -215,7 +215,7 @@
 
 \NewDocumentCommand \Env { m }
  {
-  {\MacroFont #1}\xspace
+  {\hyperlink{ltx-md-env-#1}{\MacroFont #1}\xspace}
  }
 
 \NewDocumentCommand \Cmd { m }
@@ -228,10 +228,6 @@
   \texttt { #1 } \xspace
  }
 
-\NewDocumentCommand \NOTE {}
- {
-  \minisec{Note}
- }
 
 \NewDocumentCommand \limitation { O{TikZ} }
  {
@@ -258,7 +254,9 @@
     \par
     \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
     \noindent
-    \hbox_to_wd:nn { \c_zero_dim }
+    \hypertarget{ltx-md-env-#2}
+      {
+       \hbox_to_wd:nn { \c_zero_dim }
                    {
                      \skip_horizontal:n { -2em }
                      \@bsphack\def\arraystretch{1.25}
@@ -269,6 +267,7 @@
                       \end{tabular} 
                      \@esphack
                     }
+      }                
     \hfill\null
     \IfNoValueF { #1 }
       {

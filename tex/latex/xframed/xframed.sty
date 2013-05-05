@@ -41,9 +41,10 @@
 %%============================================%%
 %%============================================%%
 \ExplSyntaxOff
-\RequirePackage{tikz}
-\usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
+ \RequirePackage{tikz}
+ \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
+
 \RequirePackage{longtable}%needed to display developer Info
 \RequirePackage{etoolbox}%as long as regexpatch has alpha status
 %%============================================%%
@@ -119,7 +120,13 @@
  {
  \group_begin:
    \xframedsetup { #1 }
-   \xframed__start_environment:n { 1cm }
+   \xframed__start_environment:n 
+    { 
+     \xframed__get_length:n
+      {
+       minimum-space
+      }
+    }
    \xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }

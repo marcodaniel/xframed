@@ -34,3 +34,5 @@
 .DS_Store
 
 *.pyg
+
+doc/latex/xframed-doc.pyg

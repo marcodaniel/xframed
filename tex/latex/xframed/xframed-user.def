@@ -84,7 +84,11 @@
  }
 
  
- 
+%%display the frame method
+\NewDocumentCommand \xframedmethod {  }
+ {
+  \tl_use:N \xframed__framemethode_tl
+ }
  
  
 %%Allows the usage of length defined by key=value
