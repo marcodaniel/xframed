@@ -28,12 +28,11 @@
 %\show\begin
 %\show\end
 \begin{document}
+%as
 
-\begin{xframed}[head={this is my first box},first-title={title title title },last-foot={\lipsum[2]},margin-right=-1cm,
-]
-\begin{multicols}{3}
-\lipsum[2]
-\end{multicols}
+
+\begin{xframed}[head={this is my first box},first-title={title title title },title={Title},foot={\lipsum[2]},last-foot={ENDE},developer-info=true,skip=1cm plus .2cm,line-width-bottom=10pt]
+\lipsum\lipsum\lipsum\lipsum\lipsum\lipsum\lipsum\lipsum \textbf{FOOBARFOOBAR}
 \end{xframed}
 
 asd
@@ -44,7 +43,7 @@ asd
 
 
 
-\begin{xframed}[head={},title={},foot={},last-foot={},first-title={}]
+\begin{xframed}[head={},title={},foot={},last-foot={},first-title={},line-width-bottom=10pt]
 \centering
 Hallo TITEL $1+1=2$
 \lipsum[1]

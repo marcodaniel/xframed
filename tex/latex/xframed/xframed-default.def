@@ -1,0 +1,265 @@
+%%=======================================================%%
+%%=======================================================%%
+%% xframed-default.def                                   %%
+%%                                                       %%
+%% file to define all basic draw functions using \rule   %%
+%% file is part of the package xframed                   %%
+%%                                                       %%
+%% Author's name: Marco Daniel                           %%
+%% License type: lppl                                    %%
+%%                                                       %%
+%%  Copyright (c) 2013 Marco Daniel                      %%
+%%                                                       %%
+%%  This package may be distributed under the terms      %%
+%%  of the LaTeX Project Public License, as described    %%
+%%  in lppl.txt in the base LaTeX distribution.Either    %%
+%%  version 1.0 or, at your option, any later version.   %%
+%%=======================================================%%
+%%=======================================================%%
+
+
+
+
+\cs_new:Nn \xframed__draw_default_frame:
+ {
+  \begin{tikzpicture}[remember~picture]    
+   %%Inner part -- defines node xframed-inner
+   \xframed__default_innerpart:
+   %%title part -- defines node xframed-title
+   \xframed__default_titlepart:
+   %%foot part -- defines node xframed-foot  
+   \xframed__default_footpart:
+   %%%%%%%%%
+   %Outer part -- defines node xframed-outer
+   \xframed__default_drawframe:    
+  %\pgfnodealias{xframed-outer}{xframed-inner}
+   %use the correct bounding box
+   \pgfresetboundingbox\useasboundingbox%
+     ($(xframed-outer.south~west)+(-\xframed__get_length:n { margin-left },0)$) 
+       rectangle
+     ($(xframed-outer.north~east)+( \xframed__get_length:n { margin-right },0)
+       +(0,\xframed__get_length:n { extra-skip-above })$) ;
+      %Show development tools
+   %%User hook
+   \tl_use:N \l__xframed_posttikz_tl   
+   \l__xframed_singletikz_tl
+   %%xframed-developer info      
+   %\xframed__nodepoints_development:
+  \end{tikzpicture} 
+%%%%  \xframed__all_option_output:
+ }
+ 
+\cs_new:Nn \xframed__default_innerpart:
+ {
+  \begin{scope}
+    \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
+    \node[](xframed-inner)
+      {
+       \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
+       \xframed__display_coffins:N \l__xframed_main_coffin 
+       \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
+      };        
+  \end{scope}
+ }
+ 
+\cs_new:Nn \xframed__default_titlepart:
+ {
+  \tl_if_blank:VTF \l__xframed_firsttitle_tl
+    {
+     \pgfnodealias{xframed-title}{xframed-inner} 
+    } 
+    {
+    \begin{scope}
+      \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}
+      \node[anchor=south,
+       yshift= \xframed__get_length:n { line-width-title } ] (xframed-title) at (xframed-inner.north)
+        {
+         \hbox:n{} \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
+         \xframed__display_coffins:N \l__xframed_title_coffin 
+         \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
+        };
+        
+    \end{scope}
+    } 
+ } 
+\cs_new:Nn \xframed__default_footpart:
+ {
+  \tl_if_blank:VTF \l__xframed_lastfoot_tl
+    {
+     \pgfnodealias{xframed-foot}{xframed-inner}
+    }
+    {
+     \begin{scope}
+       \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}     
+       \node[anchor=north,
+        yshift= {-\xframed__get_length:n { line-width-foot }}, 
+        ] (xframed-foot) at (xframed-inner.south)
+         {
+          \skip_horizontal:n { \xframed__get_length:n { inner-margin-left } }
+          \xframed__display_coffins:N \l__xframed_foot_coffin
+          \skip_horizontal:n { \xframed__get_length:n { inner-margin-right } } \hbox:n{} 
+         };
+     \end{scope}
+    } 
+ } 
+
+\cs_new:Nn \xframed__default_drawframe:
+ {
+  \begin{scope}[on~background~layer]
+    %%Draw the main frame
+    \coordinate (fxx) at %fxx=left bottom
+             ($(xframed-foot.south~west)+(-\xframed__get_length:n { line-width-left },-\xframed__get_length:n { line-width-bottom })$); 
+    \coordinate (fyy) at %fyy=right top
+             ($(xframed-title.north~east)+(\xframed__get_length:n { line-width-right },\xframed__get_length:n { line-width-top })$);
+    \tikzset{every~node/.style={inner~sep=0pt,outer~sep=0pt,}}      
+    \node[anchor=south,
+           yshift= -\xframed__get_length:n { line-width-bottom },
+           xshift= .5*\xframed__get_length:n { line-width-right }-.5*\xframed__get_length:n { line-width-left }, ] 
+         (xframed-outer) at (xframed-foot.south)
+         {\tikz\path(fxx) rectangle (fyy);};
+    \clip[xframed/outer~arc](xframed-outer.south~west) rectangle (xframed-outer.north~east);
+    \xframed__default_drawframe_lines:
+    \xframed__default_drawframe_titlefoot:
+  \end{scope}
+ }
+\cs_new:Nn \xframed__default_drawframe_lines:
+ {
+  %left line
+    \path[fill = \xframed__get_color:n { line-color-left }] 
+     (xframed-outer.north~west) --  (xframed-outer.south~west) -- (xframed-inner.center) --cycle;
+   %right line
+    \path[fill = \xframed__get_color:n { line-color-right }] 
+     (xframed-outer.north~east) --  (xframed-outer.south~east) -- (xframed-inner.center) --cycle;
+  %top line
+    \path[fill = \xframed__get_color:n { line-color-top }] 
+     (xframed-outer.north~east) --  (xframed-outer.north~west) -- (xframed-inner.center) --cycle;
+   %bottom line
+    \path[fill = \xframed__get_color:n { line-color-bottom }] 
+     (xframed-outer.south~east) --  (xframed-outer.south~west) -- (xframed-inner.center) --cycle;   
+ } 
+
+\cs_new:Nn \xframed__default_drawframe_titlefoot:
+ {
+  \begin{scope}
+   %inner frame
+     \clip[xframed/inner~arc] (xframed-foot.south~west) rectangle (xframed-title.north~east);
+     \path[xframed/bg] (xframed-foot.south~west) rectangle (xframed-title.north~east);
+   %draw title componente (1) title (2) foot rule:
+     \tl_if_blank:VF \l__xframed_firsttitle_tl
+       {
+        \path[xframed/title~bg] (xframed-title.south~west) rectangle (xframed-title.north~east);
+        \bool_if:NT \l__xframed_footline_bool
+         {
+          \path[xframed/title~rule]    
+                 ([yshift= .5*\xframed__get_length:n { line-width-foot }]xframed-inner.north~west) -- 
+                 ([yshift= .5*\xframed__get_length:n { line-width-foot }]xframed-inner.north~east);  
+         }
+       }
+   %draw foot componente (1) foot (2) foot rule:
+     \tl_if_blank:VF \l__xframed_lastfoot_tl
+       {
+        \path[xframed/foot~bg] (xframed-foot.south~west) rectangle (xframed-foot.north~east);
+        \bool_if:NT \l__xframed_footline_bool
+         {
+          \path[xframed/foot~rule]    
+                 ([yshift= -.5*\xframed__get_length:n { line-width-foot }]xframed-inner.south~west) -- 
+                 ([yshift= -.5*\xframed__get_length:n { line-width-foot }]xframed-inner.south~east);  
+         }
+       }
+  \end{scope}    
+ }
+
+\tex_endinput:D
+%%%%%%%%%%
+%DEVELOPER INFO
+%%%%%%%%%%
+\cs_new:Nn \xframed__nodepoints_development:
+ {
+  \bool_if:NT \l__xframed_developer_info_bool
+   {
+    \begin{scope}
+     %%%%%Inner nodes
+     \xframed__nodepoints_inner_development:
+     %%%%%title nodes
+     \xframed__nodepoints_title_development:
+     %%%%%foot nodes
+     \xframed__nodepoints_foot_development:
+     %%%%%Outer nodes  
+     \xframed__nodepoints_outer_development:
+     %%%%%length     
+     \xframed__outerlength_development:
+    \end{scope}
+   }
+ }
+ 
+ \cs_new:Nn \xframed__nodepoints_inner_development:
+  {
+   \fill[red!70!black] (xframed-inner.north~west) circle (2pt) 
+      node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.north~west}; 
+   \fill[red!70!black] (xframed-inner.north~east) circle (2pt) 
+      node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.north~east}; 
+   \fill[red!70!black] (xframed-inner.south~west) circle (2pt) 
+      node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.south~west}; 
+   \fill[red!70!black] (xframed-inner.south~east) circle (2pt) 
+      node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.south~east};
+   \fill[red!70!black] (xframed-inner.center) circle (2pt) 
+      node[draw,rectangle,fill=yellow,above=0.5cm,font=\footnotesize\ttfamily] {xframed-inner.center};
+  }
+
+ \cs_new:Nn \xframed__nodepoints_outer_development:
+  {
+   \fill[blue!70!black] (xframed-outer.north~west) circle (2pt) 
+      node[above=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.north~west}; 
+   \fill[blue!70!black] (xframed-outer.north~east) circle (2pt) 
+      node[above=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.north~east}; 
+   \fill[blue!70!black] (xframed-outer.south~west) circle (2pt) 
+      node[below=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.south~west}; 
+   \fill[blue!70!black] (xframed-outer.south~east) circle (2pt) 
+      node[below=0.75cm,font=\footnotesize\ttfamily] {xframed-outer.south~east};
+   \fill[blue!70!black] (xframed-outer.center) circle (2pt) 
+      node[draw,rectangle,fill=yellow,below=0.5cm,font=\footnotesize\ttfamily] {xframed-outer.center};
+  }
+
+ \cs_new:Nn \xframed__nodepoints_title_development:
+  {
+   \tl_if_blank:VF \l__xframed_firsttitle_tl
+     {
+       \fill[green!70!black] (xframed-title.north~west) circle (2pt) 
+          node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-title.north~west}; 
+       \fill[green!70!black] (xframed-title.north~east) circle (2pt) 
+          node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-title.north~east}; 
+       \fill[green!70!black] (xframed-title.south~west) circle (2pt) 
+          node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-title.south~west}; 
+       \fill[green!70!black] (xframed-title.south~east) circle (2pt) 
+          node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-title.south~east};
+       \fill[green!70!black] (xframed-title.center) circle (2pt) 
+          node[draw,rectangle,fill=yellow,above=0.5cm,font=\footnotesize\ttfamily] {xframed-title.center};
+     }
+  }
+
+ \cs_new:Nn \xframed__nodepoints_foot_development:
+  {
+   \tl_if_blank:VF \l__xframed_lastfoot_tl
+    {
+      \fill[green!70!black] (xframed-foot.north~west) circle (2pt) 
+         node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-foot.north~west}; 
+      \fill[green!70!black] (xframed-foot.north~east) circle (2pt) 
+         node[above=0.5cm,font=\footnotesize\ttfamily] {xframed-foot.north~east}; 
+      \fill[green!70!black] (xframed-foot.south~west) circle (2pt) 
+         node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-foot.south~west}; 
+      \fill[green!70!black] (xframed-foot.south~east) circle (2pt) 
+         node[below=0.5cm,font=\footnotesize\ttfamily] {xframed-foot.south~east};
+      \fill[green!70!black] (xframed-foot.center) circle (2pt) 
+         node[draw,rectangle,fill=yellow,above=0.5cm,font=\footnotesize\ttfamily] {xframed-foot.center};
+    } 
+  }
+ 
+\cs_new:Nn \xframed__outerlength_development:
+ {
+  \draw[latex-latex] (xframed-outer.east)  --++ ( \xframed__get_length:n { margin-right },0) ;
+  \draw[latex-latex] (xframed-outer.west)  --++ (-\xframed__get_length:n { margin-left }, 0) ;
+  \draw[latex-latex] (xframed-outer.north) --++ ( 0 , \xframed__get_skip:n { skip-above }  ) ;
+  \draw[latex-latex] (xframed-outer.south)  --++ ( 0 , -\xframed__get_skip:n { skip-below } ) ;
+ }
+
+ 

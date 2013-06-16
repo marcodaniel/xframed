@@ -22,7 +22,7 @@
   \vcoffin_set:Nnn #1
                   { \coffin_wd:N \l__xframed_main_coffin } 
                   { 
-                    \box_use_clear:N #1
+                    \vbox_unpack_clear:N #1
                   } 
  }
 
@@ -69,11 +69,34 @@
      { #3 }
      { \c_zero_dim }
   }
+ }
+ 
+\cs_new:Npn \xframed__length_add:Nn #1 #2
+ {
+  \dim_add:Nn #1
+    {
+     \xframed__get_length:n { #2 }
+    }
  } 
+ 
+\cs_new:Npn \xframed__length_sub:Nn #1 #2
+ {
+  \dim_sub:Nn #1
+    {
+     \xframed__get_length:n { #2 }
+    }
+ } 
+  
  
 %http://tex.stackexchange.com/a/112345/5239
 \cs_generate_variant:Nn \tl_if_empty:nTF { f } 
 
+
+%%%
+\cs_new:Npn \xframed_convert:n #1
+ {
+  \fp_eval:n { round( \dim_to_fp:n { #1 } / 1cm, 5) }~cm
+ }
 
 %%Test developer:
 \cs_new:Npn \xframed__display_coffins:N #1
@@ -99,10 +122,35 @@
     }
  }
 
-\cs_new:Npn \egreg_convertto:nn #1 #2
+%%!!!!CONVERT NEEDED
+\tl_new:N \l__xframed_vbadness_tl
+\cs_new:Npn \xframed_ignore_vbadness:
  {
-  \fp_eval:n { round( \dim_to_fp:n { #2 } / 1#1, 5) }~#1
+   \tl_set:Nx \l__xframed_vbadness_tl { \the\vbadness }
+   \vbadness=\@M%
+   \tex_afterassignment:D \xframed_restore_vbadness:
  }
+\cs_new:Npn \xframed_restore_vbadness:
+ {
+  \vbadness=\l__xframed_vbadness_tl
+ }
+
+\cs_new_protected:Npn \xframed_local_boxdim:
+ {
+  \boxmaxdepth=0pt
+  \splittopskip0pt
+  \splitmaxdepth=0pt
+ }%
+
+
+%LaTeX2e offinterlineskip to LaTeX3:
+\cs_new:Npn \xframed__offinterlineskip:
+ {
+  \dim_set:Nn \tex_baselineskip:D { - \c_one_thousand \c_one_pt_dim }
+  \dim_set:Nn \tex_lineskip:D { \c_zero \c_one_pt_dim }
+  \dim_set:Nn \tex_lineskiplimit:D { \c_max_dim }
+ }
+
 \cs_new:Nn \xframed__all_option_output:
  {
   \tl_set:Nn \l_tmpa_tl 
@@ -121,14 +169,14 @@
    \tl_put_right:Nn \l_tmpa_tl 
     { 
      \prop_map_inline:Nn  \l__xframed_length_option_prop 
-       { ##1 & \dim_eval:n { ##2 } & \egreg_convertto:nn{cm}{##2}  \\ } 
+       { ##1 & \dim_eval:n { ##2 } & \Convert{##2}  \\ } 
     }
    \tl_put_right:Nn \l_tmpa_tl 
     { \\\hline\multicolumn{3}{@{}c@{}}{skips} \\\hline }
    \tl_put_right:Nn \l_tmpa_tl 
     { 
      \prop_map_inline:Nn  \l__xframed_skip_option_prop 
-      { ##1 & \skip_eval:n { ##2 } & \egreg_convertto:nn{cm}{##2} \\ } 
+      { ##1 & \skip_eval:n { ##2 } & \Convert{##2} \\ } 
     }
    \tl_put_right:Nn \l_tmpa_tl 
     { \\\hline\multicolumn{3}{@{}c@{}}{color} \\\hline }
@@ -163,7 +211,7 @@
  \tl_put_right:Nn \l_tmpa_tl 
   { 
    \prop_map_inline:Nn  \l__xframed_length_option_prop 
-    { ##1 & \dim_eval:n { ##2 } & \egreg_convertto:nn{cm}{##2}  \\ } 
+    { ##1 & \dim_eval:n { ##2 } & \Convert{##2}  \\ } 
   }
  \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
  \tl_use:N \l_tmpa_tl
@@ -186,7 +234,7 @@
  \tl_put_right:Nn \l_tmpa_tl 
   { 
    \prop_map_inline:Nn  \l__xframed_skip_option_prop 
-    { ##1 & \skip_eval:n { ##2 } & \egreg_convertto:nn{cm}{##2}  \\ } 
+    { ##1 & \skip_eval:n { ##2 } & \Convert{##2}  \\ } 
   }
  \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
  \tl_use:N \l_tmpa_tl
@@ -237,6 +285,8 @@
 \cs_new:Npn \xframed__start_environment:n #1
  {
   \par
+    \skip_set:Nn \l_tmpa_skip { \xframed__get_skip:n { skip-above } }
+    \addvspace { \skip_use:N \l_tmpa_skip }  
     \xframed__enought_room:n { #1 }
   \par
   \dim_compare:nNnF
@@ -270,7 +320,10 @@
     \@nobreakfalse\addpenalty\z@
   \group_end:
   \dim_set_eq:NN \l__xframed_free_vspace_dim \tex_pagegoal:D
-  \dim_add:Nn \l__xframed_free_vspace_dim {  - \tex_pagetotal:D }
+  \dim_compare:nNnTF
+   { \l__xframed_free_vspace_dim } = { \c_max_dim } 
+   { \dim_set_eq:NN \l__xframed_free_vspace_dim \vsize }
+   { \dim_add:Nn \l__xframed_free_vspace_dim {  - \tex_pagetotal:D } }
   \dim_set:Nn \l_tmpa_dim { #1 }
   %\xframed__msg_log:n
   \msg_log:n
@@ -278,17 +331,17 @@
      xframed~info~\msg_line_number:\\\\
      \ dimension~of~the~current~page \\
      \ height~=~\dim_use:N \tex_pagegoal:D\ =
-            \ \egreg_convertto:nn{cm}{\tex_pagegoal:D} \\
+            \ \xframed_convert:n{\tex_pagegoal:D} \\
      \ used~=~\dim_use:N \tex_pagetotal:D\ =
-            \ \egreg_convertto:nn{cm}{\tex_pagetotal:D} \\
-     \ free~=~\dim_use:N \l__xframed_free_vspace_dim 
-            \ \egreg_convertto:nn{cm}{\l__xframed_free_vspace_dim} \\
+            \ \xframed_convert:n{\tex_pagetotal:D} \\
+     \ free~=~\dim_use:N \l__xframed_free_vspace_dim\ =
+            \ \xframed_convert:n{\l__xframed_free_vspace_dim} \\
      \ request~=~\dim_use:N \l_tmpa_dim\ =
-            \  \egreg_convertto:nn{cm}{ \l_tmpa_dim } \\      
+            \  \xframed_convert:n{ \l_tmpa_dim } \\      
      \ request~is~provided~by~the~option:~minimum-space
     }
  \dim_compare:nNnTF
-  { \l__xframed_free_vspace_dim } { < } { \l_tmpa_dim } 
+  { \l__xframed_free_vspace_dim } < { \l_tmpa_dim } 
   { \newpage }{}%not enough space on current p   
  }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

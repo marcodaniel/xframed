@@ -18,11 +18,23 @@
 %%=======================================================%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                          Declaration of title                          %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \cs_new:Nn \xframed__title:
  {
-    \tl_if_blank:VTF \l__xframed_title_tl
+    \tl_if_blank:VTF \l__xframed_temptitle_tl
      {
-      \coffin_set_eq:NN \l__xframed_foot_coffin \c_empty_coffin
+      \coffin_set_eq:NN \l__xframed_title_coffin \c_empty_coffin
+      \dim_set:Nn \l__xframed_title_htdp_dim { 0pt }
+      \xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { line-width-title } { 0pt }
+      \bool_set_false:N \l__xframed_titleline_bool 
+      \xframed__prop_set:Nnn \l__xframed_length_option_prop  
+            { title-height } { 0pt }
      } 
      {
       %ssave the contents of title in coffin
@@ -33,63 +45,51 @@
          \tl_use:N \l__xframed_titleprecode_tl
          \tl_use:N \l__xframed_title_font_tl
          \color { \xframed__get_color:n { title-font-color } }
-         \tl_use:N \l__xframed_title_tl
+         \tl_use:N \l__xframed_temptitle_tl
          \xframed__ignore_last_descenders:
          \xframed__ignore_last_skip:
          \tl_use:N \l__xframed_titlepostcode_tl 
         }
+      \xframed__coffin_restructure:N  \l__xframed_title_coffin  
       %add the needed vertical space to coffin    
       \vcoffin_set:Nnn   
           \l__xframed_title_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n {  \xframed__get_length:n { title-skip-above } - \parskip }
-         \skip_vertical:n { - \parskip }
-         \box_use:N \l__xframed_title_coffin
+         \xframed__offinterlineskip:
+         \skip_vertical:n { \xframed__get_length:n { title-skip-above } }
+         \vbox_unpack_clear:N \l__xframed_title_coffin
          \skip_vertical:n {  \xframed__get_length:n { title-skip-below } }
         }     
+      \dim_set:Nn \l__xframed_title_htdp_dim
+         { 
+           \coffin_ht:N \l__xframed_title_coffin + 
+           \coffin_dp:N \l__xframed_title_coffin 
+         }
+      \xframed__prop_set:Nnn \l__xframed_length_option_prop  
+            { title-height } { \dim_use:N \l__xframed_title_htdp_dim }   
+      \bool_if:NF \l__xframed_titleline_bool 
+       {
+        \xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { line-width-title } { 0pt }
+       }               
     }    
  } 
-
-\cs_new:Nn \xframed__first_title:
- {
-    \tl_if_blank:VTF \l__xframed_firsttitle_tl
-     {
-      \coffin_set_eq:NN \l__xframed_foot_coffin \c_empty_coffin
-     } 
-     {
-      \vcoffin_set:Nnn
-          \l__xframed_title_coffin
-        { \l__xframed_coffin_width_dim   }
-        {
-         \tl_use:N \l__xframed_titleprecode_tl
-         \tl_use:N \l__xframed_title_font_tl
-         \color { \xframed__get_color:n { title-font-color } }
-         \tl_use:N \l__xframed_firsttitle_tl
-         \xframed__ignore_last_descenders:
-         \xframed__ignore_last_skip:
-         \tl_use:N \l__xframed_titlepostcode_tl 
-        }
-      %add the needed vertical space to coffin    
-      \vcoffin_set:Nnn   
-          \l__xframed_title_coffin
-        { \l__xframed_coffin_width_dim }
-        {
-         \skip_vertical:n { \xframed__get_length:n { title-skip-above } - \parskip }
-         %\skip_vertical:n { - \parskip }
-         \box_use:N \l__xframed_title_coffin
-         \skip_vertical:n { \xframed__get_length:n { title-skip-below } }
-        }    
-    }
- }
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                           Declaration of foot                          %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \cs_new:Nn \xframed__foot:
  {
-    \tl_if_blank:VTF \l__xframed_foot_tl
+    \tl_if_blank:VTF \l__xframed_tempfoot_tl
      {
       \coffin_set_eq:NN \l__xframed_foot_coffin \c_empty_coffin
+      \dim_set:Nn \l__xframed_foot_htdp_dim { 0pt }
+      \xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { line-width-foot } { 0pt }
+      \bool_set_false:N \l__xframed_footline_bool  
      } 
      {
       \vcoffin_set:Nnn
@@ -99,53 +99,39 @@
          \color { \xframed__get_color:n { foot-font-color } }
          \tl_use:N \l__xframed_footprecode_tl
          \tl_use:N \l__xframed_foot_font_tl
-         \tl_use:N \l__xframed_foot_tl
+         \tl_use:N \l__xframed_tempfoot_tl
          \xframed__ignore_last_descenders:
          \xframed__ignore_last_skip:
          \tl_use:N \l__xframed_footpostcode_tl 
         }
-      %add the needed vertical space to coffin    
       \vcoffin_set:Nnn   
           \l__xframed_foot_coffin
         { \l__xframed_coffin_width_dim }
         {
-         \skip_vertical:n {  \xframed__get_length:n { foot-skip-above } - \parskip }
-         \box_use:N \l__xframed_foot_coffin
+         \xframed__offinterlineskip:
+         \skip_vertical:n {  \xframed__get_length:n { foot-skip-above } }
+         \vbox_unpack_clear:N \l__xframed_foot_coffin
          \skip_vertical:n {  \xframed__get_length:n { foot-skip-below } }
-        }    
-    }
- }
-
-
-\cs_new:Nn \xframed__last_foot:
- {
-    \tl_if_blank:VTF \l__xframed_lastfoot_tl
-     {
-      \coffin_set_eq:NN \l__xframed_foot_coffin \c_empty_coffin
-     } 
-     {
-      \vcoffin_set:Nnn
-          \l__xframed_foot_coffin
-        { \l__xframed_coffin_width_dim   }
-        {
-         \color { \xframed__get_color:n { foot-font-color } }
-         \tl_use:N \l__xframed_footprecode_tl
-         \tl_use:N \l__xframed_foot_font_tl
-         \tl_use:N \l__xframed_lastfoot_tl
-         \xframed__ignore_last_descenders:
-         \xframed__ignore_last_skip:
-         \tl_use:N \l__xframed_footpostcode_tl 
         }
-      %add the needed vertical space to coffin    
-      \vcoffin_set:Nnn   
-          \l__xframed_foot_coffin
-        { \l__xframed_coffin_width_dim }
-        {
-         \skip_vertical:n {  \xframed__get_length:n { foot-skip-above } - \parskip }
-         \box_use:N \l__xframed_foot_coffin
-         \skip_vertical:n {  \xframed__get_length:n { foot-skip-below } }
-        }    
+      \dim_set:Nn \l__xframed_foot_htdp_dim
+         { 
+           \coffin_ht:N \l__xframed_foot_coffin + 
+           \coffin_dp:N \l__xframed_foot_coffin 
+         }
+      \xframed__prop_set:Nnn \l__xframed_length_option_prop  
+            { foot-height } { \dim_use:N \l__xframed_foot_htdp_dim }
+      \bool_if:NF \l__xframed_footline_bool 
+       {
+        \xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { line-width-foot } { 0pt }
+       }         
     }
  }
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                                   END                                  %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \tex_endinput:D

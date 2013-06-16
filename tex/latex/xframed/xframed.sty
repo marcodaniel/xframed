@@ -45,6 +45,7 @@
  \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
 \RequirePackage{xcolor}%needed to display developer Info
+\RequirePackage{lengthconvert}%as long as regexpatch has alpha status
 \RequirePackage{longtable}%needed to display developer Info
 \RequirePackage{etoolbox}%as long as regexpatch has alpha status
 %%============================================%%
@@ -98,6 +99,8 @@
 \xframed__load_deffiles:n { theorem }
 %!input drawing method tikz
 \xframed__load_deffiles:n { tikz }
+%!input drawing method default
+\xframed__load_deffiles:n { default }
 %!input user commands
 \xframed__load_deffiles:n { user }
 %!input listings -- later, much later
@@ -179,8 +182,6 @@
  }
 
 \cs_new:Npn \xframed__environment_afterhead_precode: {}
-
-\cs_new:Npn \xframed__test_if_splittable: {}
 
 \cs_new:Npn \xframed__environment_head_postcode: {}
 
@@ -264,8 +265,7 @@
    }
  }
 
-%% Question on TeX.SX leads to the code
-%% http://tex.stackexchange.com/questions/47584/how-to-make-mdframed-ignore-descenders-in-last-line
+
 %%at the moment I need the interface to LaTeX2e
 \cs_new:Npn \xframed__ignore_last_descenders:
  {
@@ -287,8 +287,8 @@
  {
 %  \xframed__check_title_first:
   \xframed_check_footnotes:
-  \xframed__first_title:
-  \xframed__last_foot:
+  \xframed__title:
+  \xframed__foot:
   \xframed__coffin_output: 
   \tl_use:N \l__xframed_codeafter_tl
   \skip_vertical:n { - \parskip }
@@ -351,45 +351,48 @@
  {
   \xframed__coffin_restructure:N \l__xframed_temp_coffin 
   \xframed__coffin_restructure:N \l__xframed_main_coffin
-  %Add vertical space to main coffin
-  \vcoffin_set:Nnn   \l__xframed_main_coffin
-                        { 
-                         \l__xframed_coffin_width_dim
-                        }
-                        {
-                         \skip_vertical:n {  \xframed__get_length:n { inner-top-margin } }
-                         \box_use:N \l__xframed_main_coffin
-                         \skip_vertical:n {  \xframed__get_length:n { inner-bottom-margin } }
-                        } 
-  \xframed_needed_height:
-  \xframed__draw_tikz_frame:  %\l__xframed_main_coffin
-%  \fbox{\xframed__display_coffins:N \l__xframed_head_coffin }
-%  \par
-%  \fbox{\xframed__display_coffins:N \l__xframed_main_coffin }
-%%  \box_use:N \l__xframed_main_coffin
+  % %Add vertical space to main coffin
+  % \vcoffin_set:Nnn   
+  %     \l__xframed_main_coffin
+  %   { \l__xframed_coffin_width_dim }
+  %   {
+  %    \xframed__offinterlineskip:
+  %    \skip_vertical:n { \xframed__get_length:n { inner-top-margin } }
+  %    \vbox_unpack_clear:N \l__xframed_main_coffin
+  %    \skip_vertical:n { \xframed__get_length:n { inner-bottom-margin } }
+  %   }
+  \dim_set:Nn \l__xframed_maincoffin_htdp_dim
+    {
+     \coffin_ht:N \l__xframed_main_coffin + 
+     \coffin_dp:N \l__xframed_main_coffin
+    }     
+  \xframed__coffin_output_aux:
  }
+
+\cs_new:Npn \xframed__coffin_output_aux:
+ {
+  \xframed__test_if_splittable:
+  \bool_if:NT \l__xframed_allowbreaking_bool { \xframed_needed_height: }
+  \xframed__output_and_draw:
+ }
+
 
 \cs_new:Npn \xframed_needed_height:
  {
   \dim_set:Nn \l__xframed_computed_coffin_height_dim
           {
-           \coffin_ht:N \l__xframed_main_coffin
-           + 
-           \coffin_dp:N \l__xframed_main_coffin
+           \l__xframed_maincoffin_htdp_dim
            +
-           \coffin_ht:N \l__xframed_title_coffin
-           + 
-           \coffin_dp:N \l__xframed_title_coffin        
+           \l__xframed_title_htdp_dim       
            +
-           \coffin_ht:N \l__xframed_foot_coffin
-           + 
-           \coffin_dp:N \l__xframed_foot_coffin
+           \l__xframed_foot_htdp_dim
           }
   \xframed__frame_linewidth:  
   \clist_map_inline:nn
     {
      extra-skip-above , line-width-top , line-width-bottom ,
-     line-width-title , line-width-foot 
+     inner-top-margin, inner-bottom-margin , line-width-title ,
+     line-width-foot 
     }
     {
      \dim_add:Nn \l__xframed_computed_coffin_height_dim
@@ -397,15 +400,21 @@
             \xframed__get_length:n { ##1 }
            }
     }
+  \dim_compare:nNnTF
+    { \l__xframed_computed_coffin_height_dim } < { \l__xframed_free_vspace_dim }
+    %break needed
+    { \bool_set_false:N \l__xframed_allowbreaking_bool }
+    %no break needed
+    { \bool_set_true:N  \l__xframed_allowbreaking_bool }    
   \msg_log:n
     {
      xframed~info~\msg_line_number:\\\\
      \ coffin~dimension =~\dim_use:N \l__xframed_computed_coffin_height_dim\ =
-            \ \egreg_convertto:nn{cm}{\l__xframed_computed_coffin_height_dim} \\
+            \ \xframed_convert:n{\l__xframed_computed_coffin_height_dim} \\
      \ used~=~\dim_use:N \tex_pagetotal:D\ =
-            \ \egreg_convertto:nn{cm}{\tex_pagetotal:D} \\
+            \ \xframed_convert:n{\tex_pagetotal:D} \\
      \ free~=~\dim_use:N \l__xframed_free_vspace_dim\ =
-            \ \egreg_convertto:nn{cm}{\l__xframed_free_vspace_dim} 
+            \ \xframed_convert:n{\l__xframed_free_vspace_dim} 
     }    
  }
 

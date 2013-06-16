@@ -20,22 +20,26 @@
 
 %!framemethod
 \tl_new:N \xframed__framemethode_tl
+\int_new:N \xframed__framemethode_int
 \cs_new_protected:Npn \xframed__set_framemethod:n #1
  {
    \tl_set:Nx \l_tmpa_tl { \tl_expandable_lowercase:n { #1 } }
    \clist_if_in:noTF { pgf , tikz } { \l_tmpa_tl }
     {
      \tl_set:Nn \xframed__framemethode_tl { tikz }
+     \int_set_eq:NN \xframed__framemethode_int \c_one
     }
     {
      \clist_if_in:noTF { default , tex , latex , none  } { \l_tmpa_tl }
       {
        \tl_set:Nn \xframed__framemethode_tl { default }
+       \int_set_eq:NN \xframed__framemethode_int \c_two
       }
       {
        \clist_if_in:noTF { pstricks , ps , postscript } { \l_tmpa_tl }
         {
-         \tl_set:Nn \xframed__framemethode_tl { default }
+         \tl_set:Nn \xframed__framemethode_tl { pstricks }
+         \int_set_eq:NN \xframed__framemethode_int \c_three
         }
         {
          \msg_error:nnx { xframed }{ unknown-option } { \l_tmpa_tl }
@@ -109,6 +113,9 @@
    shadow-size             ==  2pt              ,
    extra-skip-above        ==  \c_zero_dim      ,
    minimum-space           ==  2\baselineskip   ,
+   split-skip-top          ==  10pt             ,
+   split-skip-bottom       ==  10pt             ,
+   footnote-distance       ==  10pt             ,
  } \xframed__lengthkeys_define:n
 
 
@@ -205,9 +212,6 @@
  {
    skip-above              ==  10pt      ,
    skip-below              ==  10pt      ,
-   split-skip-top          ==  10pt      ,
-   split-skip-top bottom   ==  10pt      ,
-   footnote-distance       ==  10pt      ,
    subtitle-skip-above     ==  5pt       ,
    subtitle-skip-below     ==  5pt       ,
  } \xframed__skipkeys_define:n
@@ -324,6 +328,9 @@
   foot-line             .initial:n  = true                              ,
   subtitle-line         .bool_set:N = \l__xframed_subtitleline_bool     ,
   allow-breaking        .bool_set:N = \l__xframed_allowbreaking_bool    ,
+  allow-breaking        .initial:n  = true                              ,
+  draw-everyline        .bool_set:N = \l__xframed_draweveryline_bool    ,
+  draw-everyline        .initial:n  = false                             ,
 %%!!  footnote-inside not used and not described yet
   footnote-inside       .bool_set:N = \l__xframed_footnoteinside_bool   ,
   twoside-mode          .bool_set:N = \l__xframed_usetwoside_bool       ,
