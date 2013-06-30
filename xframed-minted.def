@@ -1,0 +1,123 @@
+%%
+%% This is file `xframed-minted.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-minted')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to support predefined environments with minted   %%
+%%=======================================================%%
+\RequirePackage{minted,caption}
+\keys_define:nn {xframed-doc-minted }
+ {
+  caption      .tl_set:N   = \l__xframed_minted_caption_tl  ,
+  label        .tl_set:N   = \l__xframed_minted_label_tl    ,
+  minted-opt   .tl_set:N   = \l__xframed_minted_minted_tl   ,
+  minted-opt   .initial:n  = {linenos=true}            ,
+  language     .tl_set:N   = \l__xframed_minted_language_tl ,
+  language     .initial:n  = latex                     ,
+  result       .bool_set:N = \l__xframed_minted_result_bool ,
+  result       .initial:n  = false                     ,
+  xframed      .tl_set:N   = \l__xframed_minted_xframed_tl  ,
+  hook         .tl_set:N   = \l__xframed_minted_hook_tl     ,
+}
+
+\NewDocumentCommand \xframedmintedsetup { m }
+ {
+ \keys_set:nn { xframed-doc-minted } { #1 }
+ }
+
+\NewDocumentEnvironment {xframedexample} { O {} }
+ {
+  \keys_set:nn { xframed-doc-minted } { #1 }
+  \group_begin:
+   \tl_set:Nx \l__mdxex_temp_tl
+    {
+     \exp_not:V \l__xframed_minted_hook_tl
+     \exp_not:N \VerbatimEnvironment
+     \exp_not:N \xframedsetup
+      {
+       line-color           = brown!70!black   ,
+       bg-color             = brown!10!white   ,
+       inner-top-margin     = 12pt             ,
+       inner-bottom-margin  = 6pt              ,
+       title-skip-above     = 6pt              ,
+       title-skip-below     = 6pt              ,
+       title-bg-color       = brown!15!white   ,
+       line-width-top       = 2pt              ,
+       margin               = 1cm              ,
+      }
+     \tl_if_empty:NTF \l__xframed_minted_caption_tl
+       {
+        \scan_stop:
+       }
+       {
+        \exp_not:N \xframedsetup
+         {
+          first-title          =
+            {
+              \exp_not:N \captionsetup { skip = 0pt }
+              \exp_not:N \captionof
+                { lstlisting }
+                { \exp_not:V \l__xframed_minted_caption_tl }
+              \tl_if_empty:NF \l__xframed_minted_label_tl
+                {
+                  \exp_not:N \label
+                  { lst \exp_not:N : \l__xframed_minted_label_tl }
+                }
+            }
+         }
+       }
+     \exp_not:n { \begin{xframed} }[ \exp_not:V \l__xframed_minted_xframed_tl ]
+     % \exp_not:n { \MakePercentComment }
+     \exp_not:n { \begin{minted} } [ \l__xframed_minted_minted_tl ]
+                                   { \l__xframed_minted_language_tl }
+    }
+   \l__mdxex_temp_tl
+ }
+ {
+    \end{minted}
+   % \MakePercentIgnore
+   \end{xframed}
+  \group_end:
+  \bool_if:NT \l__xframed_minted_result_bool { \input{\jobname.pyg} }
+}
+
+\RenewDocumentCommand\DeleteFile{m}{}
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-minted.def'.

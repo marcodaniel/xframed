@@ -1,0 +1,152 @@
+%%
+%% This is file `xframed-dim.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-dim')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to define all needed dim functions               %%
+%%=======================================================%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%          All length/skip options are save in a property list           %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%             getting skip options out of the property list              %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__get_skip:n #1
+ {
+  \skip_eval:n
+    {
+     \prop_get:Nn \l__xframed_skip_option_prop { #1 }
+    }
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%            getting length options out of the property list             %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__get_length:n #1
+ {
+  \dim_eval:n
+    {
+     \prop_get:Nn \l__xframed_length_option_prop { #1 }
+    }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                add/sub a length option to a given length               %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__length_add:Nn #1 #2
+ {
+  \dim_add:Nn #1
+    {
+     \__xframed__get_length:n { #2 }
+    }
+ }
+\cs_new:Npn \__xframed__length_sub:Nn #1 #2
+ {
+  \dim_sub:Nn #1
+    {
+     \__xframed__get_length:n { #2 }
+    }
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                        Output a dimension in cm                        %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__convert:n #1
+ {
+  \fp_eval:n { round( \dim_to_fp:n { #1 } / 1cm, 5) }~cm
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                    remove glue from a skip register                    %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__get_stretch:Nn  #1 #2
+ {
+  \skip_if_finite:nTF { #2 }
+   {
+    #1 = \etex_gluestretch:D #2 \scan_stop:
+   }
+   {
+    #1 = \c_zero_skip
+   }
+ }
+\cs_new:Npn \__xframed__get_shrink:Nn  #1 #2
+ {
+  \skip_if_finite:nTF { #2 }
+   {
+    #1 = \etex_glueshrink:D #2 \scan_stop:
+   }
+   {
+    #1 = \c_zero_skip
+   }
+ }
+\cs_new:Npn \__xframed__remove_skip_glue:Nn  #1 #2
+ {
+  \skip_split_finite_else_action:nnNN { #2 } {  } \l_tmpa_dim \l_tmpb_dim
+  \skip_set:Nn #1
+     {
+      #2 - \c_zero_dim ~ plus  ~ \l_tmpa_dim
+         - \c_zero_dim ~ minus ~ \l_tmpb_dim
+     }
+ }
+
+\cs_new:Npn \__xframed__maximum_skip:Nn  #1 #2
+ {
+  \skip_split_finite_else_action:nnNN { #2 } {  } \l_tmpa_dim \l_tmpb_dim
+  \skip_set:Nn #1
+     {
+      #2 - \c_zero_dim ~ plus  ~ \l_tmpa_dim
+         - \c_zero_dim ~ minus ~ \l_tmpb_dim
+         + \l_tmpa_dim
+     }
+ }
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-dim.def'.

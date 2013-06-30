@@ -1,0 +1,434 @@
+%%
+%% This is file `xframed.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+\RequirePackage{expl3,xparse}
+%%
+%% This is file `xframed.sty',
+%% ----------------------------------------------------------------
+%%
+%% Author's name: Marco Daniel
+%% License type: lppl
+%%
+%% ===========================================================
+%% ===== Currently the package has a pre-pre-alpha-status ====
+%% ===========================================================
+%%
+%%  Copyright (c) 2013 Marco Daniel
+%%
+\RequirePackage{expl3}
+\GetIdInfo$Id: xframed.dtx 13 2012-06-08 14:11:22Z marco $
+          {package xframed}
+
+\ProvidesExplPackage {xframed} {2013/06/21} {0.01 ALPHA} {package xframed}
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\@ifpackagelater { expl3 } { 2011/09/05 }
+  { }
+  {
+    \PackageError { xframed } { Support~package~expl3~too~old. }
+      {
+        You~need~to~update~your~installation~of~the~bundles~'l3kernel'~and~
+        'l3packages'.\\
+        Loading~xframed~will~abort!
+      }
+    \tex_endinput:D
+  }
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\RequirePackage{xcolor}%needed to display developer Info
+\ExplSyntaxOff
+ \RequirePackage{tikz}
+ \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
+\ExplSyntaxOn
+\RequirePackage{lengthconvert}%as long as regexpatch has alpha status
+\RequirePackage{longtable}%needed to display developer Info
+\RequirePackage{etoolbox}%as long as regexpatch has alpha status
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\cs_new_protected:Npn \__xframed__load_check:n #1 {
+    \IfFileExists {#1.sty}
+      { \RequirePackage{#1} }
+      { \msg_error:nnx { xframed } { package-not-available } {#1} }
+}
+
+\clist_map_function:nN
+  { zref-abspage , xparse , l3keys2e  }
+    \__xframed__load_check:n
+
+\cs_new_protected:Npn \__xframed__load_deffiles:n #1 {
+    \IfFileExists {xframed-#1.def}
+      { \input{xframed-#1.def} }
+      { \msg_error:nnx { xframed } { def-not-available } {#1} }
+}
+\msg_new:nnnn { xframed } { def-not-available }
+  { File~xframed-'#1'.def~is~not~available. }
+  {
+    The~file~xframed-#1-.def~is~not available\\
+    but~xframed~needs~the~file~.\\
+    I~guess~you~installed~xframed~wrong.
+  }
+
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\__xframed__load_deffiles:n { initial }
+\__xframed__load_deffiles:n { dim }
+\__xframed__load_deffiles:n { funct }
+\__xframed__load_deffiles:n { dev }
+\__xframed__load_deffiles:n { msg }
+\__xframed__load_deffiles:n { keys }
+\__xframed__load_deffiles:n { titlefoot }
+\__xframed__load_deffiles:n { split }
+\__xframed__load_deffiles:n { default }
+\__xframed__load_deffiles:n { user }
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\cs_new_protected:Npn \__xframed__load_ifrequested:n #1 {
+ \bool_if:cT { l__xframed_#1_bool }
+  {
+    \IfFileExists {xframed-#1.def}
+      { \input{xframed-#1.def} }
+      { \msg_error:nnx { xframed } { def-not-available } {#1} }
+  }
+}
+\__xframed__load_ifrequested:n { listings }
+\__xframed__load_ifrequested:n { minted   }
+\__xframed__load_ifrequested:n { tikz     }
+\__xframed__load_ifrequested:n { pstricks }
+\__xframed__load_ifrequested:n { theorem  }
+\__xframed__load_ifrequested:n { mdframed }
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+\__xframed__developer_tools:
+%%============================================%%
+%%============================================%%
+%%============================================%%
+%%============================================%%
+
+
+\NewDocumentEnvironment { xframed } { O{} }
+ {
+ \group_begin:
+   \xframedsetup { #1 }
+   \__xframed__start_environment:n
+    {
+     \__xframed__get_length:n
+      {
+       minimum-space
+      }
+    }
+   \__xframed__environment_precode:
+    \vcoffin_set:Nnw   \l__xframed_main_coffin
+                     { \l__xframed_coffin_width_dim }
+     \__xframed_prevent_firstindent:
+     \__xframed__environment_inner_precode:
+     \__xframed__inner_head:
+ }
+ {
+    \__xframed__environment_inner_postcode:
+    \vcoffin_set_end:
+  \__xframed__set_list:
+    \__xframed__environment_postcode:
+  \__xframed__set_endlist:
+  \group_end:
+ }
+
+\cs_new:Nn \__xframed_prevent_firstindent:
+ {
+  \@afterindentfalse\@afterheading
+ }
+
+\cs_new:Nn \__xframed__inner_head:
+ {
+    \tl_if_blank:VF \l__xframed_head_tl
+     {
+     \group_begin:
+       \tl_use:N \l__xframed_headprecode_tl
+       \color
+          {
+           \__xframed__get_color:n { head-font-color }
+          }
+       \tl_use:N \l__xframed_head_font_tl
+       \tl_use:N \l__xframed_head_tl
+       \tl_use:N \l__xframed_headpostcode_tl
+     \group_end:
+     }
+ }
+
+%%Not recommended
+\cs_new_nopar:Npn \xframeddivide
+ {
+    \__xframed__environment_head_postcode:
+    \vcoffin_set_end:
+    \coffin_set_eq:NN \l__xframed_head_coffin \l__xframed_main_coffin
+    \bool_set_true:N \l__xframed_head_bool
+    \vcoffin_set:Nnw   \l__xframed_main_coffin
+                      { \l__xframed_coffin_width_dim }
+     \__xframed__environment_afterhead_precode:
+ }
+
+\cs_new:Npn \__xframed__environment_afterhead_precode: {}
+
+\cs_new:Npn \__xframed__environment_head_postcode: {}
+
+\cs_new:Npn \__xframed__environment_precode:
+ {
+  \__xframed__developer_tools:
+  %%\__xframed__minimum_space:
+  \__xframed__test_if_splittable:
+  \__xframed__calculate_width:
+  \__xframed__declare_footnotes:
+  \__xframed__frame_linewidth:
+  \tl_use:N \l__xframed_codebefore_tl
+ }
+
+\cs_new:Npn \__xframed__calculate_width:
+ {
+  \dim_set:Nn \l__xframed_coffin_width_dim { \__xframed__get_length:n { width } }
+  \clist_map_inline:nn
+    {
+     margin-left , line-width-left ,  inner-margin-left ,
+     inner-margin-right , line-width-right , margin-right
+    }
+    {
+     \dim_sub:Nn \l__xframed_coffin_width_dim
+           {
+            \__xframed__get_length:n { ##1 }
+           }
+    }
+ }
+
+\cs_new:Npn \__xframed__declare_footnotes:
+ {
+  %% START
+   \cs_set:Npn \@mpfn { mpfootnote }
+  %% set the counter output
+   \cs_set:Npn \thempfn { \thempfootnote }
+  %%reset counter
+   \int_set_eq:NN \c@mpfootnote \c_zero
+  %%
+   \cs_set_eq:NN \@footnotetext \@mpfootnotetext
+ }
+
+\cs_new:Npn \__xframed__environment_inner_precode:
+ {
+  \skip_vertical:n { - \parskip }
+  \tl_use:N \l__xframed_main_font_tl
+  \color { \__xframed__get_color:n { font-color } }
+  \tl_use:N \l__xframed_codebegin_tl
+ }
+
+\cs_new:Npn \__xframed__environment_inner_postcode:
+ {
+  \__xframed__ignore_last_skip:
+  \__xframed__ignore_last_descenders:
+  \tl_use:N \l__xframed_codeend_tl
+ }
+
+\cs_new:Npn \__xframed__ignore_last_skip:
+ {
+  \bool_if:NT \l__xframed_ignore_lastskip_bool
+   {
+    \par \tex_unskip:D
+    \skip_vertical:N \tex_lastskip:D
+   }
+ }
+
+%%at the moment I need the interface to LaTeX2e
+\cs_new:Npn \__xframed__ignore_last_descenders:
+ {
+  \bool_if:NT \l__xframed_descenders_bool
+    {
+    \par
+    \strut
+    \par \tex_unskip:D \tex_unskip:D
+    \setbox0=\tex_lastbox:D
+    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+    }
+ }
+
+\cs_new:Npn \__xframed__environment_postcode:
+ {
+  \__xframed_check_footnotes:
+  \__xframed__title:
+  \__xframed__foot:
+  \__xframed__coffin_output:
+  \tl_use:N \l__xframed_codeafter_tl
+  \skip_vertical:n { - \parskip }
+ }
+
+\cs_new:Npn \__xframed_check_footnotes:
+ {
+  \box_if_empty:NTF \@mpfootins
+    {
+     \__xframed__msg_log:n { no~footnotes~presented }
+    }
+    {
+    \__xframed__msg_log:n { footnotes~are~found }
+    %%Save the footnoterule inside a coffin
+    \vcoffin_set:Nnn   \l__xframed_temp_coffin
+                     { \l__xframed_coffin_width_dim   }
+                     {
+                      \skip_vertical:n
+                          {
+                           \__xframed__get_skip:n { footnote-distance }
+                          }
+                      \__xframed_footnote_rule:
+                      \vbox_unpack_clear:N \@mpfootins
+                     }
+    %%Join main coffin with footnote-rule coffin
+    \coffin_join:NnnNnnnn
+      \l__xframed_main_coffin {b}{l}
+      \l__xframed_temp_coffin {t}{l}
+      { 0pt }{ 0pt }
+    %%reset structure of main coffin:
+    \__xframed__coffin_restructure:N   \l__xframed_main_coffin
+    }
+ }
+
+\cs_new:Npn \__xframed_footnote_rule:
+ {
+  \tex_kern:D \c_zero_skip
+  \tex_hrule:D
+    width   \__xframed__get_length:n { footnote-line-length }
+    height  \__xframed__get_length:n { footnote-line-width }
+   \scan_stop:
+  \tex_kern:D 2.6 pt
+ }
+
+\cs_new:Nn \__xframed__frame_linewidth:
+ {
+  \__xframed__test_linewidth:nnn
+     { topline } { length } { line-width-top }
+  \__xframed__test_linewidth:nnn
+     { leftline } { length } { line-width-left }
+  \__xframed__test_linewidth:nnn
+     { rightline } { length } { line-width-right }
+  \__xframed__test_linewidth:nnn
+     { bottomline } { length } { line-width-bottom }
+ }
+
+\cs_new:Npn \__xframed__coffin_output:
+ {
+  \__xframed__coffin_restructure:N \l__xframed_temp_coffin
+  \__xframed__coffin_restructure:N \l__xframed_main_coffin
+  \tl_set_eq:NN \l__xframed_temptitle_tl \l__xframed_firsttitle_tl
+  \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_lastfoot_tl
+  \__xframed__title:
+  \__xframed__foot:
+  % %Add vertical space to main coffin
+  % \vcoffin_set:Nnn
+  %     \l__xframed_main_coffin
+  %   { \l__xframed_coffin_width_dim }
+  %   {
+  %    \__xframed__offinterlineskip:
+  %    \skip_vertical:n { \__xframed__get_length:n { inner-top-margin } }
+  %    \vbox_unpack_clear:N \l__xframed_main_coffin
+  %    \skip_vertical:n { \__xframed__get_length:n { inner-bottom-margin } }
+  %   }
+  \dim_set:Nn \l__xframed_maincoffin_htdp_dim
+    {
+     \coffin_ht:N \l__xframed_main_coffin +
+     \coffin_dp:N \l__xframed_main_coffin
+    }
+  \__xframed__coffin_output_aux:
+ }
+
+\cs_new:Npn \__xframed__coffin_output_aux:
+ {
+  \__xframed__test_if_splittable:
+  \bool_if:NT \l__xframed_allowbreaking_bool { \__xframed_needed_height: }
+  \__xframed__output_and_draw:
+ }
+
+\cs_new:Npn \__xframed_needed_height:
+ {
+  \dim_set:Nn \l__xframed_computed_coffin_height_dim
+          {
+           \l__xframed_maincoffin_htdp_dim
+           +
+           \l__xframed_title_htdp_dim
+           +
+           \l__xframed_foot_htdp_dim
+          }
+  \__xframed__frame_linewidth:
+  \clist_map_inline:nn
+    {
+     extra-skip-above , line-width-top , line-width-bottom ,
+     inner-top-margin, inner-bottom-margin , line-width-title ,
+     line-width-foot
+    }
+    {
+     \dim_add:Nn \l__xframed_computed_coffin_height_dim
+           {
+            \__xframed__get_length:n { ##1 }
+           }
+    }
+  \dim_compare:nNnTF
+    { \l__xframed_computed_coffin_height_dim } < { \l__xframed_free_vspace_dim }
+    %break needed
+    { \bool_set_false:N \l__xframed_allowbreaking_bool }
+    %no break needed
+    { \bool_set_true:N  \l__xframed_allowbreaking_bool }
+  \msg_log:n
+    {
+     xframed~info~\msg_line_number:\\\\
+     \ coffin~dimension =~\dim_use:N \l__xframed_computed_coffin_height_dim\ =
+            \ \__xframed__convert:n{\l__xframed_computed_coffin_height_dim} \\
+     \ used~=~\dim_use:N \tex_pagetotal:D\ =
+            \ \__xframed__convert:n{\tex_pagetotal:D} \\
+     \ free~=~\dim_use:N \l__xframed_free_vspace_dim\ =
+            \ \__xframed__convert:n{\l__xframed_free_vspace_dim}
+    }
+ }
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed.sty'.

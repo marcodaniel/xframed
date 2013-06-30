@@ -1,0 +1,499 @@
+%%
+%% This is file `xframed-split.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-split')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to define the algorithm to split xframed         %%
+%%=======================================================%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                      Starting Output of the frame                      %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%do the output related to the previous tests
+%%if splittable or split needed
+%% \l__@@_allowbreaking_bool = true
+%%if split need not or isn't needed
+%% \l__@@_allowbreaking_bool = false
+\cs_new:Nn \__xframed__output_and_draw:
+ {
+  \bool_if:NTF \l__xframed_allowbreaking_bool
+   {%need~split
+    \__xframed__output_and_draw_aux:
+   }
+   {%no~split
+    \__xframed_draw_frame:
+   }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                          Output of the frame                           %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Nn \__xframed_draw_frame:
+ {
+  \int_case:nnn { \__xframed__framemethode_int }
+   {
+    { 1 } { \__xframed__draw_tikz_frame: }%tikz
+    { 2 } { \__xframed__draw_tikz_frame: }%default
+    { 3 } { \__xframed__draw_tikz_frame: }%pstricks
+   }
+   {
+    \__xframed__msg_log:n { xframed~undefined~style }%need a good warning
+   }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                           Splitting allowed?                           %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%Test if xframed can be splitted
+%% not possible if inside
+%% minipage, parbox, float, boxes
+\cs_new:Nn \__xframed__test_if_splittable:
+ {
+  \bool_if:nTF
+    {
+      \__xframed_if_p:N \if@minipage                  || %compatible to LaTeX2e
+      \mode_if_inner_p:                             || %compatible to LaTeX2e
+      \int_compare_p:nNn { \@floatpenalty } < { 0 } || %compatible to LaTeX2e
+      \bool_if_p:N \l__xframed_allowbreaking_bool
+    }
+    {
+     \bool_if:NF \l__xframed_allowbreaking_bool
+       {
+        \msg_warning:nn { xframed } { inside-box }
+       }
+     \__xframed__msg_log:n { xframed~uses~nonsplittable~output }
+     %%can't be splitted
+   %  \__xframed_use_nonsplittable_output:
+     \bool_set_false:N \l__xframed_allowbreaking_bool
+    }
+    {
+     \__xframed__msg_log:n { xframed~uses~splittable~output }
+     %%can be splitted
+    % \__xframed_use_splittable_output:
+     \bool_set_true:N \l__xframed_allowbreaking_bool
+    }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                Setup the different parts of the frame                  %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed_setup_firstframe:
+ {
+  %bottom line required, otherwise bottomline 0pt.
+  \bool_if:NF \l__xframed_draweveryline_bool
+   {
+    \bool_if:NT \l__xframed_bottomline_bool
+     {
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+           { line-width-bottom } { 0pt }
+      \bool_set_false:N \l__xframed_bottomline_bool
+     }
+   }
+  %no last-foot -- only foot
+  \tl_set_eq:NN \l__xframed_lastfoot_tl \l__xframed_foot_tl
+  % \cs_set_eq:NN \__xframed__last_foot: \__xframed__foot:
+  %no inner-bottom-margin -- instead split-skip-bottom
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { inner-bottom-margin } { \__xframed__get_length:n { split-skip-bottom } }
+  %no skip below
+  \__xframed__prop_set:Nnn \l__xframed_skip_option_prop
+       { skip-below } { 0 pt }
+ }
+
+\cs_new:Npn \__xframed_setup_middleframe:
+ {
+  %top/bottom line required, otherwise top/bottom line 0pt.
+  \bool_if:NF \l__xframed_draweveryline_bool
+   {
+    \bool_if:NT \l__xframed_bottomline_bool
+     {
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+           { line-width-bottom } { 0pt }
+      \bool_set_false:N \l__xframed_bottomline_bool
+     }
+    \bool_if:NT \l__xframed_topline_bool
+     {
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+           { line-width-top } { 0pt }
+      \bool_set_false:N \l__xframed_topline_bool
+     }
+   }
+  %no extra skip above
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { extra-skip-above } { 0 pt }
+  %no first-title -- only title
+  \tl_set_eq:NN \l__xframed_firsttitle_tl \l__xframed_title_tl
+  % \cs_set_eq:NN \__xframed__first_title: \__xframed__title:
+  %no last-foot -- only foot
+  \tl_set_eq:NN \l__xframed_lastfoot_tl \l__xframed_foot_tl
+  % \cs_set_eq:NN \__xframed__last_foot: \__xframed__foot:
+  %no inner-top-margin -- instead split-skip-top
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { inner-top-margin } { \__xframed__get_length:n { split-skip-top } }
+  %no inner-bottom-margin -- instead split-skip-bottom
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { inner-bottom-margin } { \__xframed__get_length:n { split-skip-bottom } }
+  %no skip below
+  \__xframed__prop_set:Nnn \l__xframed_skip_option_prop
+       { skip-below } { 0 pt }
+ }
+
+\cs_new:Npn \__xframed_setup_lastframe:
+ {
+  %top line required, otherwise top line 0pt.
+  \bool_if:NF \l__xframed_draweveryline_bool
+   {
+    \bool_if:NT \l__xframed_topline_bool
+     {
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+           { line-width-top } { 0pt }
+      \bool_set_false:N \l__xframed_topline_bool
+     }
+   }
+  %no extra skip above
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { extra-skip-above } { 0 pt }
+  %no first-title -- only title
+  \tl_set_eq:NN \l__xframed_firsttitle_tl \l__xframed_title_tl
+  % \cs_set_eq:NN \__xframed__first_title: \__xframed__title:
+  %no inner-top-margin -- instead split-skip-top
+  \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { inner-top-margin } { \__xframed__get_length:n { split-skip-top } }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                    Test if split is in title of foot                   %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_set_eq:NN \__xframed__setup_frame: \q_stop
+
+\cs_new:Npn \__xframed__dimtest_title_foot:
+ {
+  \dim_compare:nNnTF
+    { \vsize }
+    <
+    {
+     \l__xframed_title_htdp_dim + \l__xframed_foot_htdp_dim
+     +
+     \__xframed__get_length:n { line-width-title }
+     +
+     \__xframed__get_length:n { line-width-foot }
+    }
+    {%title+foot too big for one page -- error
+     \__xframed__msg_log:n { xframed~foot~title~too~big }%need a good warning
+    }
+    {%we can work:
+     \dim_compare:nNnTF
+       { \l__xframed_free_vspace_dim }
+       <
+       {
+        \l__xframed_firsttitle_htdp_dim + \l__xframed_foot_htdp_dim
+        +
+        \__xframed__get_length:n { line-width-title }
+        +
+        \__xframed__get_length:n { line-width-foot }
+        +
+        \__xframed__get_length:n { minimum-space }
+       }
+       {%title+foot too big for current page
+        \xframmed__pagebreak:
+        \__xframed__coffin_output_aux:
+        \__xframed__msg_log:n { xframed~foot~title~not~too~big~with~minimum-space}
+       }
+       {
+        \__xframed__msg_log:n { xframed~foot~title~not~too~big }
+       }
+    }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%               Starting splitting algorithm -- first part               %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \xframmed__pagebreak:
+ {
+  \vfill\eject
+  \dim_set_eq:NN \l__xframed_free_vspace_dim \vsize
+ }
+
+\cs_new:Npn \__xframed__output_and_draw_aux:
+ {
+  \group_begin:
+    \tl_set_eq:NN \l__xframed_temptitle_tl \l__xframed_firsttitle_tl
+    \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_foot_tl
+    \__xframed__title:
+    \__xframed__foot:
+    \__xframed__dimtest_title_foot:
+    %calculate the maximum height of first frame:
+    \dim_set:Nn \l__xframed_splitheight_dim { \l__xframed_free_vspace_dim }
+    \clist_map_inline:nn
+      {
+       extra-skip-above  , line-width-top   , inner-top-margin ,
+       split-skip-bottom , line-width-title , line-width-foot  ,
+       title-height      , foot-height
+      }
+      {
+       \__xframed__length_sub:Nn \l__xframed_splitheight_dim  { ##1 }
+      }
+    \__xframed__maximum_skip:Nn \l_tmpa_dim
+     { \__xframed__get_skip:n { skip-above } }
+    \dim_sub:Nn  \l__xframed_splitheight_dim { \l_tmpa_dim }
+    \bool_if:NT \l__xframed_draweveryline_bool
+     {
+      \bool_if:NT \l__xframed_bottomline_bool
+       {
+        \__xframed__length_sub:Nn
+           \l__xframed_splitheight_dim { line-width-bottom }
+       }
+     }
+    \__xframed__msg_log:n
+      {
+       Maximum~height~of~first~frame:\\
+       \dim_eval:n { \l__xframed_splitheight_dim }\ =\
+       \__xframed__convert:n{ \l__xframed_splitheight_dim }
+      }
+    \dim_compare:nNnTF
+      { \l__xframed_splitheight_dim }
+      <
+      { \__xframed__get_length:n { minimum-space } }
+      { \xframmed__pagebreak: \__xframed__output_and_draw_aux: }
+      {
+       \__xframed_splitting_algorithm:
+       \group_begin:
+         \__xframed_setup_firstframe:
+         \coffin_set_eq:NN \l__xframed_main_coffin \l__xframed_temp_coffin
+         \vcoffin_set:Nnn \l__xframed_main_coffin
+            { \l__xframed_coffin_width_dim }
+            {
+             \__xframed__offinterlineskip:
+             \skip_vertical:n { \__xframed__get_length:n { inner-top-margin } }
+             \vbox_unpack_clear:N \l__xframed_main_coffin
+             \skip_vertical:n { \__xframed__get_length:n { inner-bottom-margin } }
+            }
+         \__xframed_draw_frame:
+       \group_end:
+       \xframmed__pagebreak:
+       \__xframed__output_and_draw_aux_i:
+      }
+  \group_end:
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%              Starting splitting algorithm -- middle part               %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new:Npn \__xframed__output_and_draw_aux_i:
+ {
+  \dim_compare:nNnTF { \box_wd:N \l__xframed_main_coffin } < { 1pt }
+  %\box_if_empty:NTF \l__xframed_main_coffin
+   {
+     %WARNING
+   }
+   {
+    \tl_set_eq:NN \l__xframed_temptitle_tl \l__xframed_title_tl
+    \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_lastfoot_tl
+    \__xframed__title:
+    \__xframed__foot:
+    %calculate the maximum height of current / maybe last frame:
+    \dim_set:Nn \l__xframed_splitheight_dim { \l__xframed_free_vspace_dim }
+    \clist_map_inline:nn
+      {
+       split-skip-top , inner-bottom-margin ,
+       line-width-title , line-width-foot , line-width-bottom
+      }
+      {
+       \__xframed__length_sub:Nn \l__xframed_splitheight_dim { ##1 }
+      }
+    \bool_if:NT \l__xframed_draweveryline_bool
+     {
+      \bool_if:NT \l__xframed_topline_bool
+       {
+        \__xframed__length_sub:Nn \l__xframed_splitheight_dim { line-width-top }
+       }
+     }
+    \dim_compare:nNnTF
+     { \box_ht:N \l__xframed_main_coffin + \box_dp:N \l__xframed_main_coffin }
+     <
+     { \l__xframed_splitheight_dim }
+     {%last frame
+       \group_begin:
+         \__xframed_setup_lastframe:
+         \vcoffin_set:Nnn \l__xframed_main_coffin
+            { \l__xframed_coffin_width_dim }
+            {
+             \__xframed__offinterlineskip:
+             \skip_vertical:n { \__xframed__get_length:n { split-skip-top } }
+             \vbox_unpack_clear:N \l__xframed_main_coffin
+             \skip_vertical:n { \__xframed__get_length:n { inner-bottom-margin } }
+            }
+         \__xframed_draw_frame:
+       \group_end:
+     }
+     {%we have a middle part
+      \tl_set_eq:NN \l__xframed_temptitle_tl \l__xframed_title_tl
+      \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_foot_tl
+      \__xframed__title:
+      \__xframed__foot:
+      \dim_set:Nn \l__xframed_splitheight_dim { \l__xframed_free_vspace_dim }
+      \clist_map_inline:nn
+        {
+         split-skip-top , split-skip-bottom, line-width-title ,
+         line-width-foot , title-height , foot-height
+        }
+        {
+         \__xframed__length_sub:Nn \l__xframed_splitheight_dim { ##1 }
+        }
+      \bool_if:NT \l__xframed_draweveryline_bool
+       {
+        \bool_if:NT \l__xframed_topline_bool
+         {
+          \__xframed__length_sub:Nn
+             \l__xframed_splitheight_dim { line-width-top }
+         }
+        \bool_if:NT \l__xframed_bottomline_bool
+         {
+          \__xframed__length_sub:Nn
+              \l__xframed_splitheight_dim { line-width-bottom }
+         }
+       }
+      \__xframed__msg_log:n
+        {
+         Maximum~height~of~middle~frame:\\
+         \dim_eval:n { \l__xframed_splitheight_dim }\ =\
+         \__xframed__convert:n{ \l__xframed_splitheight_dim }
+        }
+      \__xframed_splitting_algorithm:
+      \group_begin:
+        \__xframed_setup_middleframe:
+        \coffin_set_eq:NN \l__xframed_main_coffin \l__xframed_temp_coffin
+        \vcoffin_set:Nnn \l__xframed_main_coffin
+           { \l__xframed_coffin_width_dim }
+           {
+            \__xframed__offinterlineskip:
+            \skip_vertical:n { \__xframed__get_length:n { split-skip-top } }
+            \vbox_unpack_clear:N \l__xframed_main_coffin
+            \skip_vertical:n { \__xframed__get_length:n { split-skip-bottom } }
+           }
+        \__xframed_draw_frame:
+      \group_end:
+      \xframmed__pagebreak:
+      \__xframed__output_and_draw_aux_i:
+     }
+   }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                          Splitting with loop                           %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed_splitting_algorithm:
+ {
+  \__xframed__local_boxdim:
+  \__xframed__ignore_vbadness:
+  \vbox_set_split_to_ht:NNn
+      \l__xframed_tmpb_box
+      \l__xframed_main_coffin
+    { \l__xframed_splitheight_dim - \tex_pageshrink:D }
+  \vbox_set:Nn \l__xframed_tmpb_box
+        { \vbox_unpack_clear:N \l__xframed_tmpb_box }
+  \dim_set:Nn \l__xframed_tmpa_dim
+    {
+     \box_ht:N \l__xframed_tmpb_box + \box_dp:N \l__xframed_tmpb_box
+    }
+  \dim_compare:nNnTF { \l__xframed_splitheight_dim } > { \l__xframed_tmpa_dim  }
+   {%splitting successful
+    \__xframed__msg_log:n { Splitting~successful }
+   }
+   {
+    \__xframed__msg_log:n { Splitting~not~successful }
+    \int_set:Nn \l_tmpa_int { 0 }
+    \dim_set:Nn \l_tmpa_dim { 0pt }
+    \dim_while_do:nNnn { \l__xframed_tmpa_dim } < { \l__xframed_splitheight_dim }
+     {
+      \coffin_set_eq:NN \l__xframed_main_coffin \l__xframed_save_coffin
+      \int_incr:N \l_tmpa_int
+      \dim_add:Nn \l_tmpa_dim { 8 pt }
+      \__xframed__ignore_vbadness:
+      \vbox_set_split_to_ht:NNn
+          \l__xframed_tmpb_box
+          \l__xframed_main_coffin
+        { \l__xframed_splitheight_dim - \tex_pageshrink:D - \l_tmpa_dim }
+      \vbox_set:Nn \l__xframed_tmpb_box
+            { \vbox_unpack_clear:N \l__xframed_tmpb_box }
+      \dim_set:Nn \l__xframed_tmpa_dim
+        {
+         \box_ht:N \l__xframed_tmpb_box + \box_dp:N \l__xframed_tmpb_box
+        }
+      \__xframed__msg_log:n { Splitting~Try~\int_use:N \l_tmpa_int }
+      \int_compare:nNnT { \l_tmpa_int } > { 50 }
+        {
+         \__xframed__msg_log:n { too~much~loops }
+         \dim_set:Nn \l__xframed_tmpa_dim  { 0pt }
+        }
+     }
+   }
+   \vcoffin_set:Nnn
+            \l__xframed_temp_coffin
+          { \l__xframed_coffin_width_dim }
+          { \vbox_unpack_clear:N \l__xframed_tmpb_box }
+   \__xframed__coffin_restructure:N \l__xframed_temp_coffin
+   \__xframed__coffin_restructure:N \l__xframed_main_coffin
+   \__xframed__msg_log:n
+     {
+      height~of~split~frame:\\
+      \dim_eval:n { \l__xframed_tmpa_dim }\ =\
+       \__xframed__convert:n{ \l__xframed_tmpa_dim }
+     }
+ }
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-split.def'.

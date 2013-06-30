@@ -1,0 +1,413 @@
+%%
+%% This is file `xframed-doc.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `doc-package')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%^^A@@=xframed%no need
+%%=======================================================%%
+%% generate sty-file for documentation                   %%
+%%=======================================================%%
+\RequirePackage{expl3,xparse,ifxetex,ifluatex}
+
+\ProvidesExplPackage
+  {xframed-doc}{2013/05/13}{1.0}{documentation package for xframed}
+\@ifpackagelater { expl3 } { 2012/11/21 }
+  { }
+  {
+    \PackageError { xframed-doc } { Support~package~expl3~too~old }
+      {
+        You~need~to~update~your~installation~of~the~bundles~'l3kernel'~and~
+        'l3packages'.\MessageBreak
+        Loading~xframed-doc~will~abort!
+      }
+    \tex_endinput:D
+  }
+\@ifclassloaded{ l3doc }
+  {  }
+  {
+    \PackageError { xframed-doc } { Wrong~document~class }
+      {
+        This~package~requires~the~document~class~l3doc~which~
+        is~part~of~the~bundles~'l3kernel'~and~
+        'l3packages'.\MessageBreak
+        Loading~xframed-doc~will~abort!
+      }
+    \tex_endinput:D
+  }
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi>0
+   % code for XeTeX or LuaTeX
+\else
+   \PackageError { xframed-doc } { Wrong~engine }
+     {
+       This~package~requires~the~engine~xetex~or~lualatex.\MessageBreak
+       Loading~xframed-doc~will~abort!
+     }
+   \tex_endinput:D
+\fi
+
+\RequirePackage{ l3keys2e , xparse}
+
+\keys_define:nn { xframeddoc }
+  {
+    tocdepth  .int_set:N  = \l__xframeddoc_tocdepth_int  ,
+    tocdepth  .initial:n  = 3                            ,
+    show-code .bool_set:N = \l__xframeddoc_showcode_bool ,
+  }
+
+\keys_define:nn { xframeddoc } {
+  unknown .code:n =
+    {
+      \msg_error:nnx { xframeddoc } { option-unknown }
+            { \exp_not:V \l_keys_key_tl }
+    }
+}
+\msg_new:nnnn { xframeddoc } { option-unknown }
+  { Unknown~option~'#1'~for~package~#2. }
+  {
+    LaTeX~has~been~asked~to~set~an~option~called~'#1'~
+    but~the~#2~package~has~not~created~an~option~with~this~name.
+  }
+
+\ProcessKeysOptions { xframeddoc }
+
+\RequirePackage{geometry}
+
+\RequirePackage{fontspec}
+\RequirePackage[ttscale=0.8]{libertine}
+\RequirePackage{fontawesome}
+\RequirePackage{metalogo}
+\RequirePackage{xspace}
+\NewDocumentCommand \Github {} {Github\faGithub\xspace }
+
+\RequirePackage{setspace}\onehalfspacing
+
+\RequirePackage{titlesec}
+
+\RequirePackage{xcolor}
+\colorlet{docblue}{blue!30!black}
+\colorlet{docred}{red!30!black}
+\RequirePackage{scrpage2}
+ \clearscrheadfoot
+ \pagestyle{scrheadings}
+ \automark[subsection]{section}
+ \ihead{\small\rightmark}
+ \ohead{\small\leftmark}
+ \ofoot[\small\pagemark]{\small\pagemark}
+ \setheadtopline{2pt}
+ \setheadsepline{.4pt}
+ \ifoot[\small file:~\jobname]{\small file:~\jobname}
+
+\RequirePackage{caption}
+\RequirePackage{listings}
+\lst@RequireAspects{writefile}
+\captionsetup[lstlisting]{font=sf,labelfont=bf,aboveskip=0pt,belowskip=0pt}
+\captionsetup[figure]{font=sf,labelfont=bf,position=above}
+
+\hypersetup{%
+        breaklinks=true,
+        pdftitle={Documenation of mdframed},%
+        pdfauthor={Marco Daniel},%
+        colorlinks=true,%
+        linkcolor=docblue,
+        urlcolor=cyan,
+        bookmarksdepth= \int_use:N \l__xframeddoc_tocdepth_int,
+}
+
+\NewDocumentCommand \addsec { m }
+ {
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{section}{#1}
+  \section*{ #1 }
+  \markboth { #1 }{}
+ }
+\NewDocumentCommand \addsubsec { m }
+ {
+  \phantomsection
+  \addcontentsline{toc}{subsection}{#1}
+  \subsection*{ #1 }
+ }
+
+\NewDocumentCommand \minisec { m }
+ {
+  \subsubsection*{ #1 }
+ }
+
+\newcommand{\sectionbreak}{\clearpage\null\thispagestyle{plain}}
+
+\titleformat{\section}[display]{\normalfont\Large\bfseries\sffamily}%
+            {Section~\thesection\usesecpreamble}{1em}{}%
+            [{\vspace{10pt}\color{docred}\titlerule[.2em]}]
+\titleformat{\subsection}{\normalfont\large\bfseries\sffamily}%
+            {\llap{\makebox[2em][l]{\thesubsection}}}{0em}{}
+
+\box_new:N \g__doc_secpreamble_box
+
+\NewDocumentCommand \usesecpreamble {}
+ {
+  \box_if_empty:NF \g__doc_secpreamble_box
+   {
+    \hfill
+    \hbox_overlap_left:n
+      {
+       \dim_set:Nn \l_tmpa_dim { \box_ht:N \g__doc_secpreamble_box }
+       \box_set_dp:Nn \g__doc_secpreamble_box { \c_zero_dim }
+       \box_set_ht:Nn \g__doc_secpreamble_box { \c_zero_dim }
+       \box_move_up:nn { 0.5\l_tmpa_dim }
+          { \box_use_clear:N \g__doc_secpreamble_box }
+      }
+   }
+ }
+
+\NewDocumentCommand \secpreamble { m }
+ {
+   \hbox_gset:Nn \g__doc_secpreamble_box { #1 }
+ }
+
+\NewDocumentCommand \dictum { +o +m }
+ {
+  \IfNoValueTF { #1 }
+   {
+    \parbox{0.5\linewidth}
+     {
+      \normalfont\normalcolor\sffamily\small
+      \raggedright
+       #2\strut
+     }
+   }
+   {
+    \parbox{0.5\linewidth}
+     {
+      \normalfont\normalcolor\sffamily\small
+      \raggedright
+       #2\strut\par\vskip-1ex\hrulefill\par
+      \itshape\raggedleft
+       (#1)\strut\par
+     }
+   }
+ }
+
+\tl_gput_left:Nn \theCodelineNo { \color{gray} }
+\dim_set:Nn \MacroTopsep { 10pt }
+\tl_gput_right:Nn \MacroFont { \color{docblue} }
+
+
+\NewDocumentCommand \Opt { m }
+ {
+  {\hyperlink{doc-md-opt-#1}{\MacroFont #1}\xspace}
+ }
+
+\NewDocumentCommand \Env { m }
+ {
+  {\hyperlink{doc-md-env-#1}{\MacroFont #1}\xspace}
+ }
+
+\NewDocumentCommand \Cmd { m }
+ {
+  {\hyperlink{doc-md-cmd-#1}{\MacroFont\textbackslash #1}\xspace}
+ }
+
+\DeclareRobustCommand \Pack {\textsf}
+
+\NewDocumentCommand \OArgs { O{option-list} }
+ {
+  \texttt{[#1]}
+ }
+\NewDocumentCommand \MArgs { O{option-list} }
+ {
+  \texttt{\{#1\}}
+ }
+
+\NewDocumentCommand \Metakey {}
+ {
+  \quad\textcolor{red!70!black}{\tiny\faStar}
+ }
+
+\NewDocumentCommand \ExplEnv { o m O{[option-list]} }
+ {
+    \par
+    \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+    \noindent
+    \hypertarget{doc-md-env-#2}
+      {
+       \hbox_to_wd:nn { \c_zero_dim }
+                   {
+                     \skip_horizontal:n { -2em }
+                     \@bsphack\def\arraystretch{1.25}
+                      \SpecialEnvIndex{#2}%
+                      \begin{tabular}{@{}l@{}}\hline
+                      \MacroFont \textbackslash begin\{#2\}#3\\
+                      \MacroFont \textbackslash end\{#2\}\\\hline
+                      \end{tabular}
+                     \@esphack
+                    }
+      }
+    \hfill\null
+    \IfNoValueF { #1 }
+      {
+       \hbox:n { \small default=\ttfamily #1 }
+      }
+    \par\nobreak
+    \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+    \@afterheading
+ }
+
+\NewDocumentCommand \ExplCmd { o m O{} }
+ {
+    \par
+    \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+    \noindent
+    \hypertarget{doc-md-cmd-#2}
+      {
+       \hbox_to_wd:nn { \c_zero_dim }
+                   {
+                     \skip_horizontal:n { -2em }
+                     \@bsphack\def\arraystretch{1.25}
+                      \begin{tabular}{@{}l@{}}\hline
+                      \MacroFont\textbackslash #2 #3
+                      \SpecialUsageIndex{#2}\\\hline
+                      \end{tabular}
+                     \@esphack
+                    }
+      }
+    \hfill\null
+    \IfNoValueF { #1 }
+      {
+       \hbox:n { \small default=\ttfamily #1 }
+      }
+    \par\nobreak
+    \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+    \@afterheading
+ }
+
+\NewDocumentCommand \ExplOpt { o m }
+ {
+  \par
+  \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+  \noindent
+   \hbox_to_wd:nn { \c_zero_dim }
+     {
+      \skip_horizontal:n { -2em }
+      \group_begin:
+       \@bsphack\def\arraystretch{1.25}
+        \tl_set:Nn \l_tmpa_tl { \begin{tabular}{@{}ll@{}}\hline }
+        \clist_map_inline:nn {#2}
+         {
+          \tl_if_in:nnTF { ##1 }{ * }
+           {
+            \tl_set:Nn \l_tmpb_tl { ##1 }
+            \tl_remove_once:Nn \l_tmpb_tl { * }
+            \tl_put_right:Nx \l_tmpa_tl
+             {
+              \exp_not:N \hypertarget{doc-md-opt-\l_tmpb_tl}
+               {
+                \exp_not:N \MacroFont \l_tmpb_tl \exp_not:N \Metakey
+               }
+             }
+            \SpecialOptIndex{ ##1 }
+            \tl_put_right:Nn \l_tmpa_tl { &\\ }
+           }
+           {
+            \tl_put_right:Nn \l_tmpa_tl
+             {
+              \hypertarget{doc-md-opt-##1}
+               {
+                \MacroFont ##1&=~<value>
+               }
+              \SpecialOptIndex{##1}
+              \\
+             }
+           }
+         }
+        \tl_put_right:Nn \l_tmpa_tl {\hline\end{tabular} }
+       \tl_use:N \l_tmpa_tl
+      \@esphack
+     \group_end:
+     }
+  \hfill\null
+  \IfNoValueF { #1 }
+    {
+     \hbox:n { \small default=\ttfamily #1 }
+    }
+  \par\nobreak
+  \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+  \@afterheading
+ }
+
+\NewDocumentCommand \ExplTOpt { o m }
+ {
+    \par
+    \skip_vertical:n { 14pt~plus~0.3pt~minus~0.2pt }
+    \noindent
+       \hbox_to_wd:nn { \c_zero_dim }
+                   {
+                     \skip_horizontal:n { -2em }
+                     \@bsphack\def\arraystretch{1.25}
+                      \begin{tabular}{@{}l@{}}\hline
+                       \MacroFont #2~
+                       \SpecialOptIndex{#2}\\\hline
+                      \end{tabular}
+                     \@esphack
+                    }
+      \hypertarget{doc-md-opt-#2}{}
+    \hfill\null
+    \IfNoValueF { #1 }
+      {
+       \group_begin:\small \ttfamily
+       \tl_set:Nn \l_tmpa_tl { \begin{tabular}[t]{@{}r@{}} }
+       \clist_map_inline:nn {#1}
+         {
+          \tl_put_right:Nn \l_tmpa_tl { ##1 \\ }
+         }
+       \tl_put_right:Nn \l_tmpa_tl { \end{tabular} }
+       \tl_use:N \l_tmpa_tl
+       \group_end:
+      }
+    \par\nobreak
+    \skip_vertical:n { 12pt~plus~0.3pt~minus~0.2pt }
+    \@afterheading
+ }
+
+\def\SpecialOptIndex#1{\@bsphack
+    \index{#1\actualchar{\protect\ttfamily#1}
+           (option)\encapchar usage}%
+    \index{options:\levelchar#1\actualchar{\protect\ttfamily#1}\encapchar
+           usage}\@esphack}
+
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-doc.sty'.

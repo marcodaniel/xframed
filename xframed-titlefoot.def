@@ -1,0 +1,165 @@
+%%
+%% This is file `xframed-titlefoot.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-titlefoot')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to define all functions to use title or foot     %%
+%%=======================================================%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                          Declaration of title                          %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\__xframed__prop_set:Nnn \l__xframed_length_option_prop
+   { title-height } { \c_zero_dim }
+\__xframed__prop_set:Nnn \l__xframed_length_option_prop
+   { foot-height } { \c_zero_dim }
+
+\cs_new:Nn \__xframed__title:
+ {
+    \tl_if_blank:VTF \l__xframed_temptitle_tl
+     {
+      \coffin_set_eq:NN \l__xframed_title_coffin \c_empty_coffin
+      \dim_set:Nn \l__xframed_title_htdp_dim { 0pt }
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { line-width-title } { 0pt }
+      \bool_set_false:N \l__xframed_titleline_bool
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { title-height } { 0pt }
+     }
+     {
+      %ssave the contents of title in coffin
+      \vcoffin_set:Nnn
+          \l__xframed_title_coffin
+        { \l__xframed_coffin_width_dim   }
+        {
+         \tl_use:N \l__xframed_titleprecode_tl
+         \tl_use:N \l__xframed_title_font_tl
+         \color { \__xframed__get_color:n { title-font-color } }
+         \tl_use:N \l__xframed_temptitle_tl
+         \__xframed__ignore_last_descenders:
+         \__xframed__ignore_last_skip:
+         \tl_use:N \l__xframed_titlepostcode_tl
+        }
+      \__xframed__coffin_restructure:N  \l__xframed_title_coffin
+      %add the needed vertical space to coffin
+      \vcoffin_set:Nnn
+          \l__xframed_title_coffin
+        { \l__xframed_coffin_width_dim }
+        {
+         \__xframed__offinterlineskip:
+         \skip_vertical:n { \__xframed__get_length:n { title-skip-above } }
+         \vbox_unpack_clear:N \l__xframed_title_coffin
+         \skip_vertical:n {  \__xframed__get_length:n { title-skip-below } }
+        }
+      \dim_set:Nn \l__xframed_title_htdp_dim
+         {
+           \coffin_ht:N \l__xframed_title_coffin +
+           \coffin_dp:N \l__xframed_title_coffin
+         }
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { title-height } { \dim_use:N \l__xframed_title_htdp_dim }
+      \bool_if:NF \l__xframed_titleline_bool
+       {
+        \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { line-width-title } { 0pt }
+       }
+    }
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                           Declaration of foot                          %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new:Nn \__xframed__foot:
+ {
+    \tl_if_blank:VTF \l__xframed_tempfoot_tl
+     {
+      \coffin_set_eq:NN \l__xframed_foot_coffin \c_empty_coffin
+      \dim_set:Nn \l__xframed_foot_htdp_dim { 0pt }
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+       { line-width-foot } { 0pt }
+      \bool_set_false:N \l__xframed_footline_bool
+     }
+     {
+      \vcoffin_set:Nnn
+          \l__xframed_foot_coffin
+        { \l__xframed_coffin_width_dim   }
+        {
+         \color { \__xframed__get_color:n { foot-font-color } }
+         \tl_use:N \l__xframed_footprecode_tl
+         \tl_use:N \l__xframed_foot_font_tl
+         \tl_use:N \l__xframed_tempfoot_tl
+         \__xframed__ignore_last_descenders:
+         \__xframed__ignore_last_skip:
+         \tl_use:N \l__xframed_footpostcode_tl
+        }
+      \vcoffin_set:Nnn
+          \l__xframed_foot_coffin
+        { \l__xframed_coffin_width_dim }
+        {
+         \__xframed__offinterlineskip:
+         \skip_vertical:n {  \__xframed__get_length:n { foot-skip-above } }
+         \vbox_unpack_clear:N \l__xframed_foot_coffin
+         \skip_vertical:n {  \__xframed__get_length:n { foot-skip-below } }
+        }
+      \dim_set:Nn \l__xframed_foot_htdp_dim
+         {
+           \coffin_ht:N \l__xframed_foot_coffin +
+           \coffin_dp:N \l__xframed_foot_coffin
+         }
+      \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { foot-height } { \dim_use:N \l__xframed_foot_htdp_dim }
+      \bool_if:NF \l__xframed_footline_bool
+       {
+        \__xframed__prop_set:Nnn \l__xframed_length_option_prop
+            { line-width-foot } { 0pt }
+       }
+    }
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                                   END                                  %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-titlefoot.def'.

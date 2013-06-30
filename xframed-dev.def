@@ -1,0 +1,212 @@
+%%
+%% This is file `xframed-dev.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-dev')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to define all development functions              %%
+%%=======================================================%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                  Testing if development info requested                 %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new:Npn \__xframed__msg_log:n #1 {}
+
+\cs_new:Npn \__xframed__developer_tools:
+ {
+  \bool_if:NT \l__xframed_developer_info_bool
+    {%developer info true
+     %print coffin coordinates
+     \cs_set:Npn \__xframed__display_coffins:N ##1
+       {
+        \coffin_display_handles:Nn ##1 { blue!70!black }
+       }
+     %print extra information to log file
+     \cs_set:Npn \__xframed__msg_log:n ##1
+      {
+       \msg_log:n { xframed~developer~info~line~
+                    \msg_line_number:\\\\##1
+                  }
+      }
+    }
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                    Print all options in a longtable                    %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Nn \__xframed__all_option_output:
+ {
+  \tl_set:Nn \l_tmpa_tl
+   {
+    \group_begin:
+    \renewcommand\arraystretch{1.25}
+    \begin{longtable}{@{}lll@{}}
+      \caption*{Options}\\\hline
+     \endhead
+      \multicolumn{3}{@{}r@{}}{\ldots}\\\hline
+     \endfoot
+      \hline
+     \endlastfoot
+   }
+   \tl_put_right:Nn \l_tmpa_tl { \multicolumn{3}{@{}c@{}}{length} \\\hline }
+   \tl_put_right:Nn \l_tmpa_tl
+    {
+     \prop_map_inline:Nn  \l__xframed_length_option_prop
+       { ##1 & \dim_eval:n { ##2 } & \Convert{##2}  \\ }
+    }
+   \tl_put_right:Nn \l_tmpa_tl
+    { \\\hline\multicolumn{3}{@{}c@{}}{skips} \\\hline }
+   \tl_put_right:Nn \l_tmpa_tl
+    {
+     \prop_map_inline:Nn  \l__xframed_skip_option_prop
+      { ##1 & \skip_eval:n { ##2 } & \Convert{##2} \\ }
+    }
+   \tl_put_right:Nn \l_tmpa_tl
+    { \\\hline\multicolumn{3}{@{}c@{}}{color} \\\hline }
+   \tl_put_right:Nn \l_tmpa_tl
+    {
+     \prop_map_inline:Nn  \l__xframed_color_option_prop
+       { ##1 &  ##2  & \color{ ##2 } ##1  \\ }
+    }
+   \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
+  \tl_use:N \l_tmpa_tl
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                 Print all lenght options in a longtable                %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Nn \__xframed__length_output_aux:
+ {
+  \tl_set:Nn \l_tmpa_tl
+   {
+    \group_begin:
+    \renewcommand\arraystretch{1.25}
+    \begin{longtable}{@{}lll@{}}
+      \caption*{Length-options}\\\hline
+     \endhead
+      \multicolumn{3}{@{}r@{}}{\ldots}\\\hline
+     \endfoot
+      \hline
+     \endlastfoot
+   }
+ \tl_put_right:Nn \l_tmpa_tl
+  {
+   \prop_map_inline:Nn  \l__xframed_length_option_prop
+    { ##1 & \dim_eval:n { ##2 } & \Convert{##2}  \\ }
+  }
+ \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
+ \tl_use:N \l_tmpa_tl
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                  Print all skip options in a longtable                 %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Nn \__xframed__skip_output_aux:
+ {
+  \tl_set:Nn \l_tmpa_tl
+   {
+    \group_begin:
+    \renewcommand\arraystretch{1.25}
+    \begin{longtable}{@{}lll@{}}
+      \caption*{Skip~options}\\\hline
+     \endhead
+      \multicolumn{3}{@{}r@{}}{\ldots}\\\hline
+     \endfoot
+      \hline
+     \endlastfoot
+   }
+ \tl_put_right:Nn \l_tmpa_tl
+  {
+   \prop_map_inline:Nn  \l__xframed_skip_option_prop
+    { ##1 & \skip_eval:n { ##2 } & \Convert{##2}  \\ }
+  }
+ \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
+ \tl_use:N \l_tmpa_tl
+ }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                 Print all color options in a longtable                 %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Nn \__xframed__color_output_aux:
+ {
+  \tl_set:Nn \l_tmpa_tl
+   {
+    \group_begin:
+    \renewcommand\arraystretch{1.25}
+    \begin{longtable}{@{}lll@{}}
+      \caption*{Color~options}\\\hline
+     \endhead
+      \multicolumn{3}{@{}r@{}}{\ldots}\\\hline
+     \endfoot
+      \hline
+     \endlastfoot
+   }
+ \tl_put_right:Nn \l_tmpa_tl
+  {
+   \prop_map_inline:Nn  \l__xframed_color_option_prop
+    { ##1 &  ##2  & \color{ ##2 } ##1  \\ }
+  }
+ \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
+ \tl_use:N \l_tmpa_tl
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%========================================================================%%%%
+%%%%                     Print single length/skip option                    %%%%
+%%%%========================================================================%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cs_new:Npn \__xframed__show_length:n #1
+ {
+  \dim_set:Nn \l_tmpa_dim { \__xframed__get_length:n { #1 } }
+  \dim_use:N \l_tmpa_dim
+ }
+\cs_new:Npn \__xframed__show_skip:n #1
+ {
+  \skip_set:Nn \l_tmpa_skip { \__xframed__get_skip:n { #1 } }
+  \skip_use:N \l_tmpa_skip
+ }
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-dev.def'.

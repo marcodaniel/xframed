@@ -1,0 +1,106 @@
+%%
+%% This is file `xframed-msg.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-msg')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to define all needed messanges                   %%
+%%=======================================================%%
+
+\msg_new:nnn { xframed } { inside-box }
+  {
+    You~are~using~the~environment~xframed~inside~a~non~breakable\\
+    box.~By~this~the~option~nobreak~is~used.~For~further~information\\
+    see~the~documentation.
+  }
+
+\msg_new:nnn { xframed } { package-not-available }
+  {
+    The~#1~package~is~not available~but~xframed~needs~the~package~.\\
+    For~further~information~see~the~documenation.
+  }
+
+\msg_new:nnn { xframed } { unknown-option }
+  {
+    The~option~file~'#1'~is~not~known~by~xframed.\\
+    Perhaps~it~is~spelled~incorrectly.
+  }
+
+\msg_new:nnn { xframed } { unknown-style }
+  {
+    The~style~'#1'~is~not~known~by~xframed:
+    perhaps~it~is~spelled~incorrectly.
+  }
+
+\msg_new:nnn { xframed } { style-not-defined }
+  {
+    You~are~trying~to~expand~the~style~#1.\\
+    The~style~is~undefined.~xframed~uses \\
+    the~command~\newxframedstyle~instead.
+  }
+
+\msg_new:nnn { xframed } { style-already-defined }
+  {
+    You~are~trying~to~define~the~style~#1.\\
+    The~style~is~alread~defined.~xframed~uses \\
+    the~command~\addtoxframedstyle~instead.
+  }
+
+\msg_new:nnn { xframed } { prop-key-not-available }
+  {
+    The~key~'#1'~is~not~defined~\\
+    in~current~property~list~of~#2.\\
+    Perhaps~it~is~spelled~incorrectly.
+  }
+
+\msg_new:nnn { xframed } { patching-worked }
+  { Patching~the~command~#1~was~successful.  }
+
+\msg_new:nnn { xframed } { patching-failed }
+  { Patching~the~command~#1~failed.  }
+
+\msg_new:nnn { xframed } { output-option-failed }
+  {
+    You~are~trying~to~print~all~#1~options.\\
+    These~options~are~not~defined~by~xframed. \\
+    Allowed~are:~length,~skip~and~color.\\
+    Perhaps~it~is~spelled~incorrectly.
+  }
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-msg.def'.

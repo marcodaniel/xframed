@@ -1,0 +1,91 @@
+%%
+%% This is file `xframed-initial.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% xframed.dtx  (with options: `package-initial')
+%% =======================================================
+%% =======================================================
+%%  file is part of the package xframed
+%% 
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%%   This package may be distributed under the terms
+%%   of the LaTeX Project Public License, as described
+%%   in lppl.txt in the base LaTeX distribution.Either
+%%   version 1.0 or, at your option, any later version.
+%% =======================================================
+%% =======================================================
+%% 
+%% 
+%%=======================================================%%
+%% file to initial all new variables needed by xframed   %%
+%%=======================================================%%
+
+\coffin_new:N \l__xframed_head_coffin
+\coffin_new:N \l__xframed_main_coffin
+\coffin_new:N \l__xframed_title_coffin
+\coffin_new:N \l__xframed_firsttitle_coffin
+\coffin_new:N \l__xframed_foot_coffin
+\coffin_new:N \l__xframed_lastfoot_coffin
+\coffin_new:N \l__xframed_footnotes_coffin
+
+\coffin_new:N \l__xframed_draw_coffin
+
+\coffin_new:N \l__xframed_temp_coffin
+\coffin_new:N \l__xframed_two_coffin
+\coffin_new:N \l__xframed_save_coffin
+
+\coffin_new:N \l__xframed_subtitle_coffin
+\coffin_new:N \l__xframed_subsubtitle_coffin
+
+\dim_new:N \l__xframed_coffin_width_dim
+
+\dim_new:N \l__xframed_title_htdp_dim
+\dim_new:N \l__xframed_firsttitle_htdp_dim
+\dim_new:N \l__xframed_foot_htdp_dim
+\dim_new:N \l__xframed_lastfoot_htdp_dim
+
+\dim_new:N \l__xframed_maincoffin_htdp_dim
+
+\dim_new:N \l__xframed_splitheight_dim
+
+\dim_new:N \l__xframed_free_vspace_dim
+\dim_new:N \l__xframed_computed_coffin_height_dim
+\dim_new:N \l__xframed_maximum_coffin_height_dim
+
+\dim_new:N \l__xframed_tmpa_dim
+\dim_new:N \l__xframed_tmpb_dim
+
+\box_new:N \l__xframed_tmpa_box
+\box_new:N \l__xframed_tmpb_box
+
+\bool_new:N \l__xframed_head_bool
+
+\dim_const:Nn \c_one_pt_dim { 1~pt }
+
+\tl_new:N \l__xframed_temptitle_tl
+\tl_new:N \l__xframed_tempfoot_tl
+
+ \tex_endinput:D
+%% =======================================================
+%% =======================================================
+%%  Author's name: Marco Daniel
+%%  License type: lppl
+%% 
+%%   Copyright (c) 2013 Marco Daniel
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL),
+%% either version 1.3c of this license or (at your option)
+%% any later version. The latest version of this license
+%% is in the file:
+%%    http://www.latex-project.org/lppl.txt
+%% =======================================================
+%% =======================================================
+%%
+%% End of file `xframed-initial.def'.
