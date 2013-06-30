@@ -39,12 +39,12 @@ help:
 	@echo -e "$(WARN_COLOR)End help$(NO_COLOR)"
 
 ################################################################
-## Compilation
+## Compilation "\def\myvar{info-to-pass} \input{<filename>}"
 ################################################################
 docsty: $(PACKAGE).dtx
 	echo -e "" ;\
 	echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).dtx$(NO_COLOR)" ;\
-	$(ENGINE) --draftmode --interaction=nonstopmode --shell-escape $(PACKAGE).dtx > /dev/null ;\
+	$(ENGINE) --draftmode --interaction=nonstopmode --shell-escape "\let\ifdevel\iffalse \input{$(PACKAGE).dtx}" > /dev/null ;\
 	if [ $$? = 0 ] ; then \
 	  echo -e "\t$(OK_COLOR)compilation in draftmode without errors$(NO_COLOR)" ;\
 	  if [ -f $(PACKAGE).glo ] ; then \
@@ -65,12 +65,49 @@ docsty: $(PACKAGE).dtx
 	     echo -e "\t$(ERROR_COLOR)compilation of Index with errors$(NO_COLOR)" ;\
 	   fi ;\
 	  fi ;\
-	  $(ENGINE) --shell-escape $(PACKAGE).dtx > /dev/null ;\
+	  $(ENGINE) --shell-escape "\let\ifdevel\iffalse \input{$(PACKAGE).dtx}" > /dev/null ;\
 	  if [ $$? = 0 ] ; then \
 	     echo -e "\t$(OK_COLOR)Second $(ENGINE) compilation without errors$(NO_COLOR)" ;\
-		 echo -e "\t$(OK_COLOR)Start third $(ENGINE) compilation(NO_COLOR)" ;\
-		 $(ENGINE) --shell-escape $(PACKAGE).dtx > /dev/null ;\
+		 echo -e "\t$(OK_COLOR)Start third $(ENGINE) compilation$(NO_COLOR)" ;\
+		 $(ENGINE) --shell-escape "\let\ifdevel\iffalse \input{$(PACKAGE).dtx}" > /dev/null ;\
 	     echo -e "\t$(OK_COLOR)Done.$(NO_COLOR)" ;\
+	  else \
+	     echo -e "\t$(ERROR_COLOR)Second $(ENGINE) compilation with errors$(NO_COLOR)" ;\
+	     exit 0;\
+	  fi ;\
+	else \
+	  echo -e "\t$(ERROR_COLOR)compilation in draftmode with errors$(NO_COLOR)" ;\
+	  exit 0;\
+	fi ;\
+
+docstydevel: $(PACKAGE).dtx
+	echo -e "" ;\
+	echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).dtx$ -- devel version$(NO_COLOR)" ;\
+	$(ENGINE) --draftmode --interaction=nonstopmode --shell-escape --jobname=$(PACKAGE)-devel "\def\jobname{xframed}\let\ifdevel\iftrue \input{$(PACKAGE).dtx}" > /dev/null ;\
+	if [ $$? = 0 ] ; then \
+	  echo -e "\t$(OK_COLOR)compilation in draftmode without errors$(NO_COLOR)" ;\
+	  if [ -f $(PACKAGE).glo ] ; then \
+	   echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).glo$(NO_COLOR)" ;\
+	   makeindex -q -t $(PACKAGE).glolog  -s gglo.ist -o $(PACKAGE).gls $(PACKAGE).glo ;\
+	   if [ $$? = 0 ] ; then \
+	     echo -e "\t$(OK_COLOR)compilation of Glossar without errors$(NO_COLOR)" ;\
+	   else \
+	     echo -e "\t$(ERROR_COLOR)compilation of Glossar with errors$(NO_COLOR)" ;\
+	   fi ;\
+	  fi ;\
+	  if [ -f $(PACKAGE).idx ] ; then \
+	   echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).idx$(NO_COLOR)" ;\
+	   makeindex -q -t $(PACKAGE).idxlog -s gind.ist $(PACKAGE).idx ;\
+	   if [ $$? = 0 ] ; then \
+	     echo -e "\t$(OK_COLOR)compilation of Index without errors$(NO_COLOR)" ;\
+	   else \
+	     echo -e "\t$(ERROR_COLOR)compilation of Index with errors$(NO_COLOR)" ;\
+	   fi ;\
+	  fi ;\
+	  $(ENGINE) --shell-escape --jobname=$(PACKAGE)-devel "\def\jobname{xframed}\let\ifdevel\iftrue \input{$(PACKAGE).dtx}" > /dev/null ;\
+	  $(ENGINE) --shell-escape --jobname=$(PACKAGE)-devel "\def\jobname{xframed}\let\ifdevel\iftrue \input{$(PACKAGE).dtx}" > /dev/null ;\
+	  if [ $$? = 0 ] ; then \
+	     echo -e "\t$(OK_COLOR)Second $(ENGINE) compilation without errors$(NO_COLOR)" ;\
 	  else \
 	     echo -e "\t$(ERROR_COLOR)Second $(ENGINE) compilation with errors$(NO_COLOR)" ;\
 	     exit 0;\
@@ -89,12 +126,12 @@ clean:
 	  done ;\
 	echo -e "\t$(OK_COLOR)Removing finished$(NO_COLOR)" ;\
 
-all:	docsty clean
+all:	docsty docstydevel clean
 
 ################################################################
 ## personal setting
 ################################################################
-localinstall:	docsty makelocalinstall clean
+localinstall:	docsty docstydevel makelocalinstall clean
 
 makelocalinstall:
 	echo  "" ;\
@@ -104,6 +141,7 @@ makelocalinstall:
 	mkdir -p $$PATHTEXHOME/doc/latex/$(PACKAGE)/ ;\
 	mkdir -p $$PATHTEXHOME/tex/latex/$(PACKAGE)/ ;\
 	cp $(PACKAGE).pdf $$PATHTEXHOME/doc/latex/$(PACKAGE)/  ;\
+	cp $(PACKAGE)-devel.pdf $$PATHTEXHOME/doc/latex/$(PACKAGE)/  ;\
 	for I in $(DEFLIST) ;\
 	do \
 	  cp $(PACKAGE)-$$I.def $$PATHTEXHOME/tex/latex/$(PACKAGE)/  ;\
