@@ -388,6 +388,91 @@
     \@afterheading
  }
 
+%%%%%%%%%%%
+\cs_set_nopar:Npn \__codedoc_macro_single:n #1
+ {
+  \int_incr:N \l__codedoc_macro_int
+
+  \tl_set:Nx \l__codedoc_at_replaced_macro_tl { \token_to_str:N #1 }
+  \__codedoc_replace_at_at:N \l__codedoc_at_replaced_macro_tl
+  \tl_set_eq:NN \saved@macroname \l__codedoc_at_replaced_macro_tl
+
+  \topsep\MacroTopsep
+  \trivlist
+  \cs_set_nopar:Npn \makelabel ##1
+    {
+     \skip_horizontal:n { - 1.5cm }
+     \begin{tabular}{@{}l@{}}
+      \hline {##1} \\\hline
+     \end{tabular}
+    }
+  \if@inlabel
+    \cs_set_eq:NN \@tempa \@empty
+    \count@ \macro@cnt
+    \loop \ifnum\count@>\z@
+      \cs_set_nopar:Npx \@tempa{\@tempa\hbox{\strut}}
+      \advance\count@\m@ne
+    \repeat
+    \cs_set_nopar:Npx \makelabel ##1
+     {
+      \llap{\vtop to\baselineskip {\@tempa\hbox{##1}\vss}}
+     }
+    \advance \macro@cnt \@ne
+  \else
+    \macro@cnt \@ne
+  \fi
+
+  \bool_if:NT \l__codedoc_macro_aux_bool
+   {
+    \cs_set_eq:NN \__codedoc_macroname_prefix:n \__codedoc_typeset_aux:n
+   }
+  \bool_if:NT \l__codedoc_macro_TF_bool
+   {
+    \cs_set_eq:NN \__codedoc_macroname_suffix: \__codedoc_typeset_TF:
+   }
+
+  \bool_if:NF \l__codedoc_macro_aux_bool
+   {
+    \tl_gset:Nx \l__codedoc_macro_tl { \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+    \exp_args:NNf \tl_greplace_all:Nnn \l__codedoc_macro_tl {\token_to_str:N _} {/}
+    \exp_args:NNf \tl_greplace_all:Nnn \l__codedoc_macro_tl {\@backslashchar} {}
+   }
+
+  \use:x
+   {
+    \exp_not:N \item [ \exp_not:N \__codedoc_print_macroname:n {
+      \tl_to_str:N \l__codedoc_at_replaced_macro_tl
+    }] \exp_not:N \mbox{} \exp_not:N \par
+   }
+  \int_gincr:N \c@CodelineNo
+
+  \bool_if:NF \l__codedoc_macro_aux_bool
+   {
+    \bool_if:NTF \l__codedoc_macro_TF_bool
+     {
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n {TF} }
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n {T } }
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n { F} }
+     }
+     {
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+     }
+   }
+  \bool_if:NTF \l__codedoc_macro_TF_bool
+   {
+    \exp_args:Nx \SpecialMainIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl TF}\nobreak
+    \exp_args:Nx \DoNotIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl TF}
+   }
+   {
+    \exp_args:Nx \SpecialMainIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl }\nobreak
+    \exp_args:Nx \DoNotIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+   }
+
+  \int_gdecr:N \c@CodelineNo
+  \ignorespaces
+ }
+
+%%%%%%%%%%%%%
 \def\SpecialOptIndex#1{\@bsphack
     \index{#1\actualchar{\protect\ttfamily#1}
            (option)\encapchar usage}%

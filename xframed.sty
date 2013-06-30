@@ -41,10 +41,7 @@
           {package xframed}
 
 \ProvidesExplPackage {xframed} {2013/06/21} {0.01 ALPHA} {package xframed}
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
+
 \@ifpackagelater { expl3 } { 2011/09/05 }
   { }
   {
@@ -56,32 +53,15 @@
       }
     \tex_endinput:D
   }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\RequirePackage{xcolor}%needed to display developer Info
+\RequirePackage{ xparse , l3keys2e }
+\RequirePackage{xcolor}
 \ExplSyntaxOff
  \RequirePackage{tikz}
  \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
-\RequirePackage{lengthconvert}%as long as regexpatch has alpha status
-\RequirePackage{longtable}%needed to display developer Info
+\RequirePackage{ longtable , lengthconvert }
+
 \RequirePackage{etoolbox}%as long as regexpatch has alpha status
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\cs_new_protected:Npn \__xframed__load_check:n #1 {
-    \IfFileExists {#1.sty}
-      { \RequirePackage{#1} }
-      { \msg_error:nnx { xframed } { package-not-available } {#1} }
-}
-
-\clist_map_function:nN
-  { zref-abspage , xparse , l3keys2e  }
-    \__xframed__load_check:n
-
 \cs_new_protected:Npn \__xframed__load_deffiles:n #1 {
     \IfFileExists {xframed-#1.def}
       { \input{xframed-#1.def} }
@@ -94,11 +74,6 @@
     but~xframed~needs~the~file~.\\
     I~guess~you~installed~xframed~wrong.
   }
-
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
 \__xframed__load_deffiles:n { initial }
 \__xframed__load_deffiles:n { dim }
 \__xframed__load_deffiles:n { funct }
@@ -109,10 +84,6 @@
 \__xframed__load_deffiles:n { split }
 \__xframed__load_deffiles:n { default }
 \__xframed__load_deffiles:n { user }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
 \cs_new_protected:Npn \__xframed__load_ifrequested:n #1 {
  \bool_if:cT { l__xframed_#1_bool }
   {
@@ -127,17 +98,6 @@
 \__xframed__load_ifrequested:n { pstricks }
 \__xframed__load_ifrequested:n { theorem  }
 \__xframed__load_ifrequested:n { mdframed }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\__xframed__developer_tools:
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-
-
 \NewDocumentEnvironment { xframed } { O{} }
  {
  \group_begin:
@@ -152,24 +112,24 @@
    \__xframed__environment_precode:
     \vcoffin_set:Nnw   \l__xframed_main_coffin
                      { \l__xframed_coffin_width_dim }
+     \@minipagetrue
      \__xframed_prevent_firstindent:
      \__xframed__environment_inner_precode:
      \__xframed__inner_head:
  }
  {
-    \__xframed__environment_inner_postcode:
+     \__xframed__environment_inner_postcode:
+     \@minipagefalse
     \vcoffin_set_end:
   \__xframed__set_list:
     \__xframed__environment_postcode:
   \__xframed__set_endlist:
   \group_end:
  }
-
 \cs_new:Nn \__xframed_prevent_firstindent:
  {
   \@afterindentfalse\@afterheading
  }
-
 \cs_new:Nn \__xframed__inner_head:
  {
     \tl_if_blank:VF \l__xframed_head_tl
@@ -186,8 +146,6 @@
      \group_end:
      }
  }
-
-%%Not recommended
 \cs_new_nopar:Npn \xframeddivide
  {
     \__xframed__environment_head_postcode:
@@ -198,7 +156,6 @@
                       { \l__xframed_coffin_width_dim }
      \__xframed__environment_afterhead_precode:
  }
-
 \cs_new:Npn \__xframed__environment_afterhead_precode: {}
 
 \cs_new:Npn \__xframed__environment_head_postcode: {}
@@ -208,12 +165,11 @@
   \__xframed__developer_tools:
   %%\__xframed__minimum_space:
   \__xframed__test_if_splittable:
+  \__xframed__frame_linewidth:
   \__xframed__calculate_width:
   \__xframed__declare_footnotes:
-  \__xframed__frame_linewidth:
   \tl_use:N \l__xframed_codebefore_tl
  }
-
 \cs_new:Npn \__xframed__calculate_width:
  {
   \dim_set:Nn \l__xframed_coffin_width_dim { \__xframed__get_length:n { width } }
@@ -228,8 +184,11 @@
             \__xframed__get_length:n { ##1 }
            }
     }
+  \dim_compare:nNnT { \l__xframed_coffin_width_dim } > { \linewidth }
+    {
+     \__xframed__msg_log:n { oversized~environment }
+    }
  }
-
 \cs_new:Npn \__xframed__declare_footnotes:
  {
   %% START
@@ -241,7 +200,6 @@
   %%
    \cs_set_eq:NN \@footnotetext \@mpfootnotetext
  }
-
 \cs_new:Npn \__xframed__environment_inner_precode:
  {
   \skip_vertical:n { - \parskip }
@@ -249,14 +207,12 @@
   \color { \__xframed__get_color:n { font-color } }
   \tl_use:N \l__xframed_codebegin_tl
  }
-
 \cs_new:Npn \__xframed__environment_inner_postcode:
  {
   \__xframed__ignore_last_skip:
   \__xframed__ignore_last_descenders:
   \tl_use:N \l__xframed_codeend_tl
  }
-
 \cs_new:Npn \__xframed__ignore_last_skip:
  {
   \bool_if:NT \l__xframed_ignore_lastskip_bool
@@ -265,20 +221,17 @@
     \skip_vertical:N \tex_lastskip:D
    }
  }
-
-%%at the moment I need the interface to LaTeX2e
 \cs_new:Npn \__xframed__ignore_last_descenders:
  {
   \bool_if:NT \l__xframed_descenders_bool
     {
-    \par
-    \strut
-    \par \tex_unskip:D \tex_unskip:D
-    \setbox0=\tex_lastbox:D
-    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+     \par
+     \strut
+     \par \tex_unskip:D \tex_unskip:D
+     \setbox0=\tex_lastbox:D
+     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
     }
  }
-
 \cs_new:Npn \__xframed__environment_postcode:
  {
   \__xframed_check_footnotes:
@@ -288,7 +241,6 @@
   \tl_use:N \l__xframed_codeafter_tl
   \skip_vertical:n { - \parskip }
  }
-
 \cs_new:Npn \__xframed_check_footnotes:
  {
   \box_if_empty:NTF \@mpfootins
@@ -317,7 +269,6 @@
     \__xframed__coffin_restructure:N   \l__xframed_main_coffin
     }
  }
-
 \cs_new:Npn \__xframed_footnote_rule:
  {
   \tex_kern:D \c_zero_skip
@@ -327,7 +278,6 @@
    \scan_stop:
   \tex_kern:D 2.6 pt
  }
-
 \cs_new:Nn \__xframed__frame_linewidth:
  {
   \__xframed__test_linewidth:nnn
@@ -339,7 +289,6 @@
   \__xframed__test_linewidth:nnn
      { bottomline } { length } { line-width-bottom }
  }
-
 \cs_new:Npn \__xframed__coffin_output:
  {
   \__xframed__coffin_restructure:N \l__xframed_temp_coffin
@@ -348,16 +297,6 @@
   \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_lastfoot_tl
   \__xframed__title:
   \__xframed__foot:
-  % %Add vertical space to main coffin
-  % \vcoffin_set:Nnn
-  %     \l__xframed_main_coffin
-  %   { \l__xframed_coffin_width_dim }
-  %   {
-  %    \__xframed__offinterlineskip:
-  %    \skip_vertical:n { \__xframed__get_length:n { inner-top-margin } }
-  %    \vbox_unpack_clear:N \l__xframed_main_coffin
-  %    \skip_vertical:n { \__xframed__get_length:n { inner-bottom-margin } }
-  %   }
   \dim_set:Nn \l__xframed_maincoffin_htdp_dim
     {
      \coffin_ht:N \l__xframed_main_coffin +
@@ -365,14 +304,12 @@
     }
   \__xframed__coffin_output_aux:
  }
-
 \cs_new:Npn \__xframed__coffin_output_aux:
  {
   \__xframed__test_if_splittable:
   \bool_if:NT \l__xframed_allowbreaking_bool { \__xframed_needed_height: }
   \__xframed__output_and_draw:
  }
-
 \cs_new:Npn \__xframed_needed_height:
  {
   \dim_set:Nn \l__xframed_computed_coffin_height_dim
@@ -413,7 +350,6 @@
             \ \__xframed__convert:n{\l__xframed_free_vspace_dim}
     }
  }
-
  \tex_endinput:D
 %% =======================================================
 %% =======================================================

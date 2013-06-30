@@ -132,6 +132,10 @@ is in the file:
 \ExplSyntaxOff
 \def\theFancyVerbLine{\rlap{\rmfamily\tiny\arabic{FancyVerbLine}}}
 \DisableImplementation
+\ifdevel
+  \DisableDocumentation
+  \EnableImplementation
+\fi
 \begin{document}
   \DocInput{\jobname.dtx}
 \end{document}
@@ -1176,12 +1180,17 @@ is in the file:
 % \clearpage
 %
 %\begin{implementation}
+% \small
+%
+%
+% \tableofcontents
 %
 %\section{\pkg{\jobname} Implementation}
 %
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname.sty} -- Main file}
 %    \begin{macrocode}
 %<*package>
 %    \end{macrocode}
@@ -1209,10 +1218,7 @@ is in the file:
           {package xframed}
 
 \ProvidesExplPackage {xframed} {2013/06/21} {0.01 ALPHA} {package xframed}
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
+
 \@ifpackagelater { expl3 } { 2011/09/05 }
   { }
   {
@@ -1224,32 +1230,27 @@ is in the file:
       }
     \tex_endinput:D
   }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\RequirePackage{xcolor}%needed to display developer Info
+%    \end{macrocode}
+%
+% Load all needed packages. The packages \pkg{longtable} and 
+% \pkg{lengthconvert} are only needed to print out develeper info.
+% The package \pkg{tikz} can't be loaded with \cs{ExplSyntaxOn}.
+%    \begin{macrocode}
+\RequirePackage{ xparse , l3keys2e }
+\RequirePackage{xcolor}
 \ExplSyntaxOff
  \RequirePackage{tikz}
  \usetikzlibrary{backgrounds,shadows,calc,positioning,shapes.misc}
 \ExplSyntaxOn
-\RequirePackage{lengthconvert}%as long as regexpatch has alpha status
-\RequirePackage{longtable}%needed to display developer Info
+\RequirePackage{ longtable , lengthconvert }
+
 \RequirePackage{etoolbox}%as long as regexpatch has alpha status
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\cs_new_protected:Npn \@@__load_check:n #1 {
-    \IfFileExists {#1.sty}
-      { \RequirePackage{#1} }
-      { \msg_error:nnx { xframed } { package-not-available } {#1} }
-}
-
-\clist_map_function:nN
-  { zref-abspage , xparse , l3keys2e  }
-    \@@__load_check:n
-
+%    \end{macrocode}
+%
+% \begin{macro}{\@@__load_deffiles:n}
+% Load all files of \pkg{xframed} with the extension \pkg{def}. It
+% is also a test whether the package is installed correctly or not. 
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@__load_deffiles:n #1 {
     \IfFileExists {xframed-#1.def}
       { \input{xframed-#1.def} }
@@ -1262,11 +1263,6 @@ is in the file:
     but~xframed~needs~the~file~.\\
     I~guess~you~installed~xframed~wrong.
   }
-
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
 %!input all new variables
 \@@__load_deffiles:n { initial }
 %!input dim/skip functions
@@ -1287,10 +1283,12 @@ is in the file:
 \@@__load_deffiles:n { default }
 %!input user commands
 \@@__load_deffiles:n { user }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@__load_ifrequested:n}
+% Load some packages if they are really needed.
+%    \begin{macrocode}
 \cs_new_protected:Npn \@@__load_ifrequested:n #1 {
  \bool_if:cT { l__@@_#1_bool }
   {
@@ -1305,20 +1303,13 @@ is in the file:
 \@@__load_ifrequested:n { pstricks }
 \@@__load_ifrequested:n { theorem  }
 \@@__load_ifrequested:n { mdframed }
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-\@@__developer_tools:
-%%============================================%%
-%%============================================%%
-%%============================================%%
-%%============================================%%
-
-
-
-% Define user environment
-
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{xframed}
+% Definition of the main user environment. That's the reason why 
+% the definition is sourced out from the other user commands.
+%    \begin{macrocode}
 \NewDocumentEnvironment { xframed } { O{} }
  {
  \group_begin:
@@ -1333,24 +1324,36 @@ is in the file:
    \@@__environment_precode:
     \vcoffin_set:Nnw   \l__@@_main_coffin
                      { \l__@@_coffin_width_dim }
+     \@minipagetrue                 
      \@@_prevent_firstindent:
      \@@__environment_inner_precode:
      \@@__inner_head:
  }
  {
-    \@@__environment_inner_postcode:
+     \@@__environment_inner_postcode:
+     \@minipagefalse
     \vcoffin_set_end:
   \@@__set_list:
     \@@__environment_postcode:  
   \@@__set_endlist:
   \group_end:
  }
-
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\@@_prevent_firstindent:}
+% The first line of the environment doesn't need any indent.
+%    \begin{macrocode}
 \cs_new:Nn \@@_prevent_firstindent: 
  {
   \@afterindentfalse\@afterheading
  }
-
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\@@__inner_head:}
+%  The definition of the inner head inside the environment itself.
+%    \begin{macrocode}
 \cs_new:Nn \@@__inner_head:
  {
     \tl_if_blank:VF \l__@@_head_tl 
@@ -1367,9 +1370,12 @@ is in the file:
      \group_end:
      }
  }
-
-
-%%Not recommended
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\xframeddivide}
+%  MAYBE LATER!!!!!
+%    \begin{macrocode}
 \cs_new_nopar:Npn \xframeddivide
  {
     \@@__environment_head_postcode:
@@ -1380,7 +1386,17 @@ is in the file:
                       { \l__@@_coffin_width_dim }
      \@@__environment_afterhead_precode:
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+%
+% \begin{macro}{\@@__environment_afterhead_precode:,^^A
+%               \@@__environment_head_postcode:,^^A
+%               \@@__environment_precode:}
+% Provides some macros which can be extended by
+% options. Normally hooks.
+%    \begin{macrocode}
 \cs_new:Npn \@@__environment_afterhead_precode: {}
 
 \cs_new:Npn \@@__environment_head_postcode: {}
@@ -1390,12 +1406,20 @@ is in the file:
   \@@__developer_tools:
   %%\@@__minimum_space:
   \@@__test_if_splittable:
+  \@@__frame_linewidth:
   \@@__calculate_width:
   \@@__declare_footnotes:
-  \@@__frame_linewidth:
   \tl_use:N \l__@@_codebefore_tl
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__calculate_width:}
+% Calling this command means to calculated the complete
+% width for the contens of the frame. The result will be
+% save inside \cs{l__@@_coffin_width_dim}.
+%    \begin{macrocode}
 \cs_new:Npn \@@__calculate_width:
  {
   \dim_set:Nn \l__@@_coffin_width_dim { \@@__get_length:n { width } }
@@ -1410,9 +1434,18 @@ is in the file:
             \@@__get_length:n { ##1 }
            }
     }
+  \dim_compare:nNnT { \l__@@_coffin_width_dim } > { \linewidth }
+    {
+     \@@__msg_log:n { oversized~environment }
+    }   
  }
-
- 
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__declare_footnotes:}
+% \pkg{xframed} shall handle footnotes like \env{minipage}.
+%    \begin{macrocode}
 \cs_new:Npn \@@__declare_footnotes:
  {
   %% START
@@ -1424,7 +1457,14 @@ is in the file:
   %%
    \cs_set_eq:NN \@footnotetext \@mpfootnotetext
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__declare_footnotes:}
+% Execute some code at the beginning of the environment. 
+% Remove first \cmd{\parskip}, set font and color.
+%    \begin{macrocode}
 \cs_new:Npn \@@__environment_inner_precode:
  {
   \skip_vertical:n { - \parskip }
@@ -1432,14 +1472,24 @@ is in the file:
   \color { \@@__get_color:n { font-color } }
   \tl_use:N \l__@@_codebegin_tl
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{ \@@__environment_inner_postcode:}
+% Execute some code at the end of the environment. 
+%    \begin{macrocode}
 \cs_new:Npn \@@__environment_inner_postcode:
  {
   \@@__ignore_last_skip:
   \@@__ignore_last_descenders:
   \tl_use:N \l__@@_codeend_tl
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@__ignore_last_skip:}
+% Remove last skip added by some environments like \env{list}.
+%    \begin{macrocode}
 \cs_new:Npn \@@__ignore_last_skip:
  {
   \bool_if:NT \l__@@_ignore_lastskip_bool
@@ -1448,25 +1498,29 @@ is in the file:
     \skip_vertical:N \tex_lastskip:D
    }
  }
-
-
-%%at the moment I need the interface to LaTeX2e
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@__ignore_last_descenders:}
+% Ignore descenders in the last line.
+%    \begin{macrocode}
 \cs_new:Npn \@@__ignore_last_descenders:
  {
   \bool_if:NT \l__@@_descenders_bool
     {
-%    \par\strut\par
-%    \unskip\unskip\setbox0=\lastbox
-%    \vspace*{\dimexpr\ht\strutbox-\baselineskip\relax}
-    \par
-    \strut
-    \par \tex_unskip:D \tex_unskip:D
-    \setbox0=\tex_lastbox:D
-    \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
+     \par
+     \strut
+     \par \tex_unskip:D \tex_unskip:D
+     \setbox0=\tex_lastbox:D
+     \skip_vertical:n { 0.7 \tex_baselineskip:D - \tex_baselineskip:D }
     }
  }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@__environment_postcode:}
+% After closing the save box this code is executed. 
+%    \begin{macrocode}
 \cs_new:Npn \@@__environment_postcode:
  {
 %  \@@__check_title_first:
@@ -1477,8 +1531,14 @@ is in the file:
   \tl_use:N \l__@@_codeafter_tl
   \skip_vertical:n { - \parskip }
  }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@_check_footnotes:}
+% Test if foonotes are presented and save them in 
+% the main coffin as part of the output.
+%    \begin{macrocode}
 \cs_new:Npn \@@_check_footnotes:
  {
   \box_if_empty:NTF \@mpfootins
@@ -1507,7 +1567,13 @@ is in the file:
     \@@__coffin_restructure:N   \l__@@_main_coffin
     }
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_footnote_rule:}
+% It's the equal definition of \LaTeXe\ but with the new options
+% provided by \pkg{xframed}.
+%    \begin{macrocode}
 \cs_new:Npn \@@_footnote_rule:
  {
   \tex_kern:D \c_zero_skip
@@ -1517,7 +1583,13 @@ is in the file:
    \scan_stop:
   \tex_kern:D 2.6 pt
  }
- 
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@__frame_linewidth:}
+% Helper functions. It test whether a line shall be drawn. If the line
+% shall be hidden the width is set to 0pt.
+%    \begin{macrocode}
 \cs_new:Nn \@@__frame_linewidth:
  {
   \@@__test_linewidth:nnn 
@@ -1529,8 +1601,13 @@ is in the file:
   \@@__test_linewidth:nnn 
      { bottomline } { length } { line-width-bottom }
  }
-
- 
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__coffin_output:}
+% Starting the output routine
+%    \begin{macrocode}
 \cs_new:Npn \@@__coffin_output:
  {
   \@@__coffin_restructure:N \l__@@_temp_coffin 
@@ -1539,16 +1616,6 @@ is in the file:
   \tl_set_eq:NN \l__xframed_tempfoot_tl  \l__xframed_lastfoot_tl
   \__xframed__title:
   \__xframed__foot:
-  % %Add vertical space to main coffin
-  % \vcoffin_set:Nnn   
-  %     \l__@@_main_coffin
-  %   { \l__@@_coffin_width_dim }
-  %   {
-  %    \@@__offinterlineskip:
-  %    \skip_vertical:n { \@@__get_length:n { inner-top-margin } }
-  %    \vbox_unpack_clear:N \l__@@_main_coffin
-  %    \skip_vertical:n { \@@__get_length:n { inner-bottom-margin } }
-  %   }
   \dim_set:Nn \l__@@_maincoffin_htdp_dim
     {
      \coffin_ht:N \l__@@_main_coffin + 
@@ -1556,15 +1623,26 @@ is in the file:
     }     
   \@@__coffin_output_aux:
  }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__coffin_output_aux:}
+% Helper functions for the output. A combination with the former
+% one isn't possible because this functions is used later too.
+%    \begin{macrocode}
 \cs_new:Npn \@@__coffin_output_aux:
  {
   \@@__test_if_splittable:
   \bool_if:NT \l__@@_allowbreaking_bool { \@@_needed_height: }
   \@@__output_and_draw:
  }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_needed_height:}
+% Calculate the height of the unsplitted and complete environment.
+%    \begin{macrocode}
 \cs_new:Npn \@@_needed_height:
  {
   \dim_set:Nn \l__@@_computed_coffin_height_dim
@@ -1605,8 +1683,10 @@ is in the file:
             \ \@@__convert:n{\l__@@_free_vspace_dim} 
     }    
  }
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -1618,6 +1698,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-default.def} -- Drawing algorithm with \cmd{rule}}
 %    \begin{macrocode}
 %<*package-default>
 %    \end{macrocode}
@@ -1889,6 +1970,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-dev.def} -- Developer info}
 %    \begin{macrocode}
 %<*package-dev>
 %    \end{macrocode}
@@ -1929,6 +2011,7 @@ is in the file:
       }
     }
  }
+\@@__developer_tools:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%========================================================================%%%%
 %%%%                    Print all options in a longtable                    %%%%
@@ -2080,6 +2163,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-dim.def} -- Helper functions handling dimensions}
 %    \begin{macrocode}
 %<*package-dim>
 %    \end{macrocode}
@@ -2223,6 +2307,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-funct.def} -- helper functions}
 %    \begin{macrocode}
 %<*package-funct>
 %    \end{macrocode}
@@ -2508,6 +2593,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-initial.def} -- Define all internal variables}
 %    \begin{macrocode}
 %<*package-initial>
 %    \end{macrocode}
@@ -2546,6 +2632,8 @@ is in the file:
 
 %new length
 \dim_new:N \l__@@_coffin_width_dim
+\dim_new:N \l__@@_environment_width_dim
+
 
 \dim_new:N \l__@@_title_htdp_dim
 \dim_new:N \l__@@_firsttitle_htdp_dim
@@ -2585,6 +2673,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-keys.def} -- Defining all options}
 %    \begin{macrocode}
 %<*package-keys>
 %    \end{macrocode}
@@ -2990,6 +3079,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-listings.def} -- listings support}
 %    \begin{macrocode}
 %<*package-listings>
 %    \end{macrocode}
@@ -3013,6 +3103,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-mdframed.def} -- NOT SUPPORTED}
 %    \begin{macrocode}
 %<*package-mdframed>
 %    \end{macrocode}
@@ -3035,6 +3126,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-minted.def} -- minted support}
 %    \begin{macrocode}
 %<*package-minted>
 %    \end{macrocode}
@@ -3135,6 +3227,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-msg.def} -- Defining all messages}
 %    \begin{macrocode}
 %<*package-msg>
 %    \end{macrocode}
@@ -3223,6 +3316,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-split.def} -- splitting algorithm}
 %    \begin{macrocode}
 %<*package-split>
 %    \end{macrocode}
@@ -3710,6 +3804,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-theorem.def} -- theorem support}
 %    \begin{macrocode}
 %<*package-theorem>
 %    \end{macrocode}
@@ -3732,6 +3827,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-tikz.def} -- drawing method tikz}
 %    \begin{macrocode}
 %<*package-tikz>
 %    \end{macrocode}
@@ -4118,6 +4214,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-titlefoot.def} -- handling title and foot}
 %    \begin{macrocode}
 %<*package-titlefoot>
 %    \end{macrocode}
@@ -4263,6 +4360,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-todo.def} -- list of todos}
 %    \begin{macrocode}
 %<*package-todo>
 %    \end{macrocode}
@@ -4285,6 +4383,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-user.def} -- defining user commands}
 %    \begin{macrocode}
 %<*package-user>
 %    \end{macrocode}
@@ -4549,6 +4648,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
+%\subsection{\pkg{\jobname-doc.sty} -- internal package for documenation}
 %    \begin{macrocode}
 %<*doc-package>
 %    \end{macrocode}
@@ -4938,6 +5038,102 @@ is in the file:
     \@afterheading
  }
 
+%%%%%%%%%%%
+\cs_set_nopar:Npn \__codedoc_macro_single:n #1
+ {
+  \int_incr:N \l__codedoc_macro_int
+
+  \tl_set:Nx \l__codedoc_at_replaced_macro_tl { \token_to_str:N #1 }
+  \__codedoc_replace_at_at:N \l__codedoc_at_replaced_macro_tl
+  \tl_set_eq:NN \saved@macroname \l__codedoc_at_replaced_macro_tl
+
+  \topsep\MacroTopsep
+  \trivlist
+  \cs_set_nopar:Npn \makelabel ##1 
+    { 
+     \skip_horizontal:n { - 1.5cm } 
+     \begin{tabular}{@{}l@{}}
+      \hline {##1} \\\hline
+     \end{tabular} 
+    }
+  \if@inlabel
+    \cs_set_eq:NN \@tempa \@empty
+    \count@ \macro@cnt
+    \loop \ifnum\count@>\z@
+      \cs_set_nopar:Npx \@tempa{\@tempa\hbox{\strut}}
+      \advance\count@\m@ne
+    \repeat
+    \cs_set_nopar:Npx \makelabel ##1
+     {
+      \llap{\vtop to\baselineskip {\@tempa\hbox{##1}\vss}}
+     }
+    \advance \macro@cnt \@ne
+  \else
+    \macro@cnt \@ne
+  \fi
+
+  \bool_if:NT \l__codedoc_macro_aux_bool
+   {
+    \cs_set_eq:NN \__codedoc_macroname_prefix:n \__codedoc_typeset_aux:n
+   }
+  \bool_if:NT \l__codedoc_macro_TF_bool
+   {
+    \cs_set_eq:NN \__codedoc_macroname_suffix: \__codedoc_typeset_TF:
+   }
+
+  \bool_if:NF \l__codedoc_macro_aux_bool
+   {
+    \tl_gset:Nx \l__codedoc_macro_tl { \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+    \exp_args:NNf \tl_greplace_all:Nnn \l__codedoc_macro_tl {\token_to_str:N _} {/}
+    \exp_args:NNf \tl_greplace_all:Nnn \l__codedoc_macro_tl {\@backslashchar} {}
+   }
+
+  \use:x
+   {
+    \exp_not:N \item [ \exp_not:N \__codedoc_print_macroname:n {
+      \tl_to_str:N \l__codedoc_at_replaced_macro_tl
+    }] \exp_not:N \mbox{} \exp_not:N \par
+   }
+  \int_gincr:N \c@CodelineNo
+
+  \bool_if:NF \l__codedoc_macro_aux_bool
+   {
+    \bool_if:NTF \l__codedoc_macro_TF_bool
+     {
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n {TF} }
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n {T } }
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl \tl_to_str:n { F} }
+     }
+     {
+      \seq_gput_right:Nx \g_doc_macros_seq { \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+     }
+   }
+  \bool_if:NTF \l__codedoc_macro_TF_bool
+   {
+    \exp_args:Nx \SpecialMainIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl TF}\nobreak
+    \exp_args:Nx \DoNotIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl TF}
+   }
+   {
+    \exp_args:Nx \SpecialMainIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl }\nobreak
+    \exp_args:Nx \DoNotIndex{ \tl_to_str:N \l__codedoc_at_replaced_macro_tl }
+   }
+
+  \int_gdecr:N \c@CodelineNo
+  \ignorespaces
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
 \def\SpecialOptIndex#1{\@bsphack
     \index{#1\actualchar{\protect\ttfamily#1}
            (option)\encapchar usage}%

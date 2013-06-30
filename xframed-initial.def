@@ -44,6 +44,7 @@
 \coffin_new:N \l__xframed_subsubtitle_coffin
 
 \dim_new:N \l__xframed_coffin_width_dim
+\dim_new:N \l__xframed_environment_width_dim
 
 \dim_new:N \l__xframed_title_htdp_dim
 \dim_new:N \l__xframed_firsttitle_htdp_dim
