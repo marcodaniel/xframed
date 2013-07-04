@@ -22,12 +22,6 @@
 %% =======================================================
 %% 
 %% 
-%%=======================================================%%
-%% file to define frontends for users                    %%
-%%=======================================================%%
-
-%%Defining new document environment based on xframed
-%%syntax \Newxframedenv[option list]{env name}
 \NewDocumentCommand \Newxframedenv { O{} m }
  {
   \NewDocumentEnvironment { #2 }{ }
@@ -39,8 +33,6 @@
     \end{xframed}
    }
  }
-%%Redefining document environment based on xframed
-%%syntax \Renewxframedenv[option list]{env name}
 \NewDocumentCommand \Renewxframedenv { O{} m }
  {
   \RenewDocumentEnvironment { #2 }{ O{} }
@@ -52,8 +44,6 @@
     \end{xframed}
    }
  }
-
-%%Defining method to save styles
 \NewDocumentCommand \newxframedstyle { m m }
  {
   \tl_if_exist:cTF { __xframed__style_#1_user_tl }
@@ -66,7 +56,6 @@
     \tl_set:cn { __xframed__style_#1_user_tl } { #2 }
    }
  }
-
 \NewDocumentCommand \renewxframedstyle { m m }
  {
   \tl_if_exist:cTF { __xframed__style_#1_user_tl }
@@ -78,8 +67,7 @@
     \newxframedstyle { #1 } { #2 }
    }
  }
-
-\NewDocumentCommand \addtoxframedstyle { m m }
+ \NewDocumentCommand \addtoxframedstyle { m m }
  {
   \tl_if_exist:cTF { __xframed__style_#1_user_tl }
    {\tl_put_right:cn { __xframed__style_#1_user_tl } { #2 } }
@@ -88,16 +76,11 @@
     \newxframedstyle { #1 } { #2 }
    }
  }
-
-%%display the frame method
+ %%display the frame method
 \NewDocumentCommand \xframedmethod {  }
  {
-  \tl_use:N \__xframed__framemethode_tl
+  \tl_use:N \l__xframed_framemethode_tl
  }
-
-%%Allows the usage of length defined by key=value
-%%\usexframendlength{key}
-%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendlength { m }
  {
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
@@ -114,11 +97,8 @@
     \prop_get:Nn \l__xframed_length_option_prop { #1 }
    }
  }
-%%\showxframendlength{key}
-%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \showxframendlength { m }
  {
-  %needed if value was length
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
    {  \prop_get:Nn \l__xframed_length_option_prop { #1 }  }
    {
@@ -134,10 +114,6 @@
     \dim_use:N  \l_tmpa_dim
    }
  }
-
-%%Allows the usage of skips defined by key=value
-%%\usexframendskips{key}
-%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendskip { m }
  {
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
@@ -154,10 +130,8 @@
     \prop_get:Nn \l__xframed_skip_option_prop { #1 }
    }
  }
-%%\showxframendskip{key}
 \NewDocumentCommand \showxframendskip { m }
  {
-  %needed if value was a skip
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
    {  \prop_get:Nn \l__xframed_skip_option_prop { #1 }  }
    {
@@ -173,9 +147,6 @@
     \skip_use:N  \l_tmpa_skip
    }
  }
-
-%%Prints all options
-%% \xframedprintalloption[<option property>]
 \NewDocumentCommand \xframedprintalloption { o }
  {
   \IfNoValueTF { #1 }
@@ -190,10 +161,6 @@
      }
    }
  }
-
-%%Allows the usage of color defined by key=value
-%%\usexframendcolor{key}
-%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \usexframendcolor { m }
  {
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
@@ -210,9 +177,6 @@
     \color{ \prop_get:Nn \l__xframed_color_option_prop { #1 } }
    }
  }
-
-%%\showxframendcolor{key}
-%%http://tex.stackexchange.com/a/112345/5239
 \NewDocumentCommand \showxframendcolor { m }
  {
  % \__xframed__get_color:n { #1 }
@@ -230,20 +194,23 @@
     \prop_get:Nn \l__xframed_color_option_prop { #1 }
    }
  }
-
-%%Surround predefined environments with xframed
-%%syntax \Surroundwithxframed[option list]{env name}
 \NewDocumentCommand \Surroundwithxframed { O{} m }
  {
   \BeforeBeginEnvironment{#2}{\begin{xframed}[#1]}%
   \AfterEndEnvironment{#2}{\end{xframed}}%
  }
-
+\NewDocumentCommand \xframedsetup { m }
+ {
+ \keys_set:nn { xframed } { #1 }
+ }
 \NewDocumentCommand \xframedsetuptikz { m }
  {
   \pgfqkeys{/tikz/xframed}
  }
-
+ %    \end{macrocode}
+ % \end{macro}
+ %
+ %    \begin{macrocode}
  \tex_endinput:D
 %% =======================================================
 %% =======================================================

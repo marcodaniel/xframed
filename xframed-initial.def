@@ -22,10 +22,6 @@
 %% =======================================================
 %% 
 %% 
-%%=======================================================%%
-%% file to initial all new variables needed by xframed   %%
-%%=======================================================%%
-
 \coffin_new:N \l__xframed_head_coffin
 \coffin_new:N \l__xframed_main_coffin
 \coffin_new:N \l__xframed_title_coffin
@@ -42,7 +38,6 @@
 
 \coffin_new:N \l__xframed_subtitle_coffin
 \coffin_new:N \l__xframed_subsubtitle_coffin
-
 \dim_new:N \l__xframed_coffin_width_dim
 \dim_new:N \l__xframed_environment_width_dim
 
@@ -68,10 +63,11 @@
 \bool_new:N \l__xframed_head_bool
 
 \dim_const:Nn \c_one_pt_dim { 1~pt }
-
 \tl_new:N \l__xframed_temptitle_tl
 \tl_new:N \l__xframed_tempfoot_tl
-
+\tl_new:N \l__xframed_framemethode_tl
+\tl_new:N \l__xframed_vbadness_tl
+\int_new:N \l__xframed__framemethode_int
  \tex_endinput:D
 %% =======================================================
 %% =======================================================

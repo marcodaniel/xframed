@@ -1310,6 +1310,7 @@ is in the file:
 % Definition of the main user environment. That's the reason why 
 % the definition is sourced out from the other user commands.
 %    \begin{macrocode}
+% \begin{xframed}[<options>]....\end{xframed}
 \NewDocumentEnvironment { xframed } { O{} }
  {
  \group_begin:
@@ -1461,7 +1462,7 @@ is in the file:
 % \end{macro}
 %
 %
-% \begin{macro}{\@@__declare_footnotes:}
+% \begin{macro}{\@@__environment_inner_precode:}
 % Execute some code at the beginning of the environment. 
 % Remove first \cmd{\parskip}, set font and color.
 %    \begin{macrocode}
@@ -1641,7 +1642,9 @@ is in the file:
 % \end{macro}
 %
 % \begin{macro}{\@@_needed_height:}
-% Calculate the height of the unsplitted and complete environment.
+% Calculate the height of the unsplitted and complete environment. The result
+% is printed to the \texttt{log}-file if the option \texttt{developer-info}
+% is used.
 %    \begin{macrocode}
 \cs_new:Npn \@@_needed_height:
  {
@@ -1698,7 +1701,7 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
-%\subsection{\pkg{\jobname-default.def} -- Drawing algorithm with \cmd{rule}}
+%\subsection{\pkg{\jobname-default.def} -- Drawing algorithm with \cs{rule}}
 %    \begin{macrocode}
 %<*package-default>
 %    \end{macrocode}
@@ -1971,6 +1974,8 @@ is in the file:
 % %^^A=======================================================================
 % %^^A NEW FILE
 %\subsection{\pkg{\jobname-dev.def} -- Developer info}
+% The idea of the package is to define commands which can be count to 
+% developer information. 
 %    \begin{macrocode}
 %<*package-dev>
 %    \end{macrocode}
@@ -1983,16 +1988,17 @@ is in the file:
 %%=======================================================%%
 %% file to define all development functions              %%
 %%=======================================================%%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                  Testing if development info requested                 %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\cs_new:Npn \@@__msg_log:n #1 {}
-
+%    \end{macrocode}
+%
+%
+% \begin{macro}{\@@__developer_tools:}
+% The command \cs{@__developer_tools:} test whether the output
+% should contain developer infos. If it's true the output of the
+% contents of \env{xframed} shows the coffin coordinates and
+% it sets the \cs{@@__msg_log:n} to print information to the 
+% \texttt{log} file. By default the command \cs{@@__msg_log:n}
+% simple gobbles its argument.
+%    \begin{macrocode}
 \cs_new:Npn \@@__developer_tools:
  {
   \bool_if:NT \l__@@_developer_info_bool
@@ -2012,11 +2018,14 @@ is in the file:
     }
  }
 \@@__developer_tools:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                    Print all options in a longtable                    %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__all_option_output:}
+% Internal command to print out all options of \env{xframed}
+% inside a \env{longtable}.
+%    \begin{macrocode}
 \cs_new:Nn \@@__all_option_output:
  {
   \tl_set:Nn \l_tmpa_tl 
@@ -2054,11 +2063,14 @@ is in the file:
    \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
   \tl_use:N \l_tmpa_tl
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                 Print all lenght options in a longtable                %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__length_output_aux:}
+% Internal command to print out all length options of \env{xframed}
+% inside a \env{longtable}.
+%    \begin{macrocode}
 \cs_new:Nn \@@__length_output_aux:
  {
   \tl_set:Nn \l_tmpa_tl 
@@ -2081,11 +2093,14 @@ is in the file:
  \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
  \tl_use:N \l_tmpa_tl
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                  Print all skip options in a longtable                 %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__skip_output_aux:}
+% Internal command to print out all skip options of \env{xframed}
+% inside a \env{longtable}.
+%    \begin{macrocode}
 \cs_new:Nn \@@__skip_output_aux:
  {
   \tl_set:Nn \l_tmpa_tl 
@@ -2108,11 +2123,14 @@ is in the file:
  \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
  \tl_use:N \l_tmpa_tl
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                 Print all color options in a longtable                 %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__color_output_aux:}
+% Internal command to print out all color options of \env{xframed}
+% inside a \env{longtable}.
+%    \begin{macrocode}
 \cs_new:Nn \@@__color_output_aux:
  {
   \tl_set:Nn \l_tmpa_tl 
@@ -2135,12 +2153,13 @@ is in the file:
  \tl_put_right:Nn \l_tmpa_tl { \end{longtable} \group_end: }
  \tl_use:N \l_tmpa_tl
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                     Print single length/skip option                    %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@@__show_length:n,\@@__show_skip:n}
+% Internal command to print out all a length/skip option of \env{xframed}.
+%    \begin{macrocode}
 \cs_new:Npn \@@__show_length:n #1
  {
   \dim_set:Nn \l_tmpa_dim { \@@__get_length:n { #1 } }
@@ -2151,8 +2170,10 @@ is in the file:
   \skip_set:Nn \l_tmpa_skip { \@@__get_skip:n { #1 } }
   \skip_use:N \l_tmpa_skip
  }    
-
-
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -2163,7 +2184,10 @@ is in the file:
 %
 % %^^A=======================================================================
 % %^^A NEW FILE
-%\subsection{\pkg{\jobname-dim.def} -- Helper functions handling dimensions}
+%\subsection{\pkg{\jobname-dim.def} -- dimension functions}
+% The following functions are internal functions to handle dimension. \pkg{xframed}
+% is saving all length/skip options inside property lists and so a length must
+% be popped.
 %    \begin{macrocode}
 %<*package-dim>
 %    \end{macrocode}
@@ -2172,23 +2196,9 @@ is in the file:
 %<@@=xframed>
 %    \end{macrocode}
 %
+% \begin{macro}{\@@__get_skip:n}
+% Get a skip option from the relavant property list.
 %    \begin{macrocode}
-%%=======================================================%%
-%% file to define all needed dim functions               %%
-%%=======================================================%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%          All length/skip options are save in a property list           %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%             getting skip options out of the property list              %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  \@@__get_skip:n { <skip option> } 
 \cs_new:Npn \@@__get_skip:n #1
  {
@@ -2197,11 +2207,13 @@ is in the file:
      \prop_get:Nn \l__@@_skip_option_prop { #1 }
     }
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%            getting length options out of the property list             %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__get_length:n}
+% Get a length option from the relavant property list.
+%    \begin{macrocode}
 %  \@@__get_length:n { <length option> }
 \cs_new:Npn \@@__get_length:n #1
  {
@@ -2210,12 +2222,13 @@ is in the file:
      \prop_get:Nn \l__@@_length_option_prop { #1 }
     }
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                add/sub a length option to a given length               %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__length_add:Nn,\@@__length_sub:Nn}
+% Add/sub a \pkg{xframed} length to a given dimenstion.
+%    \begin{macrocode}
 % \@@__length_add:Nn <dimen register> { <length option> }
 \cs_new:Npn \@@__length_add:Nn #1 #2
  {
@@ -2232,24 +2245,26 @@ is in the file:
      \@@__get_length:n { #2 }
     }
  } 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                        Output a dimension in cm                        %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+%
+% \begin{macro}{\@@__get_length:n}
+% Convert a dimension from pt to cm. Used for some developer infos.
+%    \begin{macrocode}
 % \@@_convert:n { <dimension> }
 \cs_new:Npn \@@__convert:n #1
  {
   \fp_eval:n { round( \dim_to_fp:n { #1 } / 1cm, 5) }~cm
  }
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                    remove glue from a skip register                    %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__get_stretch:Nn}
+% Get the stretch component of a skip register.
+%    \begin{macrocode}
 % \@@__get_stretch:Nn <skip register> { <skipexpr> }
 \cs_new:Npn \@@__get_stretch:Nn  #1 #2
  {
@@ -2261,6 +2276,13 @@ is in the file:
     #1 = \c_zero_skip
    }    
  }
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__get_shrink:Nn}
+% Get the shrink component of a skip register.
+%    \begin{macrocode}
 % \@@__get_shrink:Nn <skip register> { <skipexpr> }
 \cs_new:Npn \@@__get_shrink:Nn  #1 #2
  {
@@ -2272,6 +2294,14 @@ is in the file:
     #1 = \c_zero_skip
    }    
  }
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__remove_skip_glue:Nn}
+% Remove any glue from a skip register and save the result in 
+% a new skip register.
+%    \begin{macrocode}
 % \@@__remove_skip_glue:Nn <dim register> { <skipexpr> }
 \cs_new:Npn \@@__remove_skip_glue:Nn  #1 #2
  {
@@ -2282,8 +2312,13 @@ is in the file:
          - \c_zero_dim ~ minus ~ \l_tmpb_dim
      }
  }
-
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__maximum_skip:Nn}
+% Get the maximum skip considering the glue part.
+%    \begin{macrocode}
 % \@@__maximum_skip:Nn <dim register> { <skipexpr> }
 \cs_new:Npn \@@__maximum_skip:Nn  #1 #2
  {
@@ -2295,8 +2330,10 @@ is in the file:
          + \l_tmpa_dim  
      }
  }
-
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%    \begin{macrocode}
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -2316,16 +2353,10 @@ is in the file:
 %<@@=xframed>
 %    \end{macrocode}
 %
+% \begin{macro}{\@@__coffin_restructure:N}
+% Restructure the vertical box. It's eqaul to 
+% \texttt{\textbackslash setbox0=\textbackslash vbox\{\textbackslash unvbox0\}}
 %    \begin{macrocode}
-%%=======================================================%%
-%% file to define helper functions                       %%
-%%=======================================================%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                  restructure a coffin with given width                 %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \@@__coffin_restructure:N <coffing>
 \cs_new:Npn \@@__coffin_restructure:N #1
  {
@@ -2335,66 +2366,74 @@ is in the file:
                     \vbox_unpack_clear:N #1
                   } 
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                     output of a coffin for a user                      %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \@@__display_coffins:N <coffing>
-\cs_new:Npn \@@__display_coffins:N #1
- {
-  \box_use:N #1
- }
-  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                set a property  list with prefix xframed                %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__display_coffins:N}
+% Output a coffin as a simple box.
+%    \begin{macrocode}
+\cs_set_eq:NN \@@__display_coffins:N \box_use:N 
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__msg_log:n}
+% By default all developer information for the \texttt{log}-file are gobbled.
+%    \begin{macrocode}
+\cs_new:Npn \@@__msg_log:n #1 {}
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__prop_set:Nnn \prop_put:Nnn,\@@__prop_set:Nnn \prop_put:Nnx,^^A
+%               \@@__prop_set:Nnn \prop_put:cnn}
+% Internal handling of property list with some variants
+%    \begin{macrocode}
 % \@@__prop_set:Nnn <property list> {<key>} {<value>}
 \cs_new_eq:NN \@@__prop_set:Nnn \prop_put:Nnn
 \cs_generate_variant:Nn \@@__prop_set:Nnn { Nnx }
 \cs_generate_variant:Nn \@@__prop_set:Nnn { cnn }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                  get value of a xframed-property list                  %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__prop_get:nn}
+% Get the valua of a \pkg{xframed} property list.
+%    \begin{macrocode}
 % \@@__prop_set:Nnn {<xframed property list>} {<key>}
 \cs_new:Npn \@@__prop_get:nn #1 #2
  {
   \prop_get:cn { l__@@_#1_option_prop } { #2 } 
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                        testing LaTeX2e if tests                        %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%http://tex.stackexchange.com/questions/119736/what-are-the-best-practices-for-programmatic-interaction-between-latex3-and-late
+%    \end{macrocode}
+% \end{macro} 
+%
+% \begin{macro}{\@@_if:N}
+% Interface to \LaTeXe tests
+% \url{http://tex.stackexchange.com/questions/119736/what-are-the-best-practices-for-programmatic-interaction-between-latex3-and-late}
+%    \begin{macrocode}
 % \@@_if:N <LaTeX2e if test>
 \prg_new_conditional:Npnn \@@_if:N #1 {p,T,F,TF}
 {
    #1 \prg_return_true: \else: \prg_return_false: \fi:
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                 get value of xframed-property list color               %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+% \begin{macro}{\@@__get_color:n}
+% Get the value of \pkg{xframed} property list color
+%    \begin{macrocode}
 \cs_new:Npn \@@__get_color:n #1
  {
   \prop_get:Nn \l__@@_color_option_prop { #1 }
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%             test the bool flag of line -- if false set 0pt             %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+% \begin{macro}{\@@__test_linewidth:nnn}
+% Test the bool flag of line -- if false set 0pt 
+%    \begin{macrocode}
 % \@@__test_linewidth:nnn {<bool name>}{<prop-list>}{<lenght/skip>}
 \cs_new:Npn \@@__test_linewidth:nnn #1 #2 #3
  {
@@ -2406,22 +2445,21 @@ is in the file:
      { \c_zero_dim }
   }
  }
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                      variant of a token list test                      %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\tl_if_empty:nTf}
+% Variant of \cs{tl_if_empty:nTF} \url{http://tex.stackexchange.com/a/112345/5239}
+%    \begin{macrocode} 
 \cs_generate_variant:Nn \tl_if_empty:nTF { f } 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%            ignore any vbox-warning during splitting proccess           %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\tl_new:N \l__@@_vbadness_tl
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__ignore_vbadness:,\@@__restore_vbadness:}
+% Ignore any vbox-warning during splitting proccess
+%    \begin{macrocode} 
 \cs_new:Npn \@@__ignore_vbadness:
  {
    \tl_set:Nx \l__@@_vbadness_tl { \int_use:N \tex_vbadness:D }
@@ -2432,31 +2470,39 @@ is in the file:
  {
   \int_set:Nn \tex_vbadness:D { \l__@@_vbadness_tl }
  }
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__local_boxdim:}
+% Setup box dimension for splitting
+%    \begin{macrocode} 
 \cs_new_protected:Npn \@@__local_boxdim:
  {
   \dim_set:Nn \tex_boxmaxdepth:D   { \c_zero_dim }
   \dim_set:Nn \tex_splittopskip:D  { \c_zero_dim }
   \dim_set:Nn \tex_splitmaxdepth:D { \c_zero_dim }
  }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                   LaTeX2e offinterlineskip to LaTeX3                   %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__offinterlineskip:}
+% Trying to adapt \LaTeXe\ command \cs{offinterlineskip} by \pkg{expl3} Syntax
+%    \begin{macrocode} 
 \cs_new:Npn \@@__offinterlineskip:
  {
   \dim_set:Nn \tex_baselineskip:D  { - \c_one_thousand \c_one_pt_dim }
   \dim_set:Nn \tex_lineskip:D      { \c_zero \c_one_pt_dim }
   \dim_set:Nn \tex_lineskiplimit:D { \c_max_dim }
  }
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                        Start xframed environment                       %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__start_environment:n}
+% Default start definition of \pkg{xframed}
+%    \begin{macrocode} 
 % \@@__start_environment:n {<dimension>}
 \cs_new:Npn \@@__start_environment:n #1
  {
@@ -2486,6 +2532,13 @@ is in the file:
      \tex_kern:D \l_tmpa_dim 
     }   
  }
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__enought_room:n}
+% Function to check the minimum space at the current page.
+%    \begin{macrocode} 
 % \@@__enought_room:n {<dimension>}
 \cs_new:Npn \@@__enought_room:n #1 
  {
@@ -2521,13 +2574,13 @@ is in the file:
     \dim_set_eq:NN \l__@@_free_vspace_dim \vsize 
   }{}
  }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%========================================================================%%%%
-%%%%                      xframed trivlist environment                      %%%%
-%%%%========================================================================%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\@@__trivlist:,\@@_end__trivlist:}
+% Modification of trivlist for the usage of \pkg{xframed}.
+%    \begin{macrocode} 
 \cs_new:Npn \@@__trivlist:
  {
   \skip_set:Nn {\topsep}{ \@@__prop_get:nn { skip }{ skip-above } }
@@ -2541,7 +2594,7 @@ is in the file:
   \def\makelabel##1{##1}
  }
 
-\cs_new:Npn \end@@__trivlist:
+\cs_new:Npn \@@_end__trivlist:
  {    
   \if@inlabel
     \leavevmode
@@ -2566,8 +2619,13 @@ is in the file:
     \@endpetrue
   \fi
  }
-
+%    \end{macrocode}
+% \end{macro} 
 %
+%
+% \begin{macro}{\@@__set_list:,\@@__set_endlist:}
+% Set the trivlist
+%    \begin{macrocode} 
 \cs_new_protected:Npn \@@__set_list:
  {
   \@@__trivlist:\item\relax\color_group_begin:
@@ -2578,11 +2636,13 @@ is in the file:
 \cs_set_protected_nopar:Npn \@@__set_endlist:
     {
      \color_group_end:
-     \end@@__trivlist:
+     \@@_end__trivlist:
     } 
-
-
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+%    \begin{macrocode} 
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -2602,13 +2662,9 @@ is in the file:
 %<@@=xframed>
 %    \end{macrocode}
 %
+%
+% All new coffins
 %    \begin{macrocode}
-%%=======================================================%%
-%% file to initial all new variables needed by xframed   %%
-%%=======================================================%%
-
-
-
 %new coffins
 \coffin_new:N \l__@@_head_coffin
 \coffin_new:N \l__@@_main_coffin
@@ -2625,11 +2681,13 @@ is in the file:
 \coffin_new:N \l__@@_two_coffin
 \coffin_new:N \l__@@_save_coffin
 
-
 \coffin_new:N \l__@@_subtitle_coffin
 \coffin_new:N \l__@@_subsubtitle_coffin
-
-
+%    \end{macrocode}
+%
+%
+% All new dimension registers.
+%    \begin{macrocode}
 %new length
 \dim_new:N \l__@@_coffin_width_dim
 \dim_new:N \l__@@_environment_width_dim
@@ -2652,17 +2710,34 @@ is in the file:
 \dim_new:N \l__@@_tmpa_dim
 \dim_new:N \l__@@_tmpb_dim
 
+%    \end{macrocode}
+%
+%
+% All new boxes.
+%    \begin{macrocode}
 \box_new:N \l__@@_tmpa_box
 \box_new:N \l__@@_tmpb_box
 
 \bool_new:N \l__@@_head_bool
 
 \dim_const:Nn \c_one_pt_dim { 1~pt }
-
-
+%    \end{macrocode}
+%
+%
+% All new token lists.
+%    \begin{macrocode}
 \tl_new:N \l__@@_temptitle_tl
 \tl_new:N \l__@@_tempfoot_tl
-
+\tl_new:N \l__@@_framemethode_tl
+\tl_new:N \l__@@_vbadness_tl
+%    \end{macrocode}
+%
+% All new interger variables
+%    \begin{macrocode}
+\int_new:N \l__@@__framemethode_int
+%    \end{macrocode}
+%
+%    \begin{macrocode}
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -2689,27 +2764,26 @@ is in the file:
 
 
 %!framemethod
-\tl_new:N \@@__framemethode_tl
-\int_new:N \@@__framemethode_int
+
 \cs_new_protected:Npn \@@__set_framemethod:n #1
  {
    \tl_set:Nx \l_tmpa_tl { \tl_expandable_lowercase:n { #1 } }
    \clist_if_in:noTF { pgf , tikz } { \l_tmpa_tl }
     {
-     \tl_set:Nn \@@__framemethode_tl { tikz }
-     \int_set_eq:NN \@@__framemethode_int \c_one
+     \tl_set:Nn \l__@@_framemethode_tl { tikz }
+     \int_set_eq:NN \l__@@__framemethode_int \c_one
     }
     {
      \clist_if_in:noTF { default , tex , latex , none  } { \l_tmpa_tl }
       {
-       \tl_set:Nn \@@__framemethode_tl { default }
-       \int_set_eq:NN \@@__framemethode_int \c_two
+       \tl_set:Nn \l__@@_framemethode_tl { default }
+       \int_set_eq:NN \l__@@__framemethode_int \c_two
       }
       {
        \clist_if_in:noTF { pstricks , ps , postscript } { \l_tmpa_tl }
         {
-         \tl_set:Nn \@@__framemethode_tl { pstricks }
-         \int_set_eq:NN \@@__framemethode_int \c_three
+         \tl_set:Nn \l__@@_framemethode_tl { pstricks }
+         \int_set_eq:NN \l__@@__framemethode_int \c_three
         }
         {
          \msg_error:nnx { xframed }{ unknown-option } { \l_tmpa_tl }
@@ -3063,12 +3137,6 @@ is in the file:
  }
 %!end style option 
 
-% This command is the user interface to setup options.
-\NewDocumentCommand \xframedsetup { m }
- {
- \keys_set:nn { xframed } { #1 }
- }
-
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -3116,6 +3184,10 @@ is in the file:
 %%=======================================================%%
 %% file to use xframed instead of mdframed               %%
 %%=======================================================%%
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -3228,6 +3300,8 @@ is in the file:
 % %^^A=======================================================================
 % %^^A NEW FILE
 %\subsection{\pkg{\jobname-msg.def} -- Defining all messages}
+% Using \pkg{exple} allows the outsourcing of messages. This is done
+% here.
 %    \begin{macrocode}
 %<*package-msg>
 %    \end{macrocode}
@@ -3235,68 +3309,76 @@ is in the file:
 %    \begin{macrocode}
 %<@@=xframed>
 %    \end{macrocode}
-%
+% 
 %    \begin{macrocode}
-%%=======================================================%%
-%% file to define all needed messanges                   %%
-%%=======================================================%%
-
- 
 \msg_new:nnn { xframed } { inside-box }
   { 
     You~are~using~the~environment~xframed~inside~a~non~breakable\\
     box.~By~this~the~option~nobreak~is~used.~For~further~information\\
     see~the~documentation.
   }
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { package-not-available }
   { 
     The~#1~package~is~not available~but~xframed~needs~the~package~.\\
     For~further~information~see~the~documenation.
   }
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { unknown-option }
   { 
     The~option~file~'#1'~is~not~known~by~xframed.\\
     Perhaps~it~is~spelled~incorrectly.
   }
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { unknown-style }
   { 
     The~style~'#1'~is~not~known~by~xframed:
     perhaps~it~is~spelled~incorrectly.
   }
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { style-not-defined }
   {
     You~are~trying~to~expand~the~style~#1.\\
     The~style~is~undefined.~xframed~uses \\
     the~command~\newxframedstyle~instead.
   }
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { style-already-defined }
   {
     You~are~trying~to~define~the~style~#1.\\
     The~style~is~alread~defined.~xframed~uses \\
     the~command~\addtoxframedstyle~instead.
   }
-
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { prop-key-not-available }
   { 
     The~key~'#1'~is~not~defined~\\
     in~current~property~list~of~#2.\\                
     Perhaps~it~is~spelled~incorrectly.
   }
-
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { patching-worked }
   { Patching~the~command~#1~was~successful.  }
 
 \msg_new:nnn { xframed } { patching-failed }
   { Patching~the~command~#1~failed.  }
-  
-
+%    \end{macrocode}
+%
+%    \begin{macrocode}
 \msg_new:nnn { xframed } { output-option-failed }
   {
     You~are~trying~to~print~all~#1~options.\\
@@ -3304,8 +3386,9 @@ is in the file:
     Allowed~are:~length,~skip~and~color.\\
     Perhaps~it~is~spelled~incorrectly.
   }
- 
-  
+%    \end{macrocode}
+%
+%    \begin{macrocode}  
  \tex_endinput:D
 %    \end{macrocode}
 %
@@ -3361,7 +3444,7 @@ is in the file:
 % all calculations are done at this point
 \cs_new:Nn \@@_draw_frame:
  {
-  \int_case:nnn { \@@__framemethode_int }
+  \int_case:nnn { \l__@@__framemethode_int }
    {
     { 1 } { \@@__draw_tikz_frame: }%tikz
     { 2 } { \@@__draw_tikz_frame: }%default
@@ -4384,6 +4467,7 @@ is in the file:
 % %^^A=======================================================================
 % %^^A NEW FILE
 %\subsection{\pkg{\jobname-user.def} -- defining user commands}
+% All user commands are defined here. 
 %    \begin{macrocode}
 %<*package-user>
 %    \end{macrocode}
@@ -4392,14 +4476,11 @@ is in the file:
 %<@@=xframed>
 %    \end{macrocode}
 %
+%
+% \begin{macro}{\Newxframedenv}
+% Defining new document environment based on \pkg{xframed}
 %    \begin{macrocode}
-%%=======================================================%%
-%% file to define frontends for users                    %%
-%%=======================================================%%
-
-
-%%Defining new document environment based on xframed
-%%syntax \Newxframedenv[option list]{env name}
+%syntax \Newxframedenv[option list]{env name}
 \NewDocumentCommand \Newxframedenv { O{} m }
  {
   \NewDocumentEnvironment { #2 }{ }
@@ -4411,8 +4492,14 @@ is in the file:
     \end{xframed} 
    }
  }
-%%Redefining document environment based on xframed
-%%syntax \Renewxframedenv[option list]{env name}
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\Newxframedenv}
+% Redefining document environment based on \pkg{xframed}
+%    \begin{macrocode}
+%syntax \Renewxframedenv[option list]{env name}
 \NewDocumentCommand \Renewxframedenv { O{} m }
  {
   \RenewDocumentEnvironment { #2 }{ O{} }
@@ -4424,8 +4511,14 @@ is in the file:
     \end{xframed} 
    }
  }
-
-%%Defining method to save styles
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\newxframedstyle}
+% Specify a style for \pkg{xframed}
+%    \begin{macrocode}
+%syntax \newxframedstyle{style name}{options}
 \NewDocumentCommand \newxframedstyle { m m }
  {
   \tl_if_exist:cTF { @@__style_#1_user_tl }
@@ -4438,8 +4531,14 @@ is in the file:
     \tl_set:cn { @@__style_#1_user_tl } { #2 }
    }
  }
-
-
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\renewxframedstyle}
+% Redefine a style for \pkg{xframed} 
+%    \begin{macrocode}
+%syntax \renewxframedstyle{style name}{options}
 \NewDocumentCommand \renewxframedstyle { m m }
  {
   \tl_if_exist:cTF { @@__style_#1_user_tl }
@@ -4451,9 +4550,15 @@ is in the file:
     \newxframedstyle { #1 } { #2 }
    }
  }
-
- 
-\NewDocumentCommand \addtoxframedstyle { m m }
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\addtoxframedstyle}
+% Add options to a style for \pkg{xframed}
+%    \begin{macrocode}
+%syntax \addtoxframedstyle{style name}{options}
+ \NewDocumentCommand \addtoxframedstyle { m m }
  {
   \tl_if_exist:cTF { @@__style_#1_user_tl }
    {\tl_put_right:cn { @@__style_#1_user_tl } { #2 } }
@@ -4462,21 +4567,29 @@ is in the file:
     \newxframedstyle { #1 } { #2 }
    }
  }
-
- 
-%%display the frame method
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\xframedmethod}
+% Print out the current frame method.
+%    \begin{macrocode}
+ %%display the frame method
 \NewDocumentCommand \xframedmethod {  }
  {
-  \tl_use:N \@@__framemethode_tl
+  \tl_use:N \l__@@_framemethode_tl
  }
- 
- 
-%%Allows the usage of length defined by key=value
-%%\usexframendlength{key}
-%%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\usexframendlength}
+% Use the length of a given length option of \pkg{xframed}.
+% \url{http://tex.stackexchange.com/a/112345/5239}
+%    \begin{macrocode}
+%syntax \usexframendlength{key}
 \NewDocumentCommand \usexframendlength { m }
  {
-%  \@@__get_length:n { #1 }
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
    {  \prop_get:Nn \l__@@_length_option_prop { #1 }  }
    { 
@@ -4491,13 +4604,17 @@ is in the file:
     \prop_get:Nn \l__@@_length_option_prop { #1 } 
    }  
  }
-%%\showxframendlength{key}
-%%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\showxframendlength}
+% Print the length of a given length option of \pkg{xframed}.
+% \url{http://tex.stackexchange.com/a/112345/5239}
+%    \begin{macrocode}
+%syntax \showxframendlength{key}
 \NewDocumentCommand \showxframendlength { m }
  {
-  %needed if value was length
-%  \dim_set:Nn \l_tmpa_dim { \@@__get_length:n { #1 } } 
-%  \dim_use:N  \l_tmpa_dim
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
    {  \prop_get:Nn \l__@@_length_option_prop { #1 }  }
    {  
@@ -4513,15 +4630,15 @@ is in the file:
     \dim_use:N  \l_tmpa_dim
    }  
  }
-
-
-
-
-
-
-%%Allows the usage of skips defined by key=value
-%%\usexframendskips{key}
-%%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\usexframendskip}
+% Allows the usage of skips defined by key=value
+% \url{http://tex.stackexchange.com/a/112345/5239}
+%    \begin{macrocode}
+%syntax \usexframendskips{key}
 \NewDocumentCommand \usexframendskip { m }
  {
 %  \@@__get_skips:n { #1 }
@@ -4539,12 +4656,17 @@ is in the file:
     \prop_get:Nn \l__@@_skip_option_prop { #1 } 
    }  
  }
-%%\showxframendskip{key}
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{ \showxframendskip}
+% Allows the usage of skips defined by key=value
+% \url{http://tex.stackexchange.com/a/112345/5239}
+%    \begin{macrocode} 
+%syntax \showxframendskip{key}
 \NewDocumentCommand \showxframendskip { m }
  {
-  %needed if value was a skip
-%  \skip_set:Nn \l_tmpa_skip { \@@__get_skip:n { #1 } }
-%  \skip_use:N   \l_tmpa_skip
   \tl_if_empty:fTF   % return value is empty but only if we do "f" expansion
    {  \prop_get:Nn \l__@@_skip_option_prop { #1 }  }
    {  
@@ -4560,10 +4682,14 @@ is in the file:
     \skip_use:N  \l_tmpa_skip
    }   
  }
- 
-
-%%Prints all options 
-%% \xframedprintalloption[<option property>]
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\xframedprintalloption}
+% Prints all options of \pkg{xframed} with the current settings.
+%    \begin{macrocode} 
+%syntax \xframedprintalloption[<option property>]
 \NewDocumentCommand \xframedprintalloption { o }
  {
   \IfNoValueTF { #1 }
@@ -4578,12 +4704,14 @@ is in the file:
      }
    } 
  }
- 
- 
- 
-%%Allows the usage of color defined by key=value
-%%\usexframendcolor{key}
-%%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\usexframendcolor}
+% Use a color options of \pkg{xframed} with the current setting.
+%    \begin{macrocode} 
+%syntax \usexframendcolor{key}
 \NewDocumentCommand \usexframendcolor { m }
  { 
 %  \color { \@@__get_color:n { #1 } }
@@ -4601,9 +4729,14 @@ is in the file:
     \color{ \prop_get:Nn \l__@@_color_option_prop { #1 } }
    }  
  }
-
-%%\showxframendcolor{key}
-%%http://tex.stackexchange.com/a/112345/5239
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\showxframendcolor}
+% Prints a color options of \pkg{xframed} with the current setting.
+%    \begin{macrocode} 
+%syntax \showxframendcolor{key}
 \NewDocumentCommand \showxframendcolor { m }
  {
  % \@@__get_color:n { #1 }  
@@ -4621,22 +4754,45 @@ is in the file:
     \prop_get:Nn \l__@@_color_option_prop { #1 }
    }
  }
-
- 
-%%Surround predefined environments with xframed
-%%syntax \Surroundwithxframed[option list]{env name}
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\Surroundwithxframed}
+% Surround any environment with \pkg{xframed}.
+%    \begin{macrocode} 
+%syntax \Surroundwithxframed[option list]{env name}
 \NewDocumentCommand \Surroundwithxframed { O{} m }
  {
   \BeforeBeginEnvironment{#2}{\begin{xframed}[#1]}%
   \AfterEndEnvironment{#2}{\end{xframed}}%
  }
-
+%    \end{macrocode}
+% \end{macro} 
 %
+%
+% \begin{macro}{\xframedsetup}
+% This command is the user interface to setup optio
+%    \begin{macrocode} 
+\NewDocumentCommand \xframedsetup { m }
+ {
+ \keys_set:nn { xframed } { #1 }
+ }
+%    \end{macrocode}
+% \end{macro} 
+%
+%
+% \begin{macro}{\xframedsetuptikz}
+% Set up TikZ options of \pkg{xframed}
+%    \begin{macrocode} 
 \NewDocumentCommand \xframedsetuptikz { m }
  {
   \pgfqkeys{/tikz/xframed}
  } 
- 
+ %    \end{macrocode}
+ % \end{macro}
+ %
+ %    \begin{macrocode} 
  \tex_endinput:D 
 %    \end{macrocode}
 %
@@ -4649,6 +4805,7 @@ is in the file:
 % %^^A=======================================================================
 % %^^A NEW FILE
 %\subsection{\pkg{\jobname-doc.sty} -- internal package for documenation}
+% The next steps aren't documented because it's only for internal using.
 %    \begin{macrocode}
 %<*doc-package>
 %    \end{macrocode}

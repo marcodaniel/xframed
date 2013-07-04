@@ -54,7 +54,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cs_new:Nn \__xframed_draw_frame:
  {
-  \int_case:nnn { \__xframed__framemethode_int }
+  \int_case:nnn { \l__xframed__framemethode_int }
    {
     { 1 } { \__xframed__draw_tikz_frame: }%tikz
     { 2 } { \__xframed__draw_tikz_frame: }%default

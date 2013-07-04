@@ -30,11 +30,13 @@ help:
 	@echo 
 	@echo -e "$(WARN_COLOR)The following definitions provided by this Makefile"
 	@echo -e "$(OK_COLOR)\tmake docsty\t\t--\ttypesets the documenation and the package"
-	@echo -e "$(OK_COLOR)\tmake all\t\t--\trun docsty clean"
+	@echo -e "$(OK_COLOR)\tmake docstydevel\t--\ttypesets the code documenation and the package"
+	@echo -e "$(OK_COLOR)\tmake all\t\t--\trun docsty docstydevel clean"
 	@echo -e "\tmake clean\t\t--\tremove all helpfiles created by mdframed"
 	@echo -e "\tmake changeversion\t--\tmaintaner tool to change the version"
 	@echo -e "\tmake changerevision\t--\tmaintaner tool to change the revision"
-	@echo -e "\tmake changedate\t--\tmaintaner tool to change the date"
+	@echo -e "\tmake changedate\t\t--\tmaintaner tool to change the date"
+	@echo -e "\tmake change\t\t--\trun changeversion changerevision changedate"
 	@echo -e "\tmake localinstall\t--\tinstall the package in TEXMFHOME"
 	@echo -e "$(WARN_COLOR)End help$(NO_COLOR)"
 
@@ -82,7 +84,7 @@ docsty: $(PACKAGE).dtx
 
 docstydevel: $(PACKAGE).dtx
 	echo -e "" ;\
-	echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).dtx$ -- devel version$(NO_COLOR)" ;\
+	echo -e "\t$(WARN_COLOR)Typesetting $(PACKAGE).dtx$  -- devel version$(NO_COLOR)" ;\
 	$(ENGINE) --draftmode --interaction=nonstopmode --shell-escape --jobname=$(PACKAGE)-devel "\def\jobname{xframed}\let\ifdevel\iftrue \input{$(PACKAGE).dtx}" > /dev/null ;\
 	if [ $$? = 0 ] ; then \
 	  echo -e "\t$(OK_COLOR)compilation in draftmode without errors$(NO_COLOR)" ;\

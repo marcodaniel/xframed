@@ -26,27 +26,26 @@
 %% file to define all allowed keys                       %%
 %%=======================================================%%
 
-\tl_new:N \__xframed__framemethode_tl
-\int_new:N \__xframed__framemethode_int
+
 \cs_new_protected:Npn \__xframed__set_framemethod:n #1
  {
    \tl_set:Nx \l_tmpa_tl { \tl_expandable_lowercase:n { #1 } }
    \clist_if_in:noTF { pgf , tikz } { \l_tmpa_tl }
     {
-     \tl_set:Nn \__xframed__framemethode_tl { tikz }
-     \int_set_eq:NN \__xframed__framemethode_int \c_one
+     \tl_set:Nn \l__xframed_framemethode_tl { tikz }
+     \int_set_eq:NN \l__xframed__framemethode_int \c_one
     }
     {
      \clist_if_in:noTF { default , tex , latex , none  } { \l_tmpa_tl }
       {
-       \tl_set:Nn \__xframed__framemethode_tl { default }
-       \int_set_eq:NN \__xframed__framemethode_int \c_two
+       \tl_set:Nn \l__xframed_framemethode_tl { default }
+       \int_set_eq:NN \l__xframed__framemethode_int \c_two
       }
       {
        \clist_if_in:noTF { pstricks , ps , postscript } { \l_tmpa_tl }
         {
-         \tl_set:Nn \__xframed__framemethode_tl { pstricks }
-         \int_set_eq:NN \__xframed__framemethode_int \c_three
+         \tl_set:Nn \l__xframed_framemethode_tl { pstricks }
+         \int_set_eq:NN \l__xframed__framemethode_int \c_three
         }
         {
          \msg_error:nnx { xframed }{ unknown-option } { \l_tmpa_tl }
@@ -368,11 +367,6 @@
                       { \exp_not:V \l_keys_key_tl }
       }
     }
- }
-
-\NewDocumentCommand \xframedsetup { m }
- {
- \keys_set:nn { xframed } { #1 }
  }
 
  \tex_endinput:D
