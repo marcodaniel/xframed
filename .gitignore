@@ -27,3 +27,8 @@
 *.toc
 *.txt
 *.pyg
+*.glo
+
+*.glolog
+
+*.gls
